@@ -43,6 +43,21 @@ const en: typeof de = {
       body: 'Create a plan with workouts under "Manage" to start training.',
     },
   },
+  measurements: {
+    quickAdd: "Add measurement",
+    title: "Add measurement",
+    description: "Enter what you measured — empty fields are skipped.",
+    last: "Last {{value}} {{unit}}",
+    save: "Save",
+    saved: "Measurement saved",
+    saveError: "Saving failed",
+    types: {
+      bodyweight: "Bodyweight",
+      waist: "Waist",
+      chest: "Chest",
+      biceps: "Biceps",
+    },
+  },
   progress: {
     title: "Progress",
     tabs: {

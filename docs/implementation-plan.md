@@ -14,7 +14,7 @@ CRUD) · **PWA early** (manifest/SW/fonts/persist in Phase 0) · German (`de`) d
 | 0 | Foundation (data + PWA + tooling) | done | data layer + PWA + tooling green | see Phase 0 notes ↓ |
 | 1 | App shell + nav + i18n | done | tab bar + routes render, seed runs once | see Phase 1 notes ↓ |
 | 2 | Log session (hero input) | done | log + save a session, placeholders work | see Phase 2 notes ↓ |
-| 3 | Measurements quick-add | todo | sheet writes a Measurement | — |
+| 3 | Measurements quick-add | done | sheet writes a Measurement | see Phase 3 notes ↓ |
 | 4 | Dashboard cards | todo | live bodyweight + rate + quick actions | — |
 | 5 | Progress: Recomposition chart | todo | one-axis indexed strength vs bodyweight | — |
 | 6 | Progress: Strength progression | todo | per-workout top-set lines, swap-aware | — |
@@ -176,6 +176,20 @@ pattern from `SetRow`.
 **Charts:** none.
 **Out of scope:** the Body chart and trend math (P8), dashboard cards (P4), Yazio/calories.
 **Done when:** quick-add sheet writes a `Measurement`; latest value retrievable; gate passes.
+
+**Learnings (affect later phases):**
+- **`MeasurementQuickAdd`** (`features/measurements/components`) is the reusable launch
+  surface: pass the trigger as `children` (wrapped in `SheetTrigger asChild`), controlled
+  open state inside. It's wired to a temporary button on the **Dashboard placeholder** now —
+  **P4 should adopt it as the "log weight" quick-action** and **P8 should add the
+  Progress-Body launch point** (both spec'd to launch this same sheet).
+- **`useLatestMeasurements()`** (`features/measurements/hooks`) returns
+  `Map<MeasurementType, Measurement | undefined>` (latest per type) via `useLiveQuery` —
+  reuse it for P4 cards / P8 body chart placeholders instead of re-querying per type.
+- **`MeasurementInput`** is the custom numeric input mirroring `SetRow` but with a label +
+  configurable `unit`/`stepBy` (kg→0.1, cm→0.5); reuse it for any future single-value entry.
+- Repo/schema needed **no change** — `measurementRepository.add/getLatest/getByType` and
+  `MeasurementSchema` from Phase 0 covered the writes; only UI was added this phase.
 
 ## Phase 4 — Dashboard summary cards
 **Build:** `src/features/analysis/` dashboard view — stat cards (bodyweight + weekly rate, waist

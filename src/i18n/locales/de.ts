@@ -41,6 +41,21 @@ const de = {
       body: "Lege unter „Verwalten“ einen Plan mit Workouts an, um zu trainieren.",
     },
   },
+  measurements: {
+    quickAdd: "Messung erfassen",
+    title: "Messung erfassen",
+    description: "Trag ein, was du gemessen hast — leere Felder werden übersprungen.",
+    last: "Zuletzt {{value}} {{unit}}",
+    save: "Speichern",
+    saved: "Messung gespeichert",
+    saveError: "Speichern fehlgeschlagen",
+    types: {
+      bodyweight: "Körpergewicht",
+      waist: "Taille",
+      chest: "Brust",
+      biceps: "Bizeps",
+    },
+  },
   progress: {
     title: "Fortschritt",
     tabs: {
