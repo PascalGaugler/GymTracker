@@ -10,6 +10,7 @@ lerna-debug.log*
 node_modules
 dist
 dist-ssr
+dev-dist
 *.local
 
 # Editor directories and files
@@ -23,6 +24,5 @@ dist-ssr
 *.sln
 *.sw?
 
+# Visual reference only — large prototype files, never imported (see CLAUDE.md)
 design-reference
-
-docs

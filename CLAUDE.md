@@ -124,6 +124,7 @@ No backend in Phase 1. Hosting: Cloudflare Pages.
 
 ## Docs
 
+- `docs/implementation-plan.md` — phased build plan + live status table (maintain greedily)
 - `docs/architecture.md` — local-first rationale, Phase 2 Yazio plan
 - `docs/data-model.md` — entities, Zod schemas, Dexie stores, repositories
 - `docs/charts.md` — chart set + metric definitions

@@ -1,8 +1,6 @@
 /* Fonts: Space Grotesk (display + UI), JetBrains Mono (every number).
-   Must precede the Tailwind import — @import rules have to come first.
-   TODO(offline-first): self-host via @fontsource before shipping the PWA —
-   a Google Fonts @import does not work offline. */
-@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap');
+   Self-hosted via @fontsource-variable packages, imported in src/main.tsx so
+   the PWA works offline. Family names below match those packages. */
 @import "tailwindcss";
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
@@ -103,10 +101,10 @@
    rounded-<r>, shadow-<e>.
    ============================================================ */
 @theme inline {
-  /* ---- Type families ---- */
-  --font-sans: 'Space Grotesk', system-ui, sans-serif;
-  --font-display: 'Space Grotesk', system-ui, sans-serif;
-  --font-mono: 'JetBrains Mono', ui-monospace, monospace;
+  /* ---- Type families (self-hosted variable fonts via @fontsource) ---- */
+  --font-sans: 'Space Grotesk Variable', system-ui, sans-serif;
+  --font-display: 'Space Grotesk Variable', system-ui, sans-serif;
+  --font-mono: 'JetBrains Mono Variable', ui-monospace, monospace;
 
   /* ---- Type scale (px, with line-height / tracking / weight) ---- */
   --text-display-xl: 48px;
