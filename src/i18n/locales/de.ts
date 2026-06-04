@@ -9,7 +9,22 @@ const de = {
   },
   dashboard: {
     title: "Auf Kurs?",
-    placeholder: "Deine Kennzahlen erscheinen hier, sobald du Daten erfasst hast.",
+    cards: {
+      bodyweight: "Körpergewicht",
+      waist: "Taille",
+      strength: "Kraft-Index",
+      calories: "Kalorien",
+      noData: "Noch keine Daten",
+      soon: "Bald",
+      strengthSoon: "Kommt mit den Diagrammen",
+      caloriesSoon: "Yazio-Sync folgt in Phase 2",
+    },
+    ratePerWeek: "{{value}} {{unit}}/Wo",
+    sinceStart: "{{value}} seit Start",
+    today: {
+      title: "Heute dran",
+      cta: "Workout starten",
+    },
     empty: {
       title: "Willkommen",
       body: "Lege deinen ersten Plan an, um loszulegen.",
@@ -85,6 +100,7 @@ const de = {
   common: {
     comingSoon: "Kommt in einer späteren Phase",
     back: "Zurück",
+    phase2: "Phase 2",
   },
 }
 

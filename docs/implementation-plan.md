@@ -15,7 +15,7 @@ CRUD) · **PWA early** (manifest/SW/fonts/persist in Phase 0) · German (`de`) d
 | 1 | App shell + nav + i18n | done | tab bar + routes render, seed runs once | see Phase 1 notes ↓ |
 | 2 | Log session (hero input) | done | log + save a session, placeholders work | see Phase 2 notes ↓ |
 | 3 | Measurements quick-add | done | sheet writes a Measurement | see Phase 3 notes ↓ |
-| 4 | Dashboard cards | todo | live bodyweight + rate + quick actions | — |
+| 4 | Dashboard cards | done | live bodyweight + rate + quick actions | see Phase 4 notes ↓ |
 | 5 | Progress: Recomposition chart | todo | one-axis indexed strength vs bodyweight | — |
 | 6 | Progress: Strength progression | todo | per-workout top-set lines, swap-aware | — |
 | 7 | Progress: Exercise drilldown | todo | top-set line + min–max band | — |
@@ -203,6 +203,21 @@ trend, strength index placeholder ok if no baseline yet) with trend badges; quic
 **Out of scope:** the four Progress charts (P5–P8), Manage, Settings.
 **Done when:** Dashboard shows live bodyweight + rate and a workout quick-action; empty states when
 no data; gate passes.
+
+**Learnings (affect later phases):**
+- **Reusable analysis primitives** now exist in `src/features/analysis/`: `StatCard` +
+  `TrendBadge` (`components/`, tokens-only, colour keyed on *desirable* direction not the
+  arrow) and `stats.ts` (pure presentation math: `summarizeSeries`/`weeklyRate` via OLS,
+  `trendDir`). **P8 reuses `StatCard`/`TrendBadge` for the body-chart rate readout**; **P5's
+  strength-index/indexing math belongs in `stats.ts`** alongside these (not in repos).
+- **Strength-index + calories dashboard cards are static placeholders** (`SoonPill`,
+  `muted`) — no baseline math was built (correctly deferred). **P5 must wire the real
+  strength-index value into the strength card** (replace the placeholder); calories stays a
+  placeholder until product-Phase 2.
+- **`useMeasurementStats()`** (`analysis/hooks`) returns `{ bodyweight, waist }` summaries via
+  `useLiveQuery`; reuse it rather than re-summarising in P8.
+- No repo/schema/index changes this phase — existing `measurementRepository.getByType` +
+  `useWorkoutRotation`/`useExerciseCatalog` (training) covered all reads.
 
 ## Phase 5 — Progress: Recomposition (hero chart)
 **Build:** `/progress` hub shell (segmented control / nested routes) + `/progress/recomposition`

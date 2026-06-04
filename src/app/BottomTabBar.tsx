@@ -33,7 +33,7 @@ export function BottomTabBar() {
               end={to === "/"}
               className={({ isActive }) =>
                 cn(
-                  "flex min-h-[var(--tap)] w-full min-w-0 flex-col items-center justify-center gap-1 px-1 py-2 text-center text-caption font-medium transition-colors",
+                  "flex min-h-(--tap) w-full min-w-0 flex-col items-center justify-center gap-1 px-1 py-2 text-center text-caption font-medium transition-colors",
                   isActive ? "text-primary" : "text-subtle hover:text-foreground",
                 )
               }

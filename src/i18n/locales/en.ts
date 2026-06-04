@@ -11,7 +11,22 @@ const en: typeof de = {
   },
   dashboard: {
     title: "On track?",
-    placeholder: "Your key stats appear here once you've logged some data.",
+    cards: {
+      bodyweight: "Bodyweight",
+      waist: "Waist",
+      strength: "Strength index",
+      calories: "Calories",
+      noData: "No data yet",
+      soon: "Soon",
+      strengthSoon: "Arrives with the charts",
+      caloriesSoon: "Yazio sync arrives in Phase 2",
+    },
+    ratePerWeek: "{{value}} {{unit}}/wk",
+    sinceStart: "{{value}} since start",
+    today: {
+      title: "Up today",
+      cta: "Start workout",
+    },
     empty: {
       title: "Welcome",
       body: "Create your first plan to get started.",
@@ -87,6 +102,7 @@ const en: typeof de = {
   common: {
     comingSoon: "Coming in a later phase",
     back: "Back",
+    phase2: "Phase 2",
   },
 }
 
