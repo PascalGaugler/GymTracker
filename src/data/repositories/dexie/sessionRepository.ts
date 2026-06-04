@@ -7,6 +7,8 @@ import type { ExerciseDataPoint, SessionRepository } from "../types"
 export const sessionRepository: SessionRepository = {
   getById: (id) => db.sessions.get(id),
 
+  getAll: () => db.sessions.orderBy("date").toArray(),
+
   getByDate: (date) =>
     db.sessions.where("date").between(startOfDay(date), endOfDay(date), true, true).toArray(),
 

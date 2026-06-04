@@ -119,6 +119,16 @@ describe("sessionRepository", () => {
     expect(last?.id).toBe(newer.id)
   })
 
+  it("returns every session ascending by date via getAll", async () => {
+    await sessionRepository.save(makeSession(new Date("2026-05-08T10:00:00"), 82.5))
+    await sessionRepository.save(makeSession(new Date("2026-05-01T10:00:00"), 80))
+    const all = await sessionRepository.getAll()
+    expect(all.map((s) => s.date.getTime())).toEqual([
+      new Date("2026-05-01T10:00:00").getTime(),
+      new Date("2026-05-08T10:00:00").getTime(),
+    ])
+  })
+
   it("round-trips a session by id", async () => {
     const session = makeSession(new Date("2026-05-01T10:00:00"), 80)
     await sessionRepository.save(session)

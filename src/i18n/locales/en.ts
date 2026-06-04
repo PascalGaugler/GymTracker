@@ -18,7 +18,7 @@ const en: typeof de = {
       calories: "Calories",
       noData: "No data yet",
       soon: "Soon",
-      strengthSoon: "Arrives with the charts",
+      strengthBaseline: "vs. baseline (100)",
       caloriesSoon: "Yazio sync arrives in Phase 2",
     },
     ratePerWeek: "{{value}} {{unit}}/wk",
@@ -82,6 +82,16 @@ const en: typeof de = {
       body: "Body",
     },
     placeholder: "Charts appear once you've logged sessions and measurements.",
+    recomposition: {
+      caption: "Strength index and bodyweight, both indexed to 100 at the start.",
+      strengthSeries: "Strength index",
+      bodyweightSeries: "Bodyweight",
+      baseline: "Baseline = 100",
+      empty: {
+        title: "Nothing to show yet",
+        body: "Log a few sessions and weigh in, and your recomposition trend will appear here.",
+      },
+    },
   },
   manage: {
     title: "Manage",

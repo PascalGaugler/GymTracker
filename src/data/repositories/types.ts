@@ -42,6 +42,8 @@ export interface WorkoutRepository {
 
 export interface SessionRepository {
   getById(id: string): Promise<WorkoutSession | undefined>
+  /** Every session, ascending by date — the source for cross-exercise analysis. */
+  getAll(): Promise<WorkoutSession[]>
   getByDate(date: Date): Promise<WorkoutSession[]>
   getRecent(limit: number): Promise<WorkoutSession[]>
   getLastForWorkout(workoutId: string): Promise<WorkoutSession | undefined>

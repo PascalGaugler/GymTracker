@@ -1,10 +1,11 @@
 import { createBrowserRouter, Navigate } from "react-router-dom"
 
+import { RecompositionView } from "@/features/analysis/components/RecompositionView"
 import { DashboardPage } from "@/pages/DashboardPage"
 import { LogPage } from "@/pages/LogPage"
 import { ManagePage } from "@/pages/ManagePage"
 import { NotFoundPage } from "@/pages/NotFoundPage"
-import { ProgressPage } from "@/pages/ProgressPage"
+import { ProgressComingSoon, ProgressPage } from "@/pages/ProgressPage"
 import { SettingsPage } from "@/pages/SettingsPage"
 
 import { AppLayout } from "./AppLayout"
@@ -20,11 +21,17 @@ export const router = createBrowserRouter([
       { path: "log", element: <LogPage /> },
       { path: "log/:sessionId", element: <LogPage /> },
 
-      { path: "progress", element: <Navigate to="/progress/recomposition" replace /> },
-      { path: "progress/recomposition", element: <ProgressPage /> },
-      { path: "progress/strength", element: <ProgressPage /> },
-      { path: "progress/exercise/:exerciseId", element: <ProgressPage /> },
-      { path: "progress/body", element: <ProgressPage /> },
+      {
+        path: "progress",
+        element: <ProgressPage />,
+        children: [
+          { index: true, element: <Navigate to="/progress/recomposition" replace /> },
+          { path: "recomposition", element: <RecompositionView /> },
+          { path: "strength", element: <ProgressComingSoon /> },
+          { path: "exercise/:exerciseId", element: <ProgressComingSoon /> },
+          { path: "body", element: <ProgressComingSoon /> },
+        ],
+      },
 
       { path: "manage", element: <Navigate to="/manage/plans" replace /> },
       { path: "manage/plans", element: <ManagePage /> },

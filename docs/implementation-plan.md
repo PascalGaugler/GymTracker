@@ -16,7 +16,7 @@ CRUD) · **PWA early** (manifest/SW/fonts/persist in Phase 0) · German (`de`) d
 | 2 | Log session (hero input) | done | log + save a session, placeholders work | see Phase 2 notes ↓ |
 | 3 | Measurements quick-add | done | sheet writes a Measurement | see Phase 3 notes ↓ |
 | 4 | Dashboard cards | done | live bodyweight + rate + quick actions | see Phase 4 notes ↓ |
-| 5 | Progress: Recomposition chart | todo | one-axis indexed strength vs bodyweight | — |
+| 5 | Progress: Recomposition chart | done | one-axis indexed strength vs bodyweight | see Phase 5 notes ↓ |
 | 6 | Progress: Strength progression | todo | per-workout top-set lines, swap-aware | — |
 | 7 | Progress: Exercise drilldown | todo | top-set line + min–max band | — |
 | 8 | Progress: Body chart | todo | bodyweight trend+rate + measurements | — |
@@ -232,6 +232,26 @@ markers) + `--recomp-strength` / `--recomp-bodyweight` tokens — match styling,
 **Out of scope:** other Progress views (P6–P8), Manage, Settings. No rolling baseline.
 **Done when:** recomposition chart renders from logged sessions + bodyweight, both indexed to 100 on
 one axis; baseline from first 2–3 sessions; gate passes.
+
+**Learnings (affect later phases):**
+- **`SessionRepository.getAll()`** added (all sessions, ascending by date) — the read for any
+  cross-exercise / whole-history analysis. P6/P7/P8 reuse it instead of `getRecent(BIG)`.
+- **Recomposition math** is pure in `src/features/analysis/recomposition.ts`
+  (`strengthIndexSeries`, `bodyweightIndexSeries`, `buildRecomposition`, `BASELINE_SESSION_COUNT`,
+  `BASELINE_INDEX`). Top-set-per-session logic lives here; **P6's top-set series should reuse this
+  module** (don't recompute in a repo). The latest index feeds the dashboard via
+  `useStrengthIndex()`; the full chart via `useRecompositionData()`.
+- **Progress hub is a nested-route layout.** `ProgressPage` renders the header + segmented-control
+  `ProgressNav` + `<Outlet/>`; sub-routes are nested under `path: "progress"`. **P6/P7/P8 just
+  replace the `ProgressComingSoon` element** at `/progress/strength`, `/progress/exercise/:id`,
+  `/progress/body` (routes already registered) — no router restructuring needed.
+- **Recharts is wired (first chart).** Follow `RecompositionChart` as the template: tokens passed
+  as CSS vars to `stroke`/`fill`, `ReferenceLine` for the baseline, `connectNulls` to bridge series
+  on a shared time axis. Recharts 3's typed-tooltip generics don't compose — use a **minimal
+  optional-props interface + the element form** `content={<X/>}` (typing the component with
+  `TooltipContentProps` fails to assign to `content`).
+- **Bundle crossed 500 kB** (Recharts). Not blocking; a pre-ship polish option is lazy-loading the
+  Progress route. Left as-is for now (YAGNI).
 
 ## Phase 6 — Progress: Per-workout strength progression
 **Build:** `/progress/strength` — workout selector; one toggleable line per exercise (session **top

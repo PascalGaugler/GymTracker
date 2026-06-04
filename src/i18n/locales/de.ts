@@ -16,7 +16,7 @@ const de = {
       calories: "Kalorien",
       noData: "Noch keine Daten",
       soon: "Bald",
-      strengthSoon: "Kommt mit den Diagrammen",
+      strengthBaseline: "ggü. Start (100)",
       caloriesSoon: "Yazio-Sync folgt in Phase 2",
     },
     ratePerWeek: "{{value}} {{unit}}/Wo",
@@ -80,6 +80,16 @@ const de = {
       body: "Körpermaße",
     },
     placeholder: "Diagramme erscheinen, sobald du Trainings und Messungen erfasst hast.",
+    recomposition: {
+      caption: "Kraft-Index und Körpergewicht, beide auf 100 zum Start indexiert.",
+      strengthSeries: "Kraft-Index",
+      bodyweightSeries: "Körpergewicht",
+      baseline: "Start = 100",
+      empty: {
+        title: "Noch nichts zu zeigen",
+        body: "Logge ein paar Trainings und wieg dich, dann erscheint hier dein Recomposition-Verlauf.",
+      },
+    },
   },
   manage: {
     title: "Verwalten",
