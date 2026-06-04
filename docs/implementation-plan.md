@@ -12,7 +12,7 @@ CRUD) · **PWA early** (manifest/SW/fonts/persist in Phase 0) · German (`de`) d
 | # | Phase | Status | Done-when (short) | Learnings |
 |---|-------|--------|-------------------|-----------|
 | 0 | Foundation (data + PWA + tooling) | done | data layer + PWA + tooling green | see Phase 0 notes ↓ |
-| 1 | App shell + nav + i18n | todo | tab bar + routes render, seed runs once | — |
+| 1 | App shell + nav + i18n | done | tab bar + routes render, seed runs once | see Phase 1 notes ↓ |
 | 2 | Log session (hero input) | todo | log + save a session, placeholders work | — |
 | 3 | Measurements quick-add | todo | sheet writes a Measurement | — |
 | 4 | Dashboard cards | todo | live bodyweight + rate + quick actions | — |
@@ -108,6 +108,19 @@ placeholders/empty states only.
   never import Dexie outside `src/data/`.
 **Done when:** all routes navigable via tab bar; Settings icon opens `/settings` placeholder; `de`
 strings render via `t()`; empty states show; seed runs once on a fresh DB; gate passes.
+
+**Learnings (affect later phases):**
+- **i18n strings:** add every new key to BOTH `src/i18n/locales/de.ts` and `en.ts`. `de.ts` must
+  NOT be `as const` (its literals would otherwise make `en` impossible to satisfy). `t()` keys are
+  type-checked via `src/i18n/i18next.d.ts` (CustomTypeOptions ← `resources.de`); use `ParseKeys`
+  when a key is passed as a variable (see `BottomTabBar`).
+- **App entry moved** to `src/app/App.tsx` (was `src/App.tsx`); `main.tsx` imports it. App gates
+  rendering on `runStartup()` (`src/app/startup.ts` = persist + `seedIfEmpty`), so by the time any
+  route mounts the **seed is guaranteed present** — later phases can read repos without re-seeding.
+- **Routing:** data router in `src/app/router.tsx`. `/progress` and `/manage` redirect to their
+  default sub-route; tab `NavLink`s use `end` only on `/`. Add real nested views by replacing the
+  placeholder elements at the already-registered paths.
+- **Icons:** `lucide-react` (line style, matches reference) is the icon source for chrome.
 
 ## Phase 2 — Log session (the gym hero surface)
 **Build:** `src/features/training/` — workout picker (today's suggested workout via rotation, or
