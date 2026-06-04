@@ -119,6 +119,13 @@ describe("sessionRepository", () => {
     expect(last?.id).toBe(newer.id)
   })
 
+  it("round-trips a session by id", async () => {
+    const session = makeSession(new Date("2026-05-01T10:00:00"), 80)
+    await sessionRepository.save(session)
+    expect(await sessionRepository.getById(session.id)).toEqual(session)
+    expect(await sessionRepository.getById(crypto.randomUUID())).toBeUndefined()
+  })
+
   it("flattens embedded sets into exercise history points", async () => {
     await sessionRepository.save(makeSession(new Date("2026-05-01T10:00:00"), 80))
     const history = await sessionRepository.getExerciseHistory(exerciseId)

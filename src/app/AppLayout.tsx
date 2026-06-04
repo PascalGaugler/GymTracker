@@ -12,28 +12,39 @@ import { BottomTabBar } from "./BottomTabBar"
 export function AppLayout() {
   const { t } = useTranslation()
 
+  // App-shell layout: the viewport is a fixed-height flex column where the header
+  // and tab bar stay put (flex-none) and ONLY <main> scrolls. This keeps chrome
+  // visible at every size and avoids the sticky/fixed-over-document-scroll
+  // glitches (header/footer vanishing) on mobile browsers. h-dvh tracks the
+  // dynamic viewport so the address bar showing/hiding never clips content.
   return (
-    <div className="min-h-dvh bg-background">
+    <div className="flex h-dvh flex-col overflow-hidden bg-background">
       <header
-        className="sticky top-0 z-20 flex h-14 items-center justify-between border-b border-border bg-background/85 px-4 backdrop-blur-sm"
+        className="flex h-14 flex-none items-center justify-between border-b border-border bg-background px-4"
         style={{ paddingTop: "env(safe-area-inset-top)" }}
       >
-        <NavLink to="/" className="flex items-center gap-2" aria-label={t("nav.dashboard")}>
-          <Dumbbell size={22} className="text-primary" aria-hidden="true" />
-          <span className="font-display text-h3 font-semibold">Gym Tracker</span>
+        <NavLink
+          to="/"
+          className="flex min-w-0 items-center gap-2"
+          aria-label={t("nav.dashboard")}
+        >
+          <Dumbbell size={22} className="shrink-0 text-primary" aria-hidden="true" />
+          <span className="truncate font-display text-h3 font-semibold">Gym Tracker</span>
         </NavLink>
         <Button asChild variant="ghost" size="icon-lg" aria-label={t("nav.settings")}>
           <NavLink
             to="/settings"
-            className={({ isActive }) => cn(isActive && "text-primary")}
+            className={({ isActive }) => cn("shrink-0", isActive && "text-primary")}
           >
             <Settings aria-hidden="true" />
           </NavLink>
         </Button>
       </header>
 
-      <main className="mx-auto w-full max-w-screen-sm px-4 pt-5 pb-[calc(var(--tap)+env(safe-area-inset-bottom)+1.5rem)]">
-        <Outlet />
+      <main className="flex-1 overflow-y-auto overscroll-contain">
+        <div className="mx-auto w-full max-w-screen-sm px-4 pt-5 pb-8">
+          <Outlet />
+        </div>
       </main>
 
       <BottomTabBar />

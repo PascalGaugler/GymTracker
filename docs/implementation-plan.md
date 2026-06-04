@@ -13,7 +13,7 @@ CRUD) · **PWA early** (manifest/SW/fonts/persist in Phase 0) · German (`de`) d
 |---|-------|--------|-------------------|-----------|
 | 0 | Foundation (data + PWA + tooling) | done | data layer + PWA + tooling green | see Phase 0 notes ↓ |
 | 1 | App shell + nav + i18n | done | tab bar + routes render, seed runs once | see Phase 1 notes ↓ |
-| 2 | Log session (hero input) | todo | log + save a session, placeholders work | — |
+| 2 | Log session (hero input) | done | log + save a session, placeholders work | see Phase 2 notes ↓ |
 | 3 | Measurements quick-add | todo | sheet writes a Measurement | — |
 | 4 | Dashboard cards | todo | live bodyweight + rate + quick actions | — |
 | 5 | Progress: Recomposition chart | todo | one-axis indexed strength vs bodyweight | — |
@@ -46,6 +46,10 @@ CRUD) · **PWA early** (manifest/SW/fonts/persist in Phase 0) · German (`de`) d
 - All UI strings through `t()`; `de` default. User data (exercise names) never translated.
 - shadcn for chrome; **custom** for weight-logging inputs and charts (Recharts). Use tokens —
   never hard-code color/size/font.
+- **Responsive (verify at 320px):** keep the app-shell layout (header + tab bar `flex-none`,
+  only `<main>` scrolls; `h-dvh`, no `sticky`/`fixed` chrome over document scroll). No
+  horizontal overflow — every flex/grid item with text or an input carries `min-w-0`
+  (+ `truncate`/wrapping). See CLAUDE.md › UI.
 - `/design-reference/` is **visual reference only** — never import; reproduce with our tokens + shadcn.
 - **Done gate every phase:** `npm run typecheck && npm run lint && npm run test` all pass.
 
@@ -135,6 +139,31 @@ seed data (no Manage yet). Per `docs/data-model.md`.
 **Out of scope:** editing plan/catalog (Manage, P9–P10), measurements, dashboard, charts. Reps input.
 **Done when:** open today's workout, log sets with last-time placeholders, save a `WorkoutSession`;
 reopening `/log/:sessionId` shows saved sets; gate passes.
+
+**Learnings (affect later phases):**
+- **`SessionRepository.getById(id)`** was added (interface + dexie impl) so
+  `/log/:sessionId` can reload a saved session; later phases that open a specific
+  session (drilldowns, corrections) reuse it.
+- **New-session flow without DB pollution:** picking a workout mints a UUID and
+  navigates to `/log/:sessionId` carrying `{ workoutId }` in **router state**; the
+  session is persisted only on save. `useSession` returns `undefined` (loading) /
+  `null` (unsaved draft) / object (saved) — the `null` sentinel via
+  `(await getById()) ?? null` is what makes loading-vs-not-found distinguishable in
+  `useLiveQuery`. A draft refreshed without router state redirects to `/log`.
+- **shadcn `Toaster` (sonner) is now mounted** in `src/app/providers.tsx` with
+  `theme="dark"` (overrides next-themes' `system` default; no ThemeProvider needed).
+  Use `import { toast } from "sonner"` for transient feedback anywhere.
+- **Custom `SetRow`** (`features/training/components`) is the reusable gym weight
+  input (big tap targets, last-weight placeholder, ±2.5 stepper, decimal sanitise).
+  Phase 3's measurement quick-add should reuse this pattern (per its spec).
+- **Form-state-from-async pattern:** the lint rule `react-hooks/set-state-in-effect`
+  forbids seeding state in an effect. Use a loader component that waits for data,
+  then mounts an inner form **keyed by id** that seeds via a `useState` initializer.
+- **App-shell layout (shared chrome) was refactored** to a fixed-height flex column —
+  `AppLayout` is `h-dvh flex flex-col overflow-hidden`, header + `BottomTabBar` are
+  `flex-none`, only `<main>` scrolls. The tab bar is no longer `fixed` (so pages need no
+  bottom-padding hack). Build later screens inside this scrolling `<main>`; follow the new
+  responsive rules in CLAUDE.md › UI (320px floor, `min-w-0` on flexible items).
 
 ## Phase 3 — Measurements quick-add
 **Build:** `src/features/measurements/` — lightweight shadcn **sheet/dialog** launched from

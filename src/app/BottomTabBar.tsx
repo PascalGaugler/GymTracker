@@ -22,24 +22,24 @@ export function BottomTabBar() {
   return (
     <nav
       aria-label={t("nav.dashboard")}
-      className="fixed inset-x-0 bottom-0 z-20 border-t border-border bg-surface/95 backdrop-blur-sm"
+      className="flex-none border-t border-border bg-surface"
       style={{ paddingBottom: "env(safe-area-inset-bottom)" }}
     >
       <ul className="mx-auto grid max-w-screen-sm grid-cols-4">
         {TABS.map(({ to, labelKey, icon: Icon }) => (
-          <li key={to}>
+          <li key={to} className="min-w-0">
             <NavLink
               to={to}
               end={to === "/"}
               className={({ isActive }) =>
                 cn(
-                  "flex min-h-[var(--tap)] flex-col items-center justify-center gap-1 py-2 text-caption font-medium transition-colors",
+                  "flex min-h-[var(--tap)] w-full min-w-0 flex-col items-center justify-center gap-1 px-1 py-2 text-center text-caption font-medium transition-colors",
                   isActive ? "text-primary" : "text-subtle hover:text-foreground",
                 )
               }
             >
-              <Icon size={22} aria-hidden="true" />
-              <span>{t(labelKey)}</span>
+              <Icon size={22} className="shrink-0" aria-hidden="true" />
+              <span className="max-w-full truncate">{t(labelKey)}</span>
             </NavLink>
           </li>
         ))}

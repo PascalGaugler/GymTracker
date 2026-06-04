@@ -5,6 +5,8 @@ import { WorkoutSessionSchema } from "../../schema"
 import type { ExerciseDataPoint, SessionRepository } from "../types"
 
 export const sessionRepository: SessionRepository = {
+  getById: (id) => db.sessions.get(id),
+
   getByDate: (date) =>
     db.sessions.where("date").between(startOfDay(date), endOfDay(date), true, true).toArray(),
 

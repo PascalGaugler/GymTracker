@@ -41,6 +41,7 @@ export interface WorkoutRepository {
 }
 
 export interface SessionRepository {
+  getById(id: string): Promise<WorkoutSession | undefined>
   getByDate(date: Date): Promise<WorkoutSession[]>
   getRecent(limit: number): Promise<WorkoutSession[]>
   getLastForWorkout(workoutId: string): Promise<WorkoutSession | undefined>

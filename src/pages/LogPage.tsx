@@ -1,15 +1,11 @@
-import { useTranslation } from "react-i18next"
+import { useParams } from "react-router-dom"
 
-import { PageHeader } from "./PageHeader"
-import { Placeholder } from "./Placeholder"
+import { ActiveSession } from "@/features/training/components/ActiveSession"
+import { WorkoutPicker } from "@/features/training/components/WorkoutPicker"
 
+// /log shows the workout picker; /log/:sessionId opens that session for logging.
 export function LogPage() {
-  const { t } = useTranslation()
+  const { sessionId } = useParams()
 
-  return (
-    <>
-      <PageHeader overline={t("nav.log")} title={t("log.title")} />
-      <Placeholder>{t("log.placeholder")}</Placeholder>
-    </>
-  )
+  return sessionId ? <ActiveSession sessionId={sessionId} /> : <WorkoutPicker />
 }

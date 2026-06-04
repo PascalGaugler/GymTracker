@@ -79,6 +79,20 @@ No backend in Phase 1. Hosting: Cloudflare Pages.
 ### UI
 
 - Mobile-first, but fully responsive — must look correct from small phones up to desktop.
+  Treat **320px** as the smallest supported width; verify every screen there (no clipped
+  controls, no cut-off text) before considering UI work done.
+- **App-shell layout (do not deviate):** the viewport is a fixed-height flex column —
+  `h-dvh flex flex-col` with `overflow-hidden` on the root. The header and bottom tab bar
+  are `flex-none`; ONLY `<main>` scrolls (`flex-1 overflow-y-auto`). Never give chrome
+  `sticky`/`fixed` positioning over a document-level scroll — that makes the header/footer
+  vanish or jump on mobile. `h-dvh` (not `min-h-screen`) so the mobile address bar
+  showing/hiding never clips content.
+- **No horizontal overflow, ever.** Any flex/grid item that holds text or an input MUST
+  carry `min-w-0` so it can shrink below its content's intrinsic size (text inputs default
+  to ~20ch and will otherwise push siblings off-screen). Pair with `truncate` or wrapping
+  for long labels. Equal-width rows use `grid-cols-N` (tracks are `minmax(0,1fr)`).
+- Interactive controls keep a ≥ `--tap` (48px) hit area, but must still fit: make their
+  flexible neighbours (`flex-1 min-w-0`) absorb the remaining width.
 - Cross-platform: must work in Android and iOS browsers. iOS install = "Add to Home Screen".
   Do not rely on native-only or non-WebKit-supported APIs.
 - Dark mode only.

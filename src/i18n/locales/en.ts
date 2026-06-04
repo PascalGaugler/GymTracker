@@ -24,7 +24,24 @@ const en: typeof de = {
   },
   log: {
     title: "Log",
-    placeholder: "Pick today's workout and log your sets here.",
+    pick: {
+      title: "Choose a workout",
+      subtitle: "Rotation · {{total}} workouts",
+      hint: "Up next: {{name}}. Pick another if you're skipping or catching up.",
+      next: "Up next",
+    },
+    rotation: "Rotation · {{n}} of {{total}}",
+    summary: "{{exercises}} exercises · {{sets}} sets",
+    setsRepRange: "{{sets}} sets · {{low}}–{{high}} reps",
+    setsOnly: "{{sets}} sets",
+    progress: "{{done}}/{{total}} sets",
+    save: "Save session",
+    saved: "Session saved",
+    saveError: "Saving failed",
+    empty: {
+      title: "No active plan",
+      body: 'Create a plan with workouts under "Manage" to start training.',
+    },
   },
   progress: {
     title: "Progress",

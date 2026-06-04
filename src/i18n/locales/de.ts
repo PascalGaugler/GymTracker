@@ -22,7 +22,24 @@ const de = {
   },
   log: {
     title: "Trainieren",
-    placeholder: "Hier wählst du dein heutiges Workout und loggst deine Sätze.",
+    pick: {
+      title: "Workout wählen",
+      subtitle: "Rotation · {{total}} Workouts",
+      hint: "Als Nächstes dran: {{name}}. Wähle ein anderes, falls du eine Einheit überspringst oder nachholst.",
+      next: "Als Nächstes",
+    },
+    rotation: "Rotation · {{n}} von {{total}}",
+    summary: "{{exercises}} Übungen · {{sets}} Sätze",
+    setsRepRange: "{{sets}} Sätze · {{low}}–{{high}} Whlg.",
+    setsOnly: "{{sets}} Sätze",
+    progress: "{{done}}/{{total}} Sätze",
+    save: "Training speichern",
+    saved: "Training gespeichert",
+    saveError: "Speichern fehlgeschlagen",
+    empty: {
+      title: "Kein aktiver Plan",
+      body: "Lege unter „Verwalten“ einen Plan mit Workouts an, um zu trainieren.",
+    },
   },
   progress: {
     title: "Fortschritt",
