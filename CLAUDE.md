@@ -43,9 +43,24 @@ No backend in Phase 1. Hosting: Cloudflare Pages.
 - `src/lib/` — generic utilities (date-fns wrappers, formatters)
 - `src/i18n/` — react-i18next setup + locale files (`de` default, `en` optional)
 
+## Design sources
+
+- Design tokens (colors, typography, spacing, radii, chart palette) live in
+  `tailwind.config` + `src/app/globals.css` (shadcn CSS variables), documented in
+  `docs/design-system.md`. Use the tokens — never hard-code colors, sizes, or fonts.
+- `/design-reference/` (repo root, outside `src/`) holds Claude Design's prototype:
+  `screens.jsx`, `components.jsx`, `charts.jsx`, `Gym Tracker Prototype.html`. It is
+  **visual reference ONLY** — never import from it. Reproduce designs using our tokens
+  and components.
+- Charts: match the reference's visual treatment but build in **Recharts** per
+  `docs/charts.md`. The reference is not Recharts code; do not port its markup.
+- Build only the components the current phase requires. Do not scaffold screens or
+  components ahead of their phase.
+
 ## Rules
 
 ### Code quality
+
 - TypeScript strict mode. No `any`.
 - Apply YAGNI / KISS / separation of concerns. Prefer boring, proven solutions.
 - Do NOT add speculative abstraction, a state-management library, or a forms library.
@@ -53,6 +68,7 @@ No backend in Phase 1. Hosting: Cloudflare Pages.
 - Keep changes focused and reviewable.
 
 ### Data
+
 - All persistence goes through `src/data/repositories`. Nothing outside `src/data/`
   imports Dexie or touches IndexedDB directly.
 - IDs are UUIDs (`crypto.randomUUID()`), never auto-increment.
@@ -61,6 +77,7 @@ No backend in Phase 1. Hosting: Cloudflare Pages.
 - Booleans are not valid IndexedDB keys — never index a boolean (e.g. `isActive`).
 
 ### UI
+
 - Mobile-first, but fully responsive — must look correct from small phones up to desktop.
 - Cross-platform: must work in Android and iOS browsers. iOS install = "Add to Home Screen".
   Do not rely on native-only or non-WebKit-supported APIs.
@@ -76,11 +93,13 @@ No backend in Phase 1. Hosting: Cloudflare Pages.
   (children/slots) for pass-through; use Context only for genuinely global concerns.
 
 ### i18n
+
 - All UI strings go through `t()` (react-i18next). German (`de`) is the default locale.
 - User data (exercise names, notes) is NOT translated — stored and shown verbatim.
   Mixed German/English exercise names (e.g. "Overhead Trizeps Extensions") are expected.
 
 ### Domain metrics (easy to get wrong — see docs/charts.md)
+
 - Progression uses the SESSION TOP SET (heaviest set), not the average of sets.
 - Strength Index: FIXED baseline = average/median of an exercise's first 2–3 sessions.
   An exercise enters the index only once it has a baseline. Never use a rolling baseline.
@@ -91,17 +110,20 @@ No backend in Phase 1. Hosting: Cloudflare Pages.
   user. Averages compute over tracked days only, with a coverage indicator.
 
 ### Local-first / PWA
+
 - No backend in Phase 1. Installable, offline-capable PWA.
 - Call `navigator.storage.persist()` on first write.
 - Export/import (JSON, Zod-validated) is the only backup. Never commit real export files.
 
 ## Out of scope
+
 - Yazio calorie/weight integration → Phase 2 (serverless function in `src/services/yazio`).
   Do not build it yet.
 - Training-frequency heatmap → Phase 3.
 - Accounts, multi-user, sharing, cloud sync → never. Single-user by design.
 
 ## Docs
+
 - `docs/architecture.md` — local-first rationale, Phase 2 Yazio plan
 - `docs/data-model.md` — entities, Zod schemas, Dexie stores, repositories
 - `docs/charts.md` — chart set + metric definitions
