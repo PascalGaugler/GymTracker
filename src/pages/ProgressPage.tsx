@@ -22,7 +22,7 @@ function ProgressNav() {
   const { t } = useTranslation()
 
   return (
-    <nav className="-mx-4 mb-5 overflow-x-auto px-4 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+    <nav className="-mx-4 mb-5 overflow-x-auto px-4 scrollbar-none [&::-webkit-scrollbar]:hidden">
       <div className="inline-flex gap-1 rounded-lg bg-surface-2 p-1">
         {TABS.map((tab) => (
           <NavLink

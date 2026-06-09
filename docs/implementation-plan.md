@@ -18,7 +18,7 @@ CRUD) · **PWA early** (manifest/SW/fonts/persist in Phase 0) · German (`de`) d
 | 4 | Dashboard cards | done | live bodyweight + rate + quick actions | see Phase 4 notes ↓ |
 | 5 | Progress: Recomposition chart | done | one-axis indexed strength vs bodyweight | see Phase 5 notes ↓ |
 | 6 | Progress: Strength progression | done | per-workout top-set lines, swap-aware | see Phase 6 notes ↓ |
-| 7 | Progress: Exercise drilldown | todo | top-set line + min–max band | — |
+| 7 | Progress: Exercise drilldown | done | top-set line + min–max band | see Phase 7 notes ↓ |
 | 8 | Progress: Body chart | todo | bodyweight trend+rate + measurements | — |
 | 9 | Manage: exercise catalog | todo | catalog CRUD + search | — |
 | 10 | Manage: plans + workouts | todo | plan/workout/slot editor, set active | — |
@@ -291,6 +291,24 @@ set. Per `docs/charts.md`.
 **Charts:** Single-exercise drilldown (top-set line + min–max band).
 **Out of scope:** other views, Manage, Settings.
 **Done when:** drilldown shows top-set line with min–max band for a chosen exercise; gate passes.
+
+**Learnings (affect later phases):**
+- **`niceWeightAxis` extracted** to `src/features/analysis/axis.ts` (shared by the progression +
+  drilldown charts; the recomposition axis stays local — it's anchored at 100). **P8's bodyweight
+  axis should reuse `niceWeightAxis`.**
+- **Min–max band = a Recharts range area.** `buildExerciseDrilldown` emits `band: [min, max]` tuples and
+  `ExerciseDrilldownChart` renders a `ComposedChart` with a faint `<Area dataKey="band">` (range area, the
+  tuple) BEHIND a `<Line dataKey="top">`. **P8 reuses this ComposedChart+range-area shape** for any band
+  (e.g. a 7-day-MA envelope). Tooltip reads the full row off `payload[0].payload` (typed) rather than
+  per-series entries — cleaner when a row carries several derived values.
+- **Drilldown entry points (two):** its own exercise **picker** (chips → `/progress/exercise/:id`) AND a
+  **chevron on each Phase 6 strength toggle chip** (`progress.strength.openExercise`). The route has both
+  `/progress/exercise` (redirects to the first exercise with history) and `/progress/exercise/:exerciseId`;
+  an unknown/missing id `<Navigate replace>`s to the default. It is deliberately **not** a `ProgressNav`
+  segment (param-based), so no segment is highlighted while viewing it — acceptable.
+- **`useExercisesWithHistory()`** (ids+name+unit of exercises with ≥1 logged set) and
+  **`useExerciseDrilldown(id)`** (data+name+unit; `null` = unknown id) are the reads. P9's catalog could
+  link an exercise's "history" into this same drilldown URL.
 
 ## Phase 8 — Progress: Body chart
 **Build:** `/progress/body` — smoothed bodyweight trend (raw points + 7-day moving average) with

@@ -93,6 +93,7 @@ const de = {
     strength: {
       caption: "Top-Satz je Übung in diesem Workout. Stufen = doppelte Progression.",
       swapHint: "Getauschte Übung startet als neue Linie — ohne Brücke zur alten.",
+      openExercise: "{{name}} im Detail ansehen",
       empty: {
         title: "Noch keine Trainings",
         body: "Logge dieses Workout ein paar Mal, dann erscheinen hier die Verläufe.",
@@ -100,6 +101,15 @@ const de = {
       noPlan: {
         title: "Kein aktiver Plan",
         body: "Lege unter „Verwalten“ einen Plan mit Workouts an, um Verläufe zu sehen.",
+      },
+    },
+    exercise: {
+      caption: "Top-Satz (Linie) über dem Min–Max-Bereich der Sätze je Einheit.",
+      topSet: "Top-Satz",
+      range: "Bereich",
+      empty: {
+        title: "Noch keine Einzeldaten",
+        body: "Sobald du diese Übung geloggt hast, erscheint hier ihr Verlauf.",
       },
     },
   },

@@ -1,5 +1,7 @@
+import { ChevronRight } from "lucide-react"
 import { useState } from "react"
 import { useTranslation } from "react-i18next"
+import { Link } from "react-router-dom"
 
 import { Card } from "@/components/ui/card"
 import { useWorkoutRotation } from "@/features/training/hooks/useWorkoutRotation"
@@ -22,7 +24,7 @@ function WorkoutSelector({
   onSelect: (id: string) => void
 }) {
   return (
-    <nav className="-mx-4 overflow-x-auto px-4 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+    <nav className="-mx-4 overflow-x-auto px-4 scrollbar-none [&::-webkit-scrollbar]:hidden">
       <div className="inline-flex gap-1 rounded-lg bg-surface-2 p-1">
         {workouts.map((w) => (
           <button
@@ -80,28 +82,45 @@ function WorkoutProgression({ workout }: { workout: Workout }) {
 
       <StrengthProgressionChart data={data} visible={visible} />
 
+      {/* Each chip: tap the label to show/hide its line; the chevron drills into
+          the single-exercise view (Phase 7's "drilled into from elsewhere"). */}
       <div className="flex flex-wrap gap-2">
         {data.series.map((s) => {
           const on = !hidden.has(s.exerciseId)
           return (
-            <button
+            <div
               key={s.exerciseId}
-              type="button"
-              onClick={() => toggle(s.exerciseId)}
-              aria-pressed={on}
               className={cn(
-                "inline-flex min-h-(--tap) min-w-0 max-w-full items-center gap-2 rounded-full border px-3 text-caption font-medium transition-colors",
-                on ? "bg-surface-2" : "border-border text-subtle",
+                "inline-flex min-h-(--tap) max-w-full items-center rounded-full border transition-colors",
+                on ? "bg-surface-2" : "border-border",
               )}
-              style={on ? { borderColor: s.color, color: s.color } : undefined}
+              style={on ? { borderColor: s.color } : undefined}
             >
-              <span
-                className="size-2.5 shrink-0 rounded-full"
-                style={{ background: on ? s.color : "var(--border-strong)" }}
-                aria-hidden="true"
-              />
-              <span className="truncate">{s.name}</span>
-            </button>
+              <button
+                type="button"
+                onClick={() => toggle(s.exerciseId)}
+                aria-pressed={on}
+                className={cn(
+                  "inline-flex min-w-0 items-center gap-2 self-stretch rounded-l-full pr-2 pl-3 text-caption font-medium",
+                  on ? "" : "text-subtle",
+                )}
+                style={on ? { color: s.color } : undefined}
+              >
+                <span
+                  className="size-2.5 shrink-0 rounded-full"
+                  style={{ background: on ? s.color : "var(--border-strong)" }}
+                  aria-hidden="true"
+                />
+                <span className="truncate">{s.name}</span>
+              </button>
+              <Link
+                to={`/progress/exercise/${s.exerciseId}`}
+                aria-label={t("progress.strength.openExercise", { name: s.name })}
+                className="flex min-w-(--tap) shrink-0 items-center justify-center self-stretch rounded-r-full border-l border-border text-subtle hover:text-foreground"
+              >
+                <ChevronRight className="size-4" aria-hidden="true" />
+              </Link>
+            </div>
           )
         })}
       </div>
@@ -137,11 +156,7 @@ export function StrengthProgressionView() {
 
   return (
     <div className="flex flex-col gap-4">
-      <WorkoutSelector
-        workouts={workouts}
-        selectedId={selected.id}
-        onSelect={setSelectedId}
-      />
+      <WorkoutSelector workouts={workouts} selectedId={selected.id} onSelect={setSelectedId} />
       <WorkoutProgression key={selected.id} workout={selected} />
     </div>
   )

@@ -95,6 +95,7 @@ const en: typeof de = {
     strength: {
       caption: "Top set per exercise in this workout. Steps = double progression.",
       swapHint: "A swapped exercise starts as a new line — no bridge to the old one.",
+      openExercise: "View {{name}} in detail",
       empty: {
         title: "No sessions yet",
         body: "Log this workout a few times and the trends will appear here.",
@@ -102,6 +103,15 @@ const en: typeof de = {
       noPlan: {
         title: "No active plan",
         body: 'Create a plan with workouts under "Manage" to see progression.',
+      },
+    },
+    exercise: {
+      caption: "Top set (line) over the min–max range of the session's sets.",
+      topSet: "Top set",
+      range: "Range",
+      empty: {
+        title: "No drilldown data yet",
+        body: "Once you've logged this exercise, its history will appear here.",
       },
     },
   },
