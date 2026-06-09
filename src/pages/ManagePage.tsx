@@ -1,24 +1,58 @@
-import { useLiveQuery } from "dexie-react-hooks"
 import { useTranslation } from "react-i18next"
+import { NavLink, Outlet } from "react-router-dom"
 
-import { planRepository } from "@/data/repositories"
+import { cn } from "@/lib/utils"
 
-import { EmptyState } from "./EmptyState"
 import { PageHeader } from "./PageHeader"
 import { Placeholder } from "./Placeholder"
 
+// Manage sub-views reached from the segmented control. Plans land in Phase 10;
+// the exercise catalog is live.
+const TABS = [
+  { to: "/manage/plans", key: "manage.tabs.plans" },
+  { to: "/manage/exercises", key: "manage.tabs.exercises" },
+] as const
+
+function ManageNav() {
+  const { t } = useTranslation()
+
+  return (
+    <nav className="-mx-4 mb-5 overflow-x-auto px-4 scrollbar-none [&::-webkit-scrollbar]:hidden">
+      <div className="inline-flex gap-1 rounded-lg bg-surface-2 p-1">
+        {TABS.map((tab) => (
+          <NavLink
+            key={tab.to}
+            to={tab.to}
+            className={({ isActive }) =>
+              cn(
+                "flex min-h-(--tap) items-center rounded-md px-4 text-caption font-medium whitespace-nowrap transition-colors",
+                isActive
+                  ? "bg-surface text-foreground shadow-elev-1"
+                  : "text-muted-foreground hover:text-foreground",
+              )
+            }
+          >
+            {t(tab.key)}
+          </NavLink>
+        ))}
+      </div>
+    </nav>
+  )
+}
+
 export function ManagePage() {
   const { t } = useTranslation()
-  const plans = useLiveQuery(() => planRepository.getAll(), [])
 
   return (
     <>
       <PageHeader overline={t("nav.manage")} title={t("manage.title")} />
-      {plans?.length === 0 ? (
-        <EmptyState title={t("manage.empty.title")} body={t("manage.empty.body")} />
-      ) : (
-        <Placeholder>{t("manage.placeholder")}</Placeholder>
-      )}
+      <ManageNav />
+      <Outlet />
     </>
   )
+}
+
+export function ManageComingSoon() {
+  const { t } = useTranslation()
+  return <Placeholder>{t("manage.placeholder")}</Placeholder>
 }

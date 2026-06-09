@@ -48,6 +48,8 @@ export interface SessionRepository {
   getRecent(limit: number): Promise<WorkoutSession[]>
   getLastForWorkout(workoutId: string): Promise<WorkoutSession | undefined>
   getExerciseHistory(exerciseId: string): Promise<ExerciseDataPoint[]>
+  /** How many sessions contain at least one logged set for this exercise. */
+  countSessionsForExercise(exerciseId: string): Promise<number>
   save(session: WorkoutSession): Promise<void>
 }
 

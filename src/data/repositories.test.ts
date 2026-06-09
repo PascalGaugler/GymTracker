@@ -143,6 +143,13 @@ describe("sessionRepository", () => {
     expect(history.map((p) => p.weight).sort((a, b) => a - b)).toEqual([75, 80])
     expect(history[0].date).toBeInstanceOf(Date)
   })
+
+  it("counts sessions referencing an exercise (drives the delete warning)", async () => {
+    await sessionRepository.save(makeSession(new Date("2026-05-01T10:00:00"), 80))
+    await sessionRepository.save(makeSession(new Date("2026-05-08T10:00:00"), 82.5))
+    expect(await sessionRepository.countSessionsForExercise(exerciseId)).toBe(2)
+    expect(await sessionRepository.countSessionsForExercise(crypto.randomUUID())).toBe(0)
+  })
 })
 
 describe("measurementRepository", () => {

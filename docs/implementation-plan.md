@@ -20,7 +20,7 @@ CRUD) · **PWA early** (manifest/SW/fonts/persist in Phase 0) · German (`de`) d
 | 6 | Progress: Strength progression | done | per-workout top-set lines, swap-aware | see Phase 6 notes ↓ |
 | 7 | Progress: Exercise drilldown | done | top-set line + min–max band | see Phase 7 notes ↓ |
 | 8 | Progress: Body chart | done | bodyweight trend+rate + measurements | see Phase 8 notes ↓ |
-| 9 | Manage: exercise catalog | todo | catalog CRUD + search | — |
+| 9 | Manage: exercise catalog | done | catalog CRUD + search | see Phase 9 notes ↓ |
 | 10 | Manage: plans + workouts | todo | plan/workout/slot editor, set active | — |
 | 11 | Settings + backup | todo | export/import round-trips, prefs persist | — |
 
@@ -341,6 +341,27 @@ shadcn (`card`, `input`, `dialog`/`sheet`, `dropdown-menu`). Consult `Gym Tracke
 **Charts:** none.
 **Out of scope:** plans/workouts editor (P10), Settings.
 **Done when:** create/edit/search catalog exercises; new exercises appear in Log (P2) slots; gate passes.
+
+**Learnings (affect later phases):**
+- **Manage hub is now a nested-route layout** (mirrors Progress): `ManagePage` renders the header +
+  segmented `ManageNav` + `<Outlet/>`; sub-routes nest under `path: "manage"`. **P10 just replaces the
+  `ManageComingSoon` element at `/manage/plans` (+ the plan/workout deep routes, already registered)** —
+  no router restructuring. `/manage` redirects to `/manage/exercises` (the live screen).
+- **The exercise editor is a `Dialog`, not a route.** screens.md listed `/manage/exercises/:exerciseId`,
+  but a one-tap dialog launched from the list is the mobile-first choice; that route was dropped. Form
+  state resets via keyed remount + Radix unmount (the no-set-state-in-effect pattern). **P10's slot editor
+  can follow this same dialog-from-list shape.**
+- **`useExerciseList(query)`** (`features/manage/hooks`) wraps `exerciseRepository.search` in
+  `useLiveQuery` — reuse it for P10's slot exercise-picker. The repo/schema needed **no change** (Phase 0's
+  `ExerciseRepository` CRUD covered everything; only UI was added).
+- **`SegmentedField`** (local to `ExerciseEditorDialog`) is a compact wrap-at-320px selector for small
+  fixed option sets (equipment type, unit). Lift it to a shared spot if P10 needs the same control.
+- **Delete warns when history exists:** `SessionRepository.countSessionsForExercise(id)` (new) backs
+  `useExerciseUsage`; the editor disables delete until usage is known and, when an exercise has logged
+  sessions, the confirm step shows a destructive warning ("Trotzdem löschen") with the session count so
+  historical data is never removed by accident. Deleting is still permitted (deliberate) — old-exercise
+  history stays viewable via the Phase 7 drilldown as long as the catalog entry exists. **P10's plan/slot
+  delete should reuse `countSessionsForExercise` for the same guard.**
 
 ## Phase 10 — Manage: plans + workouts editor
 **Build:** `/manage/plans` (list, set active, archive) → `/manage/plans/:planId` (workouts) →

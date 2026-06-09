@@ -38,6 +38,12 @@ export const sessionRepository: SessionRepository = {
     )
   },
 
+  async countSessionsForExercise(exerciseId) {
+    // Sets are embedded; scan and count sessions that reference the exercise.
+    const sessions = await db.sessions.toArray()
+    return sessions.filter((s) => s.sets.some((set) => set.exerciseId === exerciseId)).length
+  },
+
   async save(session) {
     await db.sessions.put(WorkoutSessionSchema.parse(session)) // validate on write
   },
