@@ -12,8 +12,6 @@ import { EmptyState } from "@/pages/EmptyState"
 import { useWorkoutProgression } from "../hooks/useWorkoutProgression"
 import { StrengthProgressionChart } from "./StrengthProgressionChart"
 
-// Horizontally scrollable strip of workout chips (the strip owns any overflow so
-// full names stay readable at 320px). Mirrors the Progress segmented control.
 function WorkoutSelector({
   workouts,
   selectedId,

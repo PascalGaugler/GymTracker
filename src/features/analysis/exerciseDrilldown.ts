@@ -1,6 +1,6 @@
 import type { ExerciseDataPoint } from "@/data/repositories"
 
-import { niceWeightAxis } from "./axis"
+import { customWeightAxis } from "./axis"
 
 // Single-exercise drilldown math: collapse one exercise's logged sets into a
 // per-session top-set line with a min–max BAND (the spread of that session's
@@ -43,7 +43,7 @@ export function buildExerciseDrilldown(history: ExerciseDataPoint[]): DrilldownD
     })
     .sort((a, b) => a.t - b.t)
 
-  const { domain, ticks } = niceWeightAxis(points.flatMap((p) => [p.min, p.top]))
+  const { domain, ticks } = customWeightAxis(points.flatMap((p) => [p.min, p.top]))
 
   return { points, yDomain: domain, yTicks: ticks, sessionCount: points.length }
 }

@@ -45,7 +45,6 @@ function ProgressNav() {
   )
 }
 
-// Progress hub: shared header + segmented control above the active sub-view.
 export function ProgressPage() {
   const { t } = useTranslation()
 
@@ -58,7 +57,6 @@ export function ProgressPage() {
   )
 }
 
-// Body for Progress sub-views whose charts land in a later phase (P6-P8).
 export function ProgressComingSoon() {
   const { t } = useTranslation()
   return <Placeholder>{t("progress.placeholder")}</Placeholder>

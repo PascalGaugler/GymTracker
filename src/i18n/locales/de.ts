@@ -112,6 +112,21 @@ const de = {
         body: "Sobald du diese Übung geloggt hast, erscheint hier ihr Verlauf.",
       },
     },
+    body: {
+      weight: {
+        caption: "Rohwerte (Punkte) mit 7-Tage-Schnitt (Linie) — der Schnitt zeigt den Trend.",
+        raw: "Gewicht",
+        trend: "7-Tage-Schnitt",
+      },
+      comparison: {
+        caption: "Umfänge auf 100 zum Start indexiert: Taille (Fett) runter, Brust/Bizeps (Muskel) halten.",
+        baseline: "Start = 100",
+      },
+      empty: {
+        title: "Noch keine Körperdaten",
+        body: "Erfasse dein Körpergewicht und ein paar Umfänge, dann erscheint hier dein Verlauf.",
+      },
+    },
   },
   manage: {
     title: "Verwalten",

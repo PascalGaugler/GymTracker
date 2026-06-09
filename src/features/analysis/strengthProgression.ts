@@ -1,6 +1,6 @@
 import type { WorkoutSession } from "@/data/schema"
 
-import { niceWeightAxis } from "./axis"
+import { customWeightAxis } from "./axis"
 import { topSetsPerSession } from "./recomposition"
 
 // Per-workout strength progression: one line per exercise, value = the session
@@ -111,9 +111,7 @@ export function buildStrengthProgression(
 
   // One row per session timestamp; null where an exercise was not logged that
   // day so the chart (connectNulls off) never bridges a swap.
-  const timestamps = [...new Set(perSession.map((s) => s.date.getTime()))].sort(
-    (a, b) => a - b,
-  )
+  const timestamps = [...new Set(perSession.map((s) => s.date.getTime()))].sort((a, b) => a - b)
   const rows: ProgressionRow[] = timestamps.map((t) => {
     const row: ProgressionRow = { t }
     for (const s of series) {
@@ -122,9 +120,7 @@ export function buildStrengthProgression(
     return row
   })
 
-  const { domain, ticks } = niceWeightAxis(
-    series.flatMap((s) => s.points.map((p) => p.top)),
-  )
+  const { domain, ticks } = customWeightAxis(series.flatMap((s) => s.points.map((p) => p.top)))
 
   return { series, rows, yDomain: domain, yTicks: ticks }
 }

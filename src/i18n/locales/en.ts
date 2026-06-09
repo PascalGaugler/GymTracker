@@ -114,6 +114,21 @@ const en: typeof de = {
         body: "Once you've logged this exercise, its history will appear here.",
       },
     },
+    body: {
+      weight: {
+        caption: "Raw weigh-ins (points) with a 7-day average (line) — the average shows the trend.",
+        raw: "Weight",
+        trend: "7-day average",
+      },
+      comparison: {
+        caption: "Circumferences indexed to 100 at the start: waist (fat) down, chest/biceps (muscle) holding.",
+        baseline: "Baseline = 100",
+      },
+      empty: {
+        title: "No body data yet",
+        body: "Log your bodyweight and a few circumferences, and your trend will appear here.",
+      },
+    },
   },
   manage: {
     title: "Manage",

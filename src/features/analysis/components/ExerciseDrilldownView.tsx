@@ -9,9 +9,6 @@ import { useExerciseDrilldown } from "../hooks/useExerciseDrilldown"
 import { useExercisesWithHistory, type ExerciseOption } from "../hooks/useExercisesWithHistory"
 import { ExerciseDrilldownChart } from "./ExerciseDrilldownChart"
 
-// Horizontally scrollable picker of exercises that have logged history; the strip
-// owns any overflow so names stay readable at 320px. Selecting navigates to that
-// exercise's drilldown URL (param-based, so it is shareable/deep-linkable).
 function ExercisePicker({
   options,
   selectedId,

@@ -1,8 +1,4 @@
-// Padded, rounded raw-weight y-axis with a handful of readable ticks. Shared by
-// the per-workout progression and single-exercise drilldown charts. (The
-// recomposition axis is index-specific — anchored at the 100 baseline — so it
-// stays local to recomposition.ts.)
-export function niceWeightAxis(values: number[]): {
+export function customWeightAxis(values: number[]): {
   domain: [number, number]
   ticks: number[]
 } {

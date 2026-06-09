@@ -1,12 +1,14 @@
 import { createBrowserRouter, Navigate } from "react-router-dom"
 
+import { BodyView } from "@/features/analysis/components/BodyView"
+import { ExerciseDrilldownView } from "@/features/analysis/components/ExerciseDrilldownView"
 import { RecompositionView } from "@/features/analysis/components/RecompositionView"
 import { StrengthProgressionView } from "@/features/analysis/components/StrengthProgressionView"
 import { DashboardPage } from "@/pages/DashboardPage"
 import { LogPage } from "@/pages/LogPage"
 import { ManagePage } from "@/pages/ManagePage"
 import { NotFoundPage } from "@/pages/NotFoundPage"
-import { ProgressComingSoon, ProgressPage } from "@/pages/ProgressPage"
+import { ProgressPage } from "@/pages/ProgressPage"
 import { SettingsPage } from "@/pages/SettingsPage"
 
 import { AppLayout } from "./AppLayout"
@@ -29,8 +31,8 @@ export const router = createBrowserRouter([
           { index: true, element: <Navigate to="/progress/recomposition" replace /> },
           { path: "recomposition", element: <RecompositionView /> },
           { path: "strength", element: <StrengthProgressionView /> },
-          { path: "exercise/:exerciseId", element: <ProgressComingSoon /> },
-          { path: "body", element: <ProgressComingSoon /> },
+          { path: "exercise/:exerciseId", element: <ExerciseDrilldownView /> },
+          { path: "body", element: <BodyView /> },
         ],
       },
 

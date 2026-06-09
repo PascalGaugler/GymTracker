@@ -19,7 +19,7 @@ CRUD) · **PWA early** (manifest/SW/fonts/persist in Phase 0) · German (`de`) d
 | 5 | Progress: Recomposition chart | done | one-axis indexed strength vs bodyweight | see Phase 5 notes ↓ |
 | 6 | Progress: Strength progression | done | per-workout top-set lines, swap-aware | see Phase 6 notes ↓ |
 | 7 | Progress: Exercise drilldown | done | top-set line + min–max band | see Phase 7 notes ↓ |
-| 8 | Progress: Body chart | todo | bodyweight trend+rate + measurements | — |
+| 8 | Progress: Body chart | done | bodyweight trend+rate + measurements | see Phase 8 notes ↓ |
 | 9 | Manage: exercise catalog | todo | catalog CRUD + search | — |
 | 10 | Manage: plans + workouts | todo | plan/workout/slot editor, set active | — |
 | 11 | Settings + backup | todo | export/import round-trips, prefs persist | — |
@@ -318,6 +318,19 @@ kg/week rate; measurements chart (waist vs. biceps/chest), optionally normalized
 **Charts:** Bodyweight trend (raw + 7-day MA + rate) and measurements (waist-down vs. muscle-holding).
 **Out of scope:** Manage, Settings, calories/Yazio.
 **Done when:** body chart shows raw weigh-ins + trend line + rate, and measurements comparison; gate passes.
+
+**Learnings (affect later phases):**
+- **Body math** is pure in `src/features/analysis/body.ts` (`buildBodyweightTrend` = raw + trailing
+  7-day MA + `weeklyRate`/`customWeightAxis` reuse; `buildMeasurementComparison` = waist/chest/biceps
+  each indexed to 100 at its OWN first value on one shared axis). `useBodyData()` is the live read of
+  all four measurement types. The bodyweight chart is a **ComposedChart** with raw weigh-ins as a
+  dots-only `<Line stroke="none">` under a solid MA line; the comparison chart is a multi-line
+  `LineChart` with `connectNulls` ON (circumferences are sparse) + a 100 `ReferenceLine`.
+- **Phase 7 route was unwired:** `ExerciseDrilldownView` existed but `/progress/exercise/:exerciseId`
+  still pointed at `ProgressComingSoon` (so the Phase-6 chevrons dead-ended). Wired it here alongside
+  `/progress/body`. `ProgressComingSoon`/`Placeholder` are now unused by the router but still exported.
+- **All four Phase-1 Progress charts are done** — the Progress hub is feature-complete. Remaining
+  phases (9–11) are Manage/Settings; no chart work left.
 
 ## Phase 9 — Manage: exercise catalog
 **Build:** `/manage/exercises` list/search + `/manage/exercises/:exerciseId` create/edit (name, type,
