@@ -92,6 +92,18 @@ const en: typeof de = {
         body: "Log a few sessions and weigh in, and your recomposition trend will appear here.",
       },
     },
+    strength: {
+      caption: "Top set per exercise in this workout. Steps = double progression.",
+      swapHint: "A swapped exercise starts as a new line — no bridge to the old one.",
+      empty: {
+        title: "No sessions yet",
+        body: "Log this workout a few times and the trends will appear here.",
+      },
+      noPlan: {
+        title: "No active plan",
+        body: 'Create a plan with workouts under "Manage" to see progression.',
+      },
+    },
   },
   manage: {
     title: "Manage",

@@ -17,7 +17,7 @@ CRUD) · **PWA early** (manifest/SW/fonts/persist in Phase 0) · German (`de`) d
 | 3 | Measurements quick-add | done | sheet writes a Measurement | see Phase 3 notes ↓ |
 | 4 | Dashboard cards | done | live bodyweight + rate + quick actions | see Phase 4 notes ↓ |
 | 5 | Progress: Recomposition chart | done | one-axis indexed strength vs bodyweight | see Phase 5 notes ↓ |
-| 6 | Progress: Strength progression | todo | per-workout top-set lines, swap-aware | — |
+| 6 | Progress: Strength progression | done | per-workout top-set lines, swap-aware | see Phase 6 notes ↓ |
 | 7 | Progress: Exercise drilldown | todo | top-set line + min–max band | — |
 | 8 | Progress: Body chart | todo | bodyweight trend+rate + measurements | — |
 | 9 | Manage: exercise catalog | todo | catalog CRUD + search | — |
@@ -263,6 +263,25 @@ set**); swap-aware rendering (swapped exercise = separate series, no bridging se
 **Out of scope:** drilldown band (P7), body chart (P8), Manage, Settings.
 **Done when:** selecting a workout shows top-set lines per exercise; toggling works; a swap shows two
 separate series with no bridge; gate passes.
+
+**Learnings (affect later phases):**
+- **`topSetsPerSession` is now exported** from `src/features/analysis/recomposition.ts` (was private).
+  **P7's drilldown top-set line should reuse it** rather than recompute the heaviest-set-per-session.
+- **Progression math** is pure in `src/features/analysis/strengthProgression.ts`
+  (`buildStrengthProgression`, `PROGRESSION_PALETTE`, `ProgressionData`). **Swap-awareness is data-driven,
+  not special-cased:** rows are one-per-session with `null` where an exercise wasn't logged, and the chart
+  renders **`connectNulls` OFF** (the default) so a swapped exercise (a different `exerciseId` = its own
+  series) never bridges. This is the opposite of the recomposition chart, which uses `connectNulls` to
+  bridge two series on different dates — pick per chart.
+- **Series ordering + colour:** current plan slots first (in slot order), then swapped-away exercises by
+  first appearance; `PROGRESSION_PALETTE` (`--chart-1..6`) cycles `% 6` past six exercises.
+- **`StrengthProgressionChart`** is the multi-line Recharts template (one `<Line>` per visible series,
+  per-series colour, tooltip reads `entry.name`/`entry.color` + a `units` map). **P7/P8 reuse this shape.**
+- **Workout selector reuses `useWorkoutRotation`** — so the strength view lists the **active plan's**
+  workouts only; sessions logged under a workout no longer in the active plan are not selectable here
+  (acceptable for now; revisit if historical-plan browsing is ever needed).
+- **Toggle state reset without an effect:** the inner `WorkoutProgression` is **keyed by workout id** so
+  its `hidden` set resets on workout change (the keyed-remount pattern; avoids `set-state-in-effect`).
 
 ## Phase 7 — Progress: Single-exercise drilldown
 **Build:** `/progress/exercise/:exerciseId` — top-set line with a faint min–max band per session.

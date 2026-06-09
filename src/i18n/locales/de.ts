@@ -90,6 +90,18 @@ const de = {
         body: "Logge ein paar Trainings und wieg dich, dann erscheint hier dein Recomposition-Verlauf.",
       },
     },
+    strength: {
+      caption: "Top-Satz je Übung in diesem Workout. Stufen = doppelte Progression.",
+      swapHint: "Getauschte Übung startet als neue Linie — ohne Brücke zur alten.",
+      empty: {
+        title: "Noch keine Trainings",
+        body: "Logge dieses Workout ein paar Mal, dann erscheinen hier die Verläufe.",
+      },
+      noPlan: {
+        title: "Kein aktiver Plan",
+        body: "Lege unter „Verwalten“ einen Plan mit Workouts an, um Verläufe zu sehen.",
+      },
+    },
   },
   manage: {
     title: "Verwalten",

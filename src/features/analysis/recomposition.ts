@@ -52,7 +52,8 @@ function median(values: number[]): number {
 
 // The heaviest set of each exercise in a session — the progression value
 // (top set, not the average, per docs/charts.md). Sessions arrive sorted asc.
-function topSetsPerSession(
+// Exported so the per-workout progression module reuses one top-set definition.
+export function topSetsPerSession(
   sessions: WorkoutSession[],
 ): { date: Date; tops: Map<string, number> }[] {
   return sessions.map((session) => {

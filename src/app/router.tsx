@@ -1,6 +1,7 @@
 import { createBrowserRouter, Navigate } from "react-router-dom"
 
 import { RecompositionView } from "@/features/analysis/components/RecompositionView"
+import { StrengthProgressionView } from "@/features/analysis/components/StrengthProgressionView"
 import { DashboardPage } from "@/pages/DashboardPage"
 import { LogPage } from "@/pages/LogPage"
 import { ManagePage } from "@/pages/ManagePage"
@@ -27,7 +28,7 @@ export const router = createBrowserRouter([
         children: [
           { index: true, element: <Navigate to="/progress/recomposition" replace /> },
           { path: "recomposition", element: <RecompositionView /> },
-          { path: "strength", element: <ProgressComingSoon /> },
+          { path: "strength", element: <StrengthProgressionView /> },
           { path: "exercise/:exerciseId", element: <ProgressComingSoon /> },
           { path: "body", element: <ProgressComingSoon /> },
         ],
