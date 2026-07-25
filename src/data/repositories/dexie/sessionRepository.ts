@@ -44,6 +44,12 @@ export const sessionRepository: SessionRepository = {
     return sessions.filter((s) => s.sets.some((set) => set.exerciseId === exerciseId)).length
   },
 
+  countSessionsForWorkout: (workoutId) =>
+    db.sessions
+      .where("[workoutId+date]")
+      .between([workoutId, Dexie.minKey], [workoutId, Dexie.maxKey])
+      .count(),
+
   async save(session) {
     await db.sessions.put(WorkoutSessionSchema.parse(session)) // validate on write
   },

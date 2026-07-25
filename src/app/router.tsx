@@ -5,9 +5,12 @@ import { ExerciseDrilldownView } from "@/features/analysis/components/ExerciseDr
 import { RecompositionView } from "@/features/analysis/components/RecompositionView"
 import { StrengthProgressionView } from "@/features/analysis/components/StrengthProgressionView"
 import { ExerciseCatalogView } from "@/features/manage/components/ExerciseCatalogView"
+import { PlanDetailView } from "@/features/manage/components/PlanDetailView"
+import { PlanListView } from "@/features/manage/components/PlanListView"
+import { WorkoutSlotsView } from "@/features/manage/components/WorkoutSlotsView"
 import { DashboardPage } from "@/pages/DashboardPage"
 import { LogPage } from "@/pages/LogPage"
-import { ManageComingSoon, ManagePage } from "@/pages/ManagePage"
+import { ManagePage } from "@/pages/ManagePage"
 import { NotFoundPage } from "@/pages/NotFoundPage"
 import { ProgressPage } from "@/pages/ProgressPage"
 import { SettingsPage } from "@/pages/SettingsPage"
@@ -41,10 +44,10 @@ export const router = createBrowserRouter([
         path: "manage",
         element: <ManagePage />,
         children: [
-          { index: true, element: <Navigate to="/manage/exercises" replace /> },
-          { path: "plans", element: <ManageComingSoon /> },
-          { path: "plans/:planId", element: <ManageComingSoon /> },
-          { path: "plans/:planId/workouts/:workoutId", element: <ManageComingSoon /> },
+          { index: true, element: <Navigate to="/manage/plans" replace /> },
+          { path: "plans", element: <PlanListView /> },
+          { path: "plans/:planId", element: <PlanDetailView /> },
+          { path: "plans/:planId/workouts/:workoutId", element: <WorkoutSlotsView /> },
           { path: "exercises", element: <ExerciseCatalogView /> },
         ],
       },

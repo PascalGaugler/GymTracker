@@ -1,3 +1,4 @@
+import Dexie from "dexie"
 import { db } from "../../db"
 import { TrainingPlanSchema } from "../../schema"
 import type { PlanRepository } from "../types"
@@ -27,7 +28,15 @@ export const planRepository: PlanRepository = {
     })
   },
 
+  // Workouts are owned by their plan, so deleting one cascades. Logged sessions
+  // are self-contained and deliberately kept — history survives plan edits.
   async remove(id) {
-    await db.trainingPlans.delete(id)
+    await db.transaction("rw", [db.trainingPlans, db.workouts], async () => {
+      await db.workouts
+        .where("[planId+order]")
+        .between([id, Dexie.minKey], [id, Dexie.maxKey])
+        .delete()
+      await db.trainingPlans.delete(id)
+    })
   },
 }

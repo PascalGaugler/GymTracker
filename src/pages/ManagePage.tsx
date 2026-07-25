@@ -4,10 +4,9 @@ import { NavLink, Outlet } from "react-router-dom"
 import { cn } from "@/lib/utils"
 
 import { PageHeader } from "./PageHeader"
-import { Placeholder } from "./Placeholder"
 
-// Manage sub-views reached from the segmented control. Plans land in Phase 10;
-// the exercise catalog is live.
+// Manage sub-views reached from the segmented control: the plan/workout editor
+// and the exercise catalog.
 const TABS = [
   { to: "/manage/plans", key: "manage.tabs.plans" },
   { to: "/manage/exercises", key: "manage.tabs.exercises" },
@@ -50,9 +49,4 @@ export function ManagePage() {
       <Outlet />
     </>
   )
-}
-
-export function ManageComingSoon() {
-  const { t } = useTranslation()
-  return <Placeholder>{t("manage.placeholder")}</Placeholder>
 }

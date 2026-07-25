@@ -69,6 +69,33 @@ describe("planRepository", () => {
     expect(active?.id).toBe(b.id)
     expect((await planRepository.getById(a.id))?.isActive).toBe(false)
   })
+
+  it("cascades to the plan's workouts on remove, leaving other plans alone", async () => {
+    const doomed = makePlan()
+    const kept = makePlan({ name: "Upper/Lower" })
+    await planRepository.save(doomed)
+    await planRepository.save(kept)
+    await workoutRepository.save({
+      id: crypto.randomUUID(),
+      planId: doomed.id,
+      name: "Push",
+      order: 0,
+      exercises: [],
+    })
+    await workoutRepository.save({
+      id: crypto.randomUUID(),
+      planId: kept.id,
+      name: "Upper",
+      order: 0,
+      exercises: [],
+    })
+
+    await planRepository.remove(doomed.id)
+
+    expect(await planRepository.getById(doomed.id)).toBeUndefined()
+    expect(await workoutRepository.getByPlan(doomed.id)).toEqual([])
+    expect(await workoutRepository.getByPlan(kept.id)).toHaveLength(1)
+  })
 })
 
 describe("workoutRepository", () => {
@@ -149,6 +176,59 @@ describe("sessionRepository", () => {
     await sessionRepository.save(makeSession(new Date("2026-05-08T10:00:00"), 82.5))
     expect(await sessionRepository.countSessionsForExercise(exerciseId)).toBe(2)
     expect(await sessionRepository.countSessionsForExercise(crypto.randomUUID())).toBe(0)
+  })
+
+  it("counts sessions logged under a workout (drives the workout delete warning)", async () => {
+    await sessionRepository.save(makeSession(new Date("2026-05-01T10:00:00"), 80))
+    await sessionRepository.save(makeSession(new Date("2026-05-08T10:00:00"), 82.5))
+    expect(await sessionRepository.countSessionsForWorkout(workoutId)).toBe(2)
+    expect(await sessionRepository.countSessionsForWorkout(crypto.randomUUID())).toBe(0)
+  })
+})
+
+// The core promise of the plan/workout editor: a plan is only a template.
+describe("editing a plan vs. logged sessions", () => {
+  it("leaves past sessions untouched when the plan is deleted", async () => {
+    const exercise = makeExercise()
+    const plan: TrainingPlan = {
+      id: crypto.randomUUID(),
+      name: "PPL",
+      isActive: true,
+      createdAt: new Date(),
+    }
+    const workout: Workout = {
+      id: crypto.randomUUID(),
+      planId: plan.id,
+      name: "Push",
+      order: 0,
+      exercises: [
+        {
+          id: crypto.randomUUID(),
+          exerciseId: exercise.id,
+          targetSets: 3,
+          repRange: [6, 8],
+          order: 0,
+          alternativeIds: [],
+        },
+      ],
+    }
+    const session: WorkoutSession = {
+      id: crypto.randomUUID(),
+      workoutId: workout.id,
+      date: new Date("2026-05-01T10:00:00"),
+      sets: [{ id: crypto.randomUUID(), exerciseId: exercise.id, setNumber: 1, weight: 80 }],
+    }
+    await exerciseRepository.save(exercise)
+    await planRepository.save(plan)
+    await workoutRepository.save(workout)
+    await sessionRepository.save(session)
+
+    // Drop the slot, then the whole plan — the harshest edits the editor allows.
+    await workoutRepository.save({ ...workout, exercises: [] })
+    await planRepository.remove(plan.id)
+
+    expect(await sessionRepository.getById(session.id)).toEqual(session)
+    expect(await sessionRepository.getExerciseHistory(exercise.id)).toHaveLength(1)
   })
 })
 
