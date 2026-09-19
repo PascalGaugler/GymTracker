@@ -9,44 +9,23 @@ working in that area. Capture the decision, not the debate — rationale lives i
 
 ## Commands
 
-Package manager: **npm**.
-
-- `npm install` — install dependencies
-- `npm run dev` — start the Vite dev server
-- `npm run build` — production build
-- `npm run preview` — serve the production build locally
-- `npm run typecheck` — `tsc --noEmit`
-- `npm run lint` — ESLint
-- `npm run format` — Prettier
-- `npm run test` — Vitest
-
 Before considering a task done, run: `npm run typecheck && npm run lint && npm run test`.
 
 ## Stack
 
-React + TypeScript + Vite · Tailwind CSS · shadcn/ui · Dexie (IndexedDB) + dexie-react-hooks ·
-Zod · date-fns · Recharts · React Router · react-i18next · vite-plugin-pwa.
 No backend in Phase 1. Hosting: Cloudflare Pages.
 
 ## Structure
 
-- `src/app/` — shell: App, router, providers
 - `src/components/ui/` — reusable presentational components (shadcn/ui-derived) ONLY
-- `src/features/<feature>/` — feature code (`training`, `measurements`, `analysis`);
-  each with `components/` and `hooks/`
-- `src/pages/` — thin route components that compose feature views
 - `src/data/` — persistence layer; the ONLY place that touches Dexie
-  - `db.ts` stores · `schema.ts` Zod schemas + inferred types
-  - `repositories/` interfaces + Dexie impls · `backup.ts` export/import
   - `seed.ts` first-run seed (PPL plan + exercises; runs only when the DB is empty)
 - `src/services/` — external integrations (Yazio — Phase 2 only)
-- `src/lib/` — generic utilities (date-fns wrappers, formatters)
-- `src/i18n/` — react-i18next setup + locale files (`de` default, `en` optional)
 
 ## Design sources
 
 - Design tokens (colors, typography, spacing, radii, chart palette) live in
-  `tailwind.config` + `src/app/globals.css` (shadcn CSS variables), documented in
+  `src/index.css` (Tailwind v4 CSS-first config + shadcn CSS variables), documented in
   `docs/design-system.md`. Use the tokens — never hard-code colors, sizes, or fonts.
 - `/design-reference/` (repo root, outside `src/`) holds Claude Design's prototype:
   `screens.jsx`, `components.jsx`, `charts.jsx`, `Gym Tracker Prototype.html`. It is

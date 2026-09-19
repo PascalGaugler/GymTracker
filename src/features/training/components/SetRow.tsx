@@ -1,9 +1,13 @@
 import { useRef, useState } from "react"
 import { Check, Minus, Plus } from "lucide-react"
 
+import { formatDecimal } from "@/lib/format"
 import { cn } from "@/lib/utils"
 
 const STEP = 2.5
+
+// Machine stacks and micro-plates can carry 2 decimals, so keep that precision.
+const DECIMALS = 2
 
 // Sanitise raw keystrokes to a decimal string: digits, one separator, comma→dot.
 function sanitize(raw: string): string {
@@ -61,7 +65,7 @@ export function SetRow({ index, last, value, unit, onChange }: SetRowProps) {
           inputMode="decimal"
           enterKeyHint="next"
           aria-label={`Satz ${index}`}
-          placeholder={last != null ? String(last) : "—"}
+          placeholder={last != null ? formatDecimal(last, DECIMALS) : "—"}
           value={value}
           onFocus={() => setFocused(true)}
           onBlur={() => setFocused(false)}

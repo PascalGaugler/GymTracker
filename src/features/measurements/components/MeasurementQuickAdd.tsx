@@ -24,15 +24,24 @@ interface Field {
   type: MeasurementType
   unit: MeasurementUnit
   stepBy: number
+  decimals: number
   labelKey: ParseKeys
 }
 
 // Bodyweight in kg (fine 0.1 steps); circumferences in cm (0.5 steps).
+// Bodyweight keeps 2 decimals — scales report that precision. Circumferences are
+// read off a tape measure, where a second decimal is noise, so they show 1.
 const FIELDS: Field[] = [
-  { type: "bodyweight", unit: "kg", stepBy: 0.1, labelKey: "measurements.types.bodyweight" },
-  { type: "waist", unit: "cm", stepBy: 0.5, labelKey: "measurements.types.waist" },
-  { type: "chest", unit: "cm", stepBy: 0.5, labelKey: "measurements.types.chest" },
-  { type: "biceps", unit: "cm", stepBy: 0.5, labelKey: "measurements.types.biceps" },
+  {
+    type: "bodyweight",
+    unit: "kg",
+    stepBy: 0.1,
+    decimals: 2,
+    labelKey: "measurements.types.bodyweight",
+  },
+  { type: "waist", unit: "cm", stepBy: 0.5, decimals: 1, labelKey: "measurements.types.waist" },
+  { type: "chest", unit: "cm", stepBy: 0.5, decimals: 1, labelKey: "measurements.types.chest" },
+  { type: "biceps", unit: "cm", stepBy: 0.5, decimals: 1, labelKey: "measurements.types.biceps" },
 ]
 
 const EMPTY: Record<MeasurementType, string> = {
@@ -102,12 +111,13 @@ function MeasurementForm({ onSaved }: { onSaved: () => void }) {
       </SheetHeader>
 
       <div className="flex flex-col gap-4 overflow-y-auto px-4">
-        {FIELDS.map(({ type, unit, stepBy, labelKey }) => (
+        {FIELDS.map(({ type, unit, stepBy, decimals, labelKey }) => (
           <MeasurementInput
             key={type}
             label={t(labelKey)}
             unit={unit}
             stepBy={stepBy}
+            decimals={decimals}
             last={latest?.get(type)?.value}
             value={values[type]}
             onChange={(v) => setValues((prev) => ({ ...prev, [type]: v }))}

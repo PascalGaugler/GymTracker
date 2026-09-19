@@ -1,6 +1,7 @@
 import { useRef, useState } from "react"
 import { Minus, Plus } from "lucide-react"
 
+import { formatDecimal } from "@/lib/format"
 import { cn } from "@/lib/utils"
 
 // Sanitise raw keystrokes to a decimal string: digits, one separator, comma→dot.
@@ -18,6 +19,8 @@ export interface MeasurementInputProps {
   unit: string
   /** Stepper increment (e.g. 0.1 kg for bodyweight, 0.5 cm for circumferences). */
   stepBy: number
+  /** Decimal places shown in the placeholder — scales read 2, tape measures 1. */
+  decimals: number
   /** Latest stored value for this type, shown as the placeholder. */
   last: number | undefined
   value: string
@@ -31,6 +34,7 @@ export function MeasurementInput({
   label,
   unit,
   stepBy,
+  decimals,
   last,
   value,
   onChange,
@@ -59,7 +63,7 @@ export function MeasurementInput({
             inputMode="decimal"
             enterKeyHint="next"
             aria-label={label}
-            placeholder={last != null ? String(last) : "—"}
+            placeholder={last != null ? formatDecimal(last, decimals) : "—"}
             value={value}
             onFocus={() => setFocused(true)}
             onBlur={() => setFocused(false)}
