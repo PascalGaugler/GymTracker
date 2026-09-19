@@ -9,7 +9,8 @@ working in that area. Capture the decision, not the debate — rationale lives i
 
 ## Commands
 
-Before considering a task done, run: `npm run typecheck && npm run lint && npm run test`.
+Before considering a task done, run: `npm run ci` (typecheck + lint + test + format check).
+Files written outside the editor skip format-on-save, so the format check is not optional.
 
 ## Stack
 

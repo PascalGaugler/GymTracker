@@ -11,8 +11,11 @@ export default defineConfig({
     tailwindcss(),
     VitePWA({
       registerType: "autoUpdate",
-      includeAssets: ["favicon.svg", "app-icon.svg"],
+      workbox: {
+        globPatterns: ["**/*.{js,css,html,ico,png,svg,woff2}"],
+      },
       manifest: {
+        id: "/",
         name: "Gym Progress Tracker",
         short_name: "Gym Tracker",
         description: "Track strength and body measurements during a calorie deficit.",
@@ -22,13 +25,12 @@ export default defineConfig({
         display: "standalone",
         background_color: "#0a0c12",
         theme_color: "#0a0c12",
+
         icons: [
-          {
-            src: "app-icon.svg",
-            sizes: "any",
-            type: "image/svg+xml",
-            purpose: "any maskable",
-          },
+          { src: "pwa-192.png", sizes: "192x192", type: "image/png", purpose: "any" },
+          { src: "pwa-512.png", sizes: "512x512", type: "image/png", purpose: "any" },
+          { src: "pwa-512.png", sizes: "512x512", type: "image/png", purpose: "maskable" },
+          { src: "app-icon.svg", sizes: "any", type: "image/svg+xml", purpose: "any" },
         ],
       },
     }),

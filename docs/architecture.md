@@ -57,7 +57,9 @@ React components  →  feature hooks (useLiveQuery)  →  repositories  →  Dex
   and provides serverless functions (Workers) on the same platform for Phase 2 — so the
   Yazio function lives alongside the app with no second provider and no cross-service CORS.
 - Configure **SPA fallback** (all routes serve `index.html`) so deep links and refreshes
-  resolve, including offline.
+  resolve, including offline. Implemented as `public/_redirects` (`/*  /index.html  200`).
+  The service worker's `NavigationRoute` is not a substitute — it only covers navigations
+  once the SW is installed, so without `_redirects` a cold visit to `/progress` still 404s.
 - GitHub Pages was rejected: static-only, no serverless functions, which would force a
   second provider at Phase 2.
 

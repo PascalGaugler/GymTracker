@@ -1,0 +1,5 @@
+# Cloudflare Pages SPA fallback. createBrowserRouter owns the routes, so any
+# path that is not a built asset must serve the app shell instead of a 404.
+# Without this, a cold visit or hard refresh on /progress or /settings 404s —
+# the service worker's NavigationRoute only masks it once the SW is installed.
+/*  /index.html  200
