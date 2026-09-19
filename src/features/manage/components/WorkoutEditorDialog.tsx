@@ -45,11 +45,7 @@ export function WorkoutEditorDialog({
             {t(workout ? "manage.workouts.editTitle" : "manage.workouts.newTitle")}
           </DialogTitle>
           <DialogDescription>
-            {t(
-              workout
-                ? "manage.workouts.editDescription"
-                : "manage.workouts.newDescription",
-            )}
+            {t(workout ? "manage.workouts.editDescription" : "manage.workouts.newDescription")}
           </DialogDescription>
         </DialogHeader>
         <WorkoutForm

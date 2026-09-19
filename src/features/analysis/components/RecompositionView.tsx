@@ -14,7 +14,9 @@ function Swatch({ color, dashed, label }: { color: string; dashed?: boolean; lab
         className="h-0.5 w-5 shrink-0 rounded-full"
         style={
           dashed
-            ? { backgroundImage: `repeating-linear-gradient(to right, ${color} 0 5px, transparent 5px 9px)` }
+            ? {
+                backgroundImage: `repeating-linear-gradient(to right, ${color} 0 5px, transparent 5px 9px)`,
+              }
             : { background: color }
         }
         aria-hidden="true"
@@ -49,10 +51,7 @@ export function RecompositionView() {
       <RecompositionChart data={data} />
 
       <div className="flex flex-wrap items-center gap-x-5 gap-y-2">
-        <Swatch
-          color="var(--recomp-strength)"
-          label={t("progress.recomposition.strengthSeries")}
-        />
+        <Swatch color="var(--recomp-strength)" label={t("progress.recomposition.strengthSeries")} />
         <Swatch
           color="var(--recomp-bodyweight)"
           dashed

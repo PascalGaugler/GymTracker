@@ -12,7 +12,12 @@ function day(n: number): Date {
 }
 
 // The flat per-set points the repository returns for one exercise.
-function point(sessionId: string, dayN: number, weight: number, setNumber: number): ExerciseDataPoint {
+function point(
+  sessionId: string,
+  dayN: number,
+  weight: number,
+  setNumber: number,
+): ExerciseDataPoint {
   return { sessionId, date: day(dayN), weight, setNumber }
 }
 
@@ -44,10 +49,7 @@ describe("buildExerciseDrilldown", () => {
   })
 
   it("brackets the min and the top set with a padded axis", () => {
-    const data = buildExerciseDrilldown([
-      point("s1", 0, 100, 1),
-      point("s1", 0, 90, 2),
-    ])
+    const data = buildExerciseDrilldown([point("s1", 0, 100, 1), point("s1", 0, 90, 2)])
     expect(data.yDomain[0]).toBeLessThanOrEqual(90)
     expect(data.yDomain[1]).toBeGreaterThanOrEqual(100)
   })

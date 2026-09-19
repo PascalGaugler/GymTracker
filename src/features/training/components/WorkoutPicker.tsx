@@ -60,9 +60,7 @@ export function WorkoutPicker() {
         {ordered.map((w) => {
           const isNext = w.id === nextWorkoutId
           const totalSets = w.exercises.reduce((sum, e) => sum + e.targetSets, 0)
-          const names = w.exercises.map(
-            (e) => catalog.get(e.exerciseId)?.name ?? "?",
-          )
+          const names = w.exercises.map((e) => catalog.get(e.exerciseId)?.name ?? "?")
           return (
             <li key={w.id}>
               <button
@@ -85,10 +83,7 @@ export function WorkoutPicker() {
                       {t("log.pick.next")}
                     </span>
                   ) : (
-                    <ChevronRight
-                      className="size-5 shrink-0 text-subtle"
-                      aria-hidden="true"
-                    />
+                    <ChevronRight className="size-5 shrink-0 text-subtle" aria-hidden="true" />
                   )}
                 </div>
 

@@ -72,6 +72,7 @@ directly — credentials would be exposed and CORS blocks browser origins (only 
 clients bypass it). Therefore Yazio **requires a server-side caller**.
 
 Design:
+
 - A **single serverless function** (Cloudflare Worker) holds Yazio credentials as
   encrypted env vars, calls Yazio server-side, and returns plain JSON to the PWA.
 - Lives behind `src/services/yazio` and feeds the **same repository/data layer**, so the

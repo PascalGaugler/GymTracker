@@ -119,7 +119,8 @@ const de = {
         trend: "7-Tage-Schnitt",
       },
       comparison: {
-        caption: "Umfänge auf 100 zum Start indexiert: Taille (Fett) runter, Brust/Bizeps (Muskel) halten.",
+        caption:
+          "Umfänge auf 100 zum Start indexiert: Taille (Fett) runter, Brust/Bizeps (Muskel) halten.",
         baseline: "Start = 100",
       },
       empty: {

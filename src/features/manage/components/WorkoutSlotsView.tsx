@@ -81,9 +81,7 @@ export function WorkoutSlotsView() {
       </div>
 
       <div className="mb-3 flex items-center justify-between gap-2">
-        <h3 className="min-w-0 truncate text-h3 font-semibold">
-          {t("manage.slots.title")}
-        </h3>
+        <h3 className="min-w-0 truncate text-h3 font-semibold">{t("manage.slots.title")}</h3>
         <Button
           className="size-11 shrink-0"
           size="icon"
@@ -95,10 +93,7 @@ export function WorkoutSlotsView() {
       </div>
 
       {slots.length === 0 ? (
-        <EmptyState
-          title={t("manage.slots.empty.title")}
-          body={t("manage.slots.empty.body")}
-        >
+        <EmptyState title={t("manage.slots.empty.title")} body={t("manage.slots.empty.body")}>
           <Button onClick={() => openSlot(null)}>
             <Plus className="size-4" />
             {t("manage.slots.add")}

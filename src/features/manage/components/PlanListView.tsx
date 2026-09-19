@@ -46,10 +46,7 @@ export function PlanListView() {
       </div>
 
       {plans?.length === 0 && (
-        <EmptyState
-          title={t("manage.plans.empty.title")}
-          body={t("manage.plans.empty.body")}
-        >
+        <EmptyState title={t("manage.plans.empty.title")} body={t("manage.plans.empty.body")}>
           <Button onClick={() => setCreating(true)}>
             <Plus className="size-4" />
             {t("manage.plans.add")}

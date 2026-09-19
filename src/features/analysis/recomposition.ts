@@ -119,14 +119,10 @@ export function bodyweightIndexSeries(
   baselineEnd: number | null,
 ): IndexPoint[] {
   if (measurements.length === 0) return []
-  const sorted = [...measurements].sort(
-    (a, b) => a.measuredAt.getTime() - b.measuredAt.getTime(),
-  )
+  const sorted = [...measurements].sort((a, b) => a.measuredAt.getTime() - b.measuredAt.getTime())
 
   const inWindow =
-    baselineEnd != null
-      ? sorted.filter((m) => m.measuredAt.getTime() <= baselineEnd)
-      : []
+    baselineEnd != null ? sorted.filter((m) => m.measuredAt.getTime() <= baselineEnd) : []
   const base = inWindow.length > 0 ? mean(inWindow.map((m) => m.value)) : sorted[0].value
   if (base <= 0) return []
 
@@ -155,16 +151,12 @@ export function buildRecomposition(
   sessions: WorkoutSession[],
   bodyweight: Measurement[],
 ): RecompositionData {
-  const sortedSessions = [...sessions].sort(
-    (a, b) => a.date.getTime() - b.date.getTime(),
-  )
+  const sortedSessions = [...sessions].sort((a, b) => a.date.getTime() - b.date.getTime())
   const strength = strengthIndexSeries(sortedSessions)
 
   const baselineEnd =
     sortedSessions.length > 0
-      ? sortedSessions[
-          Math.min(BASELINE_SESSION_COUNT, sortedSessions.length) - 1
-        ].date.getTime()
+      ? sortedSessions[Math.min(BASELINE_SESSION_COUNT, sortedSessions.length) - 1].date.getTime()
       : null
   const bw = bodyweightIndexSeries(bodyweight, baselineEnd)
 
@@ -181,10 +173,7 @@ export function buildRecomposition(
   }
   const points = [...byTimestamp.values()].sort((a, b) => a.t - b.t)
 
-  const { domain, ticks } = niceAxis([
-    ...strength.map((p) => p.value),
-    ...bw.map((p) => p.value),
-  ])
+  const { domain, ticks } = niceAxis([...strength.map((p) => p.value), ...bw.map((p) => p.value)])
 
   return {
     points,

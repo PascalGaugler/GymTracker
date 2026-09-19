@@ -67,15 +67,10 @@ export function weeklyRate(series: Measurement[], windowDays = 30): number | nul
 
 // Collapse one measurement type's series into the dashboard readout. Sorts
 // defensively by time; the repository already returns ascending order.
-export function summarizeSeries(
-  series: Measurement[],
-  windowDays = 30,
-): MeasurementSummary | null {
+export function summarizeSeries(series: Measurement[], windowDays = 30): MeasurementSummary | null {
   if (series.length === 0) return null
 
-  const sorted = [...series].sort(
-    (a, b) => a.measuredAt.getTime() - b.measuredAt.getTime(),
-  )
+  const sorted = [...series].sort((a, b) => a.measuredAt.getTime() - b.measuredAt.getTime())
   const first = sorted[0]
   const last = sorted[sorted.length - 1]
 

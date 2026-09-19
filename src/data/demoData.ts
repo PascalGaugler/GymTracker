@@ -1,11 +1,7 @@
 import { addDays, startOfDay } from "date-fns"
 
 import { db } from "./db"
-import {
-  exerciseRepository,
-  planRepository,
-  workoutRepository,
-} from "./repositories"
+import { exerciseRepository, planRepository, workoutRepository } from "./repositories"
 import {
   MeasurementSchema,
   WorkoutSessionSchema,
@@ -208,7 +204,8 @@ export async function loadDemoData(opts: DemoOptions = {}): Promise<{
   measurements: number
 }> {
   const plan = await planRepository.getActive()
-  if (!plan) throw new Error("No active plan — let the first-run seed run before loading demo data.")
+  if (!plan)
+    throw new Error("No active plan — let the first-run seed run before loading demo data.")
 
   const [workouts, exercises] = await Promise.all([
     workoutRepository.getByPlan(plan.id),

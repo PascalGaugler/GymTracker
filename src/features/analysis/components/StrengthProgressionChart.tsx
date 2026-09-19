@@ -56,14 +56,10 @@ function ChartTooltip({ active, payload, label, units }: ChartTooltipProps) {
             style={{ background: entry.color }}
             aria-hidden="true"
           />
-          <span className="flex-1 truncate text-caption text-muted-foreground">
-            {entry.name}
-          </span>
+          <span className="flex-1 truncate text-caption text-muted-foreground">{entry.name}</span>
           <span className="font-mono text-caption font-semibold tabular-nums">
             {(entry.value as number).toFixed(1)}
-            <span className="ml-0.5 text-subtle">
-              {units?.[String(entry.dataKey)] ?? ""}
-            </span>
+            <span className="ml-0.5 text-subtle">{units?.[String(entry.dataKey)] ?? ""}</span>
           </span>
         </div>
       ))}

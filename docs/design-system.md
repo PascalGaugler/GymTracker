@@ -32,46 +32,46 @@ Layered cool-slate darkness; color is reserved for meaning and data.
 
 ### Surfaces (base → raised)
 
-| Token | Hex | Use |
-|---|---|---|
-| `--background` | `#0a0c12` | App base — cool near-black slate |
-| `--surface` / `--card` | `#11141d` | Card / raised surface |
-| `--surface-2` / `--muted` | `#181c28` | Higher raise: inputs, hover rows |
-| `--surface-3` | `#20253480` | Translucent overlays / progress tracks |
-| `--popover` | `#141823` | Menus, dropdowns |
-| `--sheet` | `#12161f` | Bottom sheets / dialogs |
-| `--input` | `#1b2030` | Input fill |
+| Token                     | Hex         | Use                                    |
+| ------------------------- | ----------- | -------------------------------------- |
+| `--background`            | `#0a0c12`   | App base — cool near-black slate       |
+| `--surface` / `--card`    | `#11141d`   | Card / raised surface                  |
+| `--surface-2` / `--muted` | `#181c28`   | Higher raise: inputs, hover rows       |
+| `--surface-3`             | `#20253480` | Translucent overlays / progress tracks |
+| `--popover`               | `#141823`   | Menus, dropdowns                       |
+| `--sheet`                 | `#12161f`   | Bottom sheets / dialogs                |
+| `--input`                 | `#1b2030`   | Input fill                             |
 
 ### Foreground (text levels)
 
-| Token | Hex | Use |
-|---|---|---|
-| `--foreground` | `#f3f5fa` | Primary text |
-| `--muted-foreground` | `#9aa3b6` | Secondary text / labels |
-| `--subtle` | `#69707f` | Tertiary / placeholders / hints |
-| `--disabled` | `#454b58` | Disabled |
+| Token                | Hex       | Use                             |
+| -------------------- | --------- | ------------------------------- |
+| `--foreground`       | `#f3f5fa` | Primary text                    |
+| `--muted-foreground` | `#9aa3b6` | Secondary text / labels         |
+| `--subtle`           | `#69707f` | Tertiary / placeholders / hints |
+| `--disabled`         | `#454b58` | Disabled                        |
 
 ### Borders & lines
 
-| Token | Hex | Use |
-|---|---|---|
-| `--border` | `#232936` | Default hairline |
-| `--border-strong` | `#333a4b` | Emphasised / focus-adjacent |
-| `--grid` | `#1a1f2c` | Chart gridlines (horizontal only) |
+| Token             | Hex       | Use                               |
+| ----------------- | --------- | --------------------------------- |
+| `--border`        | `#232936` | Default hairline                  |
+| `--border-strong` | `#333a4b` | Emphasised / focus-adjacent       |
+| `--grid`          | `#1a1f2c` | Chart gridlines (horizontal only) |
 
 ### Primary (electric blue) & accent (violet)
 
-| Token | Hex | Use |
-|---|---|---|
-| `--primary` / `--ring` | `#3b82f6` | Primary action, focus ring |
-| `--primary-hover` | `#5a97f8` | Hover |
-| `--primary-pressed` | `#2f6fe0` | Active |
-| `--primary-foreground` | `#06101f` | Dark text on blue (reads crisp) |
-| `--primary-soft` | `#3b82f626` | ~15% tint: focus glow, soft fills |
-| `--accent` | `#8b5cf6` | Violet support / accent buttons |
-| `--accent-hover` | `#9d74f8` | Hover |
-| `--accent-foreground` | `#0b0716` | Dark text on violet |
-| `--accent-soft` | `#8b5cf626` | Tinted fill |
+| Token                  | Hex         | Use                               |
+| ---------------------- | ----------- | --------------------------------- |
+| `--primary` / `--ring` | `#3b82f6`   | Primary action, focus ring        |
+| `--primary-hover`      | `#5a97f8`   | Hover                             |
+| `--primary-pressed`    | `#2f6fe0`   | Active                            |
+| `--primary-foreground` | `#06101f`   | Dark text on blue (reads crisp)   |
+| `--primary-soft`       | `#3b82f626` | ~15% tint: focus glow, soft fills |
+| `--accent`             | `#8b5cf6`   | Violet support / accent buttons   |
+| `--accent-hover`       | `#9d74f8`   | Hover                             |
+| `--accent-foreground`  | `#0b0716`   | Dark text on violet               |
+| `--accent-soft`        | `#8b5cf626` | Tinted fill                       |
 
 > **Note on `--accent`.** Per the design handoff, shadcn's `--accent`/`--accent-foreground`
 > map to the **brand violet**, so `bg-accent` is a violet accent surface (matching the
@@ -82,11 +82,11 @@ Layered cool-slate darkness; color is reserved for meaning and data.
 
 Each ships with a `-soft` tinted-fill companion (≈13% alpha) for badges/backgrounds.
 
-| Token | Hex | Soft |
-|---|---|---|
-| `--success` | `#34d399` | `--success-soft` `#34d39922` |
-| `--warning` | `#fbbf24` | `--warning-soft` `#fbbf2422` |
-| `--danger` / `--destructive` | `#f5544b` | `--danger-soft` `#f5544b22` |
+| Token                        | Hex       | Soft                         |
+| ---------------------------- | --------- | ---------------------------- |
+| `--success`                  | `#34d399` | `--success-soft` `#34d39922` |
+| `--warning`                  | `#fbbf24` | `--warning-soft` `#fbbf2422` |
+| `--danger` / `--destructive` | `#f5544b` | `--danger-soft` `#f5544b22`  |
 
 Trend direction is **context-aware**: bodyweight ▼ is success, not danger.
 
@@ -96,21 +96,21 @@ Six categorical series, each pairing a hue with a non-color cue (dash + marker) 
 stay legible on slate and under common color-vision deficiencies. Implementation lives in
 `docs/charts.md`; these are the colors.
 
-| Token | Hex | Cue |
-|---|---|---|
-| `--chart-1` | `#3b82f6` blue | solid · circle |
-| `--chart-2` | `#8b5cf6` violet | dashed · square |
-| `--chart-3` | `#2dd4bf` teal | dotted · triangle |
-| `--chart-4` | `#fbbf24` amber | dash-dot · diamond |
-| `--chart-5` | `#f472b6` pink | long-dash · cross |
-| `--chart-6` | `#a3e635` lime | thin · star |
+| Token       | Hex              | Cue                |
+| ----------- | ---------------- | ------------------ |
+| `--chart-1` | `#3b82f6` blue   | solid · circle     |
+| `--chart-2` | `#8b5cf6` violet | dashed · square    |
+| `--chart-3` | `#2dd4bf` teal   | dotted · triangle  |
+| `--chart-4` | `#fbbf24` amber  | dash-dot · diamond |
+| `--chart-5` | `#f472b6` pink   | long-dash · cross  |
+| `--chart-6` | `#a3e635` lime   | thin · star        |
 
 **Recomposition pair** (defined explicitly, not borrowed from the categorical scale):
 
-| Token | Hex | Story |
-|---|---|---|
-| `--recomp-strength` | `#3b82f6` blue, solid | holds / rises |
-| `--recomp-bodyweight` | `#8b5cf6` violet, dashed | trends down |
+| Token                 | Hex                      | Story         |
+| --------------------- | ------------------------ | ------------- |
+| `--recomp-strength`   | `#3b82f6` blue, solid    | holds / rises |
+| `--recomp-bodyweight` | `#8b5cf6` violet, dashed | trends down   |
 
 Both indexed to **100** at baseline on one shared axis — never dual y-axes.
 
@@ -120,18 +120,18 @@ Both indexed to **100** at baseline on one shared axis — never dual y-axes.
 400/500/600/700). **JetBrains Mono** renders every number — tabular, aligned,
 instrument-like. Apply `.tnum` (or `font-mono`) to numeric readouts for tabular figures.
 
-| Style | Utility | Size | Weight | Tracking | Use |
-|---|---|---|---|---|---|
-| Display XL | `text-display-xl` | 48px | 700 | −2% | Hero stat |
-| Display | `text-display` | 36px | 700 | −1% | Big stat value |
-| Heading 1 | `text-h1` | 28px | 700 | −1% | Screen titles |
-| Heading 2 | `text-h2` | 22px | 600 | — | Section titles |
-| Heading 3 | `text-h3` | 18px | 600 | — | Card / group titles |
-| Body large | `text-body-lg` | 17px | 400 | — | Lead text |
-| Body | `text-body` | 15px | 400 | — | Default text |
-| Label | `text-label` | 14px | 500 | — | Controls, list rows |
-| Caption | `text-caption` | 13px | 400–500 | — | Muted secondary detail |
-| Overline / micro | `text-micro` | 11px | — | +16% | Uppercase mono overline |
+| Style            | Utility           | Size | Weight  | Tracking | Use                     |
+| ---------------- | ----------------- | ---- | ------- | -------- | ----------------------- |
+| Display XL       | `text-display-xl` | 48px | 700     | −2%      | Hero stat               |
+| Display          | `text-display`    | 36px | 700     | −1%      | Big stat value          |
+| Heading 1        | `text-h1`         | 28px | 700     | −1%      | Screen titles           |
+| Heading 2        | `text-h2`         | 22px | 600     | —        | Section titles          |
+| Heading 3        | `text-h3`         | 18px | 600     | —        | Card / group titles     |
+| Body large       | `text-body-lg`    | 17px | 400     | —        | Lead text               |
+| Body             | `text-body`       | 15px | 400     | —        | Default text            |
+| Label            | `text-label`      | 14px | 500     | —        | Controls, list rows     |
+| Caption          | `text-caption`    | 13px | 400–500 | —        | Muted secondary detail  |
+| Overline / micro | `text-micro`      | 11px | —       | +16%     | Uppercase mono overline |
 
 ## Spacing · radii · elevation
 
@@ -141,21 +141,21 @@ No custom spacing tokens are needed.
 
 **Radii** are balanced; base (`--radius`) = `md`.
 
-| Utility | Value |
-|---|---|
-| `rounded-sm` | 6px |
-| `rounded-md` | 10px |
-| `rounded-lg` | 14px |
-| `rounded-xl` | 20px |
+| Utility        | Value  |
+| -------------- | ------ |
+| `rounded-sm`   | 6px    |
+| `rounded-md`   | 10px   |
+| `rounded-lg`   | 14px   |
+| `rounded-xl`   | 20px   |
 | `rounded-full` | 9999px |
 
 **Elevation** — depth comes from hairline borders + soft shadows, **never glow**.
 
-| Utility | Value | Use |
-|---|---|---|
-| `shadow-elev-1` | `0 1px 2px /.45` | Resting cards |
-| `shadow-elev-2` | `0 6px 18px -4px /.55` | Popovers, menus |
-| `shadow-elev-3` | `0 18px 44px -8px /.65` | Sheets, dialogs |
+| Utility           | Value                                 | Use                           |
+| ----------------- | ------------------------------------- | ----------------------------- |
+| `shadow-elev-1`   | `0 1px 2px /.45`                      | Resting cards                 |
+| `shadow-elev-2`   | `0 6px 18px -4px /.55`                | Popovers, menus               |
+| `shadow-elev-3`   | `0 18px 44px -8px /.65`               | Sheets, dialogs               |
 | `shadow-inset-hi` | `inset 0 1px 0 rgba(255,255,255,.04)` | Top highlight on raised cards |
 
 ## Motion & touch

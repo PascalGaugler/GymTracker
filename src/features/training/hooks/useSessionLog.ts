@@ -14,19 +14,13 @@ export function useWorkout(workoutId: string | undefined) {
 
 // undefined = loading · null = not found (a never-saved draft) · session = found.
 export function useSession(sessionId: string) {
-  return useLiveQuery(
-    async () => (await sessionRepository.getById(sessionId)) ?? null,
-    [sessionId],
-  )
+  return useLiveQuery(async () => (await sessionRepository.getById(sessionId)) ?? null, [sessionId])
 }
 
 // The most recent session of a workout, used to fill last-weight placeholders.
 export function useLastSession(workoutId: string | undefined) {
   return useLiveQuery(
-    () =>
-      workoutId
-        ? sessionRepository.getLastForWorkout(workoutId)
-        : Promise.resolve(undefined),
+    () => (workoutId ? sessionRepository.getLastForWorkout(workoutId) : Promise.resolve(undefined)),
     [workoutId],
   )
 }

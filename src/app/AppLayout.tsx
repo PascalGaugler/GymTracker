@@ -23,11 +23,7 @@ export function AppLayout() {
         className="flex h-14 flex-none items-center justify-between border-b border-border bg-background px-4"
         style={{ paddingTop: "env(safe-area-inset-top)" }}
       >
-        <NavLink
-          to="/"
-          className="flex min-w-0 items-center gap-2"
-          aria-label={t("nav.dashboard")}
-        >
+        <NavLink to="/" className="flex min-w-0 items-center gap-2" aria-label={t("nav.dashboard")}>
           <Dumbbell size={22} className="shrink-0 text-primary" aria-hidden="true" />
           <span className="truncate font-display text-h3 font-semibold">Gym Tracker</span>
         </NavLink>

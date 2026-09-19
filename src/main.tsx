@@ -1,11 +1,11 @@
-import { StrictMode } from 'react'
-import { createRoot } from 'react-dom/client'
-import '@fontsource-variable/space-grotesk'
-import '@fontsource-variable/jetbrains-mono'
-import './index.css'
-import App from './app/App.tsx'
+import { StrictMode } from "react"
+import { createRoot } from "react-dom/client"
+import "@fontsource-variable/space-grotesk"
+import "@fontsource-variable/jetbrains-mono"
+import "./index.css"
+import App from "./app/App.tsx"
 
-createRoot(document.getElementById('root')!).render(
+createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <App />
   </StrictMode>,
@@ -15,15 +15,17 @@ createRoot(document.getElementById('root')!).render(
 // against a realistic dataset. Dynamically imported under a DEV guard so it is
 // dropped from production builds.
 if (import.meta.env.DEV) {
-  void import('./data/demoData').then(({ loadDemoData, clearDemoData }) => {
+  void import("./data/demoData").then(({ loadDemoData, clearDemoData }) => {
     Object.assign(window, {
       loadDemoData: () =>
         loadDemoData().then((counts) => {
-          console.info('[demo] loaded', counts)
+          console.info("[demo] loaded", counts)
           return counts
         }),
-      clearDemoData: () => clearDemoData().then(() => console.info('[demo] cleared')),
+      clearDemoData: () => clearDemoData().then(() => console.info("[demo] cleared")),
     })
-    console.info('[demo] call loadDemoData() to seed ~16 weeks of sessions + measurements, clearDemoData() to wipe them')
+    console.info(
+      "[demo] call loadDemoData() to seed ~16 weeks of sessions + measurements, clearDemoData() to wipe them",
+    )
   })
 }

@@ -9,18 +9,18 @@ CRUD) · **PWA early** (manifest/SW/fonts/persist in Phase 0) · German (`de`) d
 
 ## Status
 
-| #   | Phase                             | Status | Done-when (short)                        | Learnings           |
-| --- | --------------------------------- | ------ | ---------------------------------------- | ------------------- |
-| 0   | Foundation (data + PWA + tooling) | done   | data layer + PWA + tooling green         | see Phase 0 notes ↓ |
-| 1   | App shell + nav + i18n            | done   | tab bar + routes render, seed runs once  | see Phase 1 notes ↓ |
-| 2   | Log session (hero input)          | done   | log + save a session, placeholders work  | see Phase 2 notes ↓ |
-| 3   | Measurements quick-add            | done   | sheet writes a Measurement               | see Phase 3 notes ↓ |
-| 4   | Dashboard cards                   | done   | live bodyweight + rate + quick actions   | see Phase 4 notes ↓ |
-| 5   | Progress: Recomposition chart     | done   | one-axis indexed strength vs bodyweight  | see Phase 5 notes ↓ |
-| 6   | Progress: Strength progression    | done   | per-workout top-set lines, swap-aware    | see Phase 6 notes ↓ |
-| 7   | Progress: Exercise drilldown      | done   | top-set line + min–max band              | see Phase 7 notes ↓ |
-| 8   | Progress: Body chart              | done   | bodyweight trend+rate + measurements     | see Phase 8 notes ↓ |
-| 9   | Manage: exercise catalog          | done   | catalog CRUD + search                    | see Phase 9 notes ↓ |
+| #   | Phase                             | Status | Done-when (short)                        | Learnings            |
+| --- | --------------------------------- | ------ | ---------------------------------------- | -------------------- |
+| 0   | Foundation (data + PWA + tooling) | done   | data layer + PWA + tooling green         | see Phase 0 notes ↓  |
+| 1   | App shell + nav + i18n            | done   | tab bar + routes render, seed runs once  | see Phase 1 notes ↓  |
+| 2   | Log session (hero input)          | done   | log + save a session, placeholders work  | see Phase 2 notes ↓  |
+| 3   | Measurements quick-add            | done   | sheet writes a Measurement               | see Phase 3 notes ↓  |
+| 4   | Dashboard cards                   | done   | live bodyweight + rate + quick actions   | see Phase 4 notes ↓  |
+| 5   | Progress: Recomposition chart     | done   | one-axis indexed strength vs bodyweight  | see Phase 5 notes ↓  |
+| 6   | Progress: Strength progression    | done   | per-workout top-set lines, swap-aware    | see Phase 6 notes ↓  |
+| 7   | Progress: Exercise drilldown      | done   | top-set line + min–max band              | see Phase 7 notes ↓  |
+| 8   | Progress: Body chart              | done   | bodyweight trend+rate + measurements     | see Phase 8 notes ↓  |
+| 9   | Manage: exercise catalog          | done   | catalog CRUD + search                    | see Phase 9 notes ↓  |
 | 10  | Manage: plans + workouts          | done   | plan/workout/slot editor, set active     | see Phase 10 notes ↓ |
 | 11  | Settings + backup                 | done   | export/import round-trips, prefs persist | see Phase 11 notes ↓ |
 
@@ -444,7 +444,7 @@ threshold + units persist; gate passes.
   `useLiveQuery` hooks. **Phase 2 reads `calorieIncompleteThreshold` from here.**
 - **`BackupSchema` gained an OPTIONAL `settings` block** — `BACKUP_VERSION` stays `1`, so files
   exported before this phase still import (an absent block leaves preferences untouched).
-  Preferences are applied *after* the Dexie transaction commits, so a rejected import changes
+  Preferences are applied _after_ the Dexie transaction commits, so a rejected import changes
   nothing. **Any future setting is automatically part of the backup; new DATA stores are not — add
   them to `exportBackup`/`importBackup` explicitly.**
 - **Unit preference = default for NEW exercises only.** `MeasurementUnit` is `kg|cm` and nothing

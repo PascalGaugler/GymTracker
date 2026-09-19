@@ -1,10 +1,6 @@
 import { useLiveQuery } from "dexie-react-hooks"
 
-import {
-  planRepository,
-  sessionRepository,
-  workoutRepository,
-} from "@/data/repositories"
+import { planRepository, sessionRepository, workoutRepository } from "@/data/repositories"
 import type { Workout } from "@/data/schema"
 
 export interface WorkoutRotation {

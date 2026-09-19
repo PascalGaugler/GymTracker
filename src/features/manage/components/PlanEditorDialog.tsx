@@ -41,9 +41,7 @@ export function PlanEditorDialog({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>
-            {t(plan ? "manage.plans.editTitle" : "manage.plans.newTitle")}
-          </DialogTitle>
+          <DialogTitle>{t(plan ? "manage.plans.editTitle" : "manage.plans.newTitle")}</DialogTitle>
           <DialogDescription>
             {t(plan ? "manage.plans.editDescription" : "manage.plans.newDescription")}
           </DialogDescription>

@@ -73,7 +73,11 @@ function RateCard({
 function Swatch({ color, label }: { color: string; label: string }) {
   return (
     <span className="inline-flex min-w-0 items-center gap-2">
-      <span className="size-2.5 shrink-0 rounded-full" style={{ background: color }} aria-hidden="true" />
+      <span
+        className="size-2.5 shrink-0 rounded-full"
+        style={{ background: color }}
+        aria-hidden="true"
+      />
       <span className="truncate text-caption text-muted-foreground">{label}</span>
     </span>
   )
@@ -89,7 +93,8 @@ export function BodyView() {
   if (data === undefined) return null
 
   const { trend, comparison } = data
-  const hasComparison = comparison.present.waist || comparison.present.chest || comparison.present.biceps
+  const hasComparison =
+    comparison.present.waist || comparison.present.chest || comparison.present.biceps
 
   if (trend.count === 0 && !hasComparison) {
     return (
@@ -115,7 +120,9 @@ export function BodyView() {
             changeSinceStart={trend.changeSinceStart}
           />
           <Card className="gap-4 p-4">
-            <p className="text-caption text-muted-foreground">{t("progress.body.weight.caption")}</p>
+            <p className="text-caption text-muted-foreground">
+              {t("progress.body.weight.caption")}
+            </p>
             <BodyweightChart trend={trend} />
           </Card>
         </>

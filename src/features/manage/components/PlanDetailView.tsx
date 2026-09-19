@@ -34,9 +34,7 @@ export function PlanDetailView() {
     const before = new Map(workouts.map((w) => [w.id, w.order]))
     try {
       await Promise.all(
-        reordered
-          .filter((w) => before.get(w.id) !== w.order)
-          .map((w) => workoutRepository.save(w)),
+        reordered.filter((w) => before.get(w.id) !== w.order).map((w) => workoutRepository.save(w)),
       )
     } catch {
       toast.error(t("manage.workouts.saveError"))
@@ -89,9 +87,7 @@ export function PlanDetailView() {
       )}
 
       <div className="mb-3 flex items-center justify-between gap-2">
-        <h3 className="min-w-0 truncate text-h3 font-semibold">
-          {t("manage.workouts.title")}
-        </h3>
+        <h3 className="min-w-0 truncate text-h3 font-semibold">{t("manage.workouts.title")}</h3>
         <Button
           className="size-11 shrink-0"
           size="icon"
@@ -103,10 +99,7 @@ export function PlanDetailView() {
       </div>
 
       {workouts.length === 0 ? (
-        <EmptyState
-          title={t("manage.workouts.empty.title")}
-          body={t("manage.workouts.empty.body")}
-        >
+        <EmptyState title={t("manage.workouts.empty.title")} body={t("manage.workouts.empty.body")}>
           <Button onClick={() => setAddingWorkout(true)}>
             <Plus className="size-4" />
             {t("manage.workouts.add")}

@@ -22,9 +22,7 @@ export const planRepository: PlanRepository = {
   async setActive(id) {
     await db.transaction("rw", db.trainingPlans, async () => {
       const plans = await db.trainingPlans.toArray()
-      await Promise.all(
-        plans.map((p) => db.trainingPlans.update(p.id, { isActive: p.id === id })),
-      )
+      await Promise.all(plans.map((p) => db.trainingPlans.update(p.id, { isActive: p.id === id })))
     })
   },
 

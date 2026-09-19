@@ -72,13 +72,7 @@ function ChartTooltip({ active, payload, unit }: ChartTooltipProps) {
 
 // Single-exercise drilldown: a top-set line over a faint min–max band (the
 // session's set spread). One exercise, one raw-weight axis.
-export function ExerciseDrilldownChart({
-  data,
-  unit,
-}: {
-  data: DrilldownData
-  unit: string
-}) {
+export function ExerciseDrilldownChart({ data, unit }: { data: DrilldownData; unit: string }) {
   return (
     <ResponsiveContainer width="100%" height={280}>
       <ComposedChart data={data.points} margin={{ top: 16, right: 14, bottom: 4, left: -12 }}>

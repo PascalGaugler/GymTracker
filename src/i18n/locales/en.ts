@@ -116,12 +116,14 @@ const en: typeof de = {
     },
     body: {
       weight: {
-        caption: "Raw weigh-ins (points) with a 7-day average (line) — the average shows the trend.",
+        caption:
+          "Raw weigh-ins (points) with a 7-day average (line) — the average shows the trend.",
         raw: "Weight",
         trend: "7-day average",
       },
       comparison: {
-        caption: "Circumferences indexed to 100 at the start: waist (fat) down, chest/biceps (muscle) holding.",
+        caption:
+          "Circumferences indexed to 100 at the start: waist (fat) down, chest/biceps (muscle) holding.",
         baseline: "Baseline = 100",
       },
       empty: {
@@ -163,8 +165,7 @@ const en: typeof de = {
       saved: "Plan saved",
       saveError: "Saving failed",
       delete: "Delete",
-      deleteWarning:
-        "The plan and its workout will be deleted. Logged sessions are kept.",
+      deleteWarning: "The plan and its workout will be deleted. Logged sessions are kept.",
       deleteWarning_other:
         "The plan and its {{count}} workouts will be deleted. Logged sessions are kept.",
       deleteAnyway: "Delete permanently",

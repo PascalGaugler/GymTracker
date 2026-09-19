@@ -40,9 +40,7 @@ export function SetRow({ index, last, value, unit, onChange }: SetRowProps) {
       <div
         className={cn(
           "flex size-12 shrink-0 items-center justify-center rounded-md font-mono text-body font-medium",
-          filled
-            ? "bg-success-soft text-success"
-            : "bg-surface-2 text-muted-foreground",
+          filled ? "bg-success-soft text-success" : "bg-surface-2 text-muted-foreground",
         )}
         aria-hidden="true"
       >

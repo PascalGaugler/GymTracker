@@ -60,10 +60,7 @@ export function MeasurementQuickAdd({ children }: { children: ReactNode }) {
   return (
     <Sheet open={open} onOpenChange={setOpen}>
       <SheetTrigger asChild>{children}</SheetTrigger>
-      <SheetContent
-        side="bottom"
-        className="mx-auto max-h-[90dvh] max-w-screen-sm rounded-t-2xl"
-      >
+      <SheetContent side="bottom" className="mx-auto max-h-[90dvh] max-w-screen-sm rounded-t-2xl">
         <MeasurementForm onSaved={() => setOpen(false)} />
       </SheetContent>
     </Sheet>

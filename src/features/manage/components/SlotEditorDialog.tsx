@@ -43,9 +43,7 @@ export function SlotEditorDialog({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>
-            {t(slot ? "manage.slots.editTitle" : "manage.slots.newTitle")}
-          </DialogTitle>
+          <DialogTitle>{t(slot ? "manage.slots.editTitle" : "manage.slots.newTitle")}</DialogTitle>
           <DialogDescription>
             {t(slot ? "manage.slots.editDescription" : "manage.slots.newDescription")}
           </DialogDescription>
@@ -87,9 +85,7 @@ function SlotForm({
   const [confirmingDelete, setConfirmingDelete] = useState(false)
 
   const nameById = new Map(catalog.map((e) => [e.id, e.name]))
-  const remaining = catalog.filter(
-    (e) => e.id !== exerciseId && !alternativeIds.includes(e.id),
-  )
+  const remaining = catalog.filter((e) => e.id !== exerciseId && !alternativeIds.includes(e.id))
 
   // An empty range means "no target"; a half-filled or inverted one is a typo.
   const low = Number(repLow)
@@ -154,9 +150,7 @@ function SlotForm({
         <ExerciseSelect
           label={t("manage.slots.fields.exercise")}
           value={exerciseId}
-          options={catalog.filter(
-            (e) => e.id === exerciseId || !alternativeIds.includes(e.id),
-          )}
+          options={catalog.filter((e) => e.id === exerciseId || !alternativeIds.includes(e.id))}
           onChange={setExerciseId}
         />
       </Field>
@@ -185,24 +179,11 @@ function SlotForm({
 
       <Field label={t("manage.slots.fields.repRange")}>
         <div className="flex items-center gap-2">
-          <RepInput
-            label={t("manage.slots.fields.repFrom")}
-            value={repLow}
-            onChange={setRepLow}
-          />
+          <RepInput label={t("manage.slots.fields.repFrom")} value={repLow} onChange={setRepLow} />
           <span className="shrink-0 text-body text-subtle">–</span>
-          <RepInput
-            label={t("manage.slots.fields.repTo")}
-            value={repHigh}
-            onChange={setRepHigh}
-          />
+          <RepInput label={t("manage.slots.fields.repTo")} value={repHigh} onChange={setRepHigh} />
         </div>
-        <p
-          className={cn(
-            "text-caption",
-            rangeValid ? "text-subtle" : "text-destructive",
-          )}
-        >
+        <p className={cn("text-caption", rangeValid ? "text-subtle" : "text-destructive")}>
           {t(rangeValid ? "manage.slots.repHint" : "manage.slots.repError")}
         </p>
       </Field>
@@ -226,9 +207,7 @@ function SlotForm({
                     name: nameById.get(id) ?? "",
                   })}
                   className="flex size-11 shrink-0 items-center justify-center rounded-md text-muted-foreground transition-colors hover:text-foreground"
-                  onClick={() =>
-                    setAlternativeIds((ids) => ids.filter((alt) => alt !== id))
-                  }
+                  onClick={() => setAlternativeIds((ids) => ids.filter((alt) => alt !== id))}
                 >
                   <X className="size-4" />
                 </button>

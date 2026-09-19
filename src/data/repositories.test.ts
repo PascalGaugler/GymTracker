@@ -7,12 +7,7 @@ import {
   sessionRepository,
   workoutRepository,
 } from "./repositories"
-import type {
-  Exercise,
-  TrainingPlan,
-  Workout,
-  WorkoutSession,
-} from "./schema"
+import type { Exercise, TrainingPlan, Workout, WorkoutSession } from "./schema"
 
 beforeEach(resetDb)
 

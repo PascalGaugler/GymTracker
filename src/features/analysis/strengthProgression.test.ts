@@ -12,16 +12,18 @@ function day(n: number): Date {
 }
 
 // A session whose listed exercises each log two sets; the heavier is the top set.
-function session(
-  dayN: number,
-  lifts: { exerciseId: string; top: number }[],
-): WorkoutSession {
+function session(dayN: number, lifts: { exerciseId: string; top: number }[]): WorkoutSession {
   return {
     id: crypto.randomUUID(),
     workoutId: "w",
     date: day(dayN),
     sets: lifts.flatMap((l, li) => [
-      { id: crypto.randomUUID(), exerciseId: l.exerciseId, setNumber: li * 2 + 1, weight: l.top - 5 },
+      {
+        id: crypto.randomUUID(),
+        exerciseId: l.exerciseId,
+        setNumber: li * 2 + 1,
+        weight: l.top - 5,
+      },
       { id: crypto.randomUUID(), exerciseId: l.exerciseId, setNumber: li * 2 + 2, weight: l.top },
     ]),
   }
@@ -51,7 +53,12 @@ describe("buildStrengthProgression", () => {
 
   it("orders series by slot order, then resolves name/unit/colour", () => {
     const data = buildStrengthProgression(
-      [session(0, [{ exerciseId: "b", top: 40 }, { exerciseId: "a", top: 100 }])],
+      [
+        session(0, [
+          { exerciseId: "b", top: 40 },
+          { exerciseId: "a", top: 100 },
+        ]),
+      ],
       ["a", "b"],
       info,
     )
@@ -81,11 +88,7 @@ describe("buildStrengthProgression", () => {
   })
 
   it("skips unweighted (0 kg) top sets that aren't meaningful to plot", () => {
-    const data = buildStrengthProgression(
-      [session(0, [{ exerciseId: "a", top: 0 }])],
-      ["a"],
-      info,
-    )
+    const data = buildStrengthProgression([session(0, [{ exerciseId: "a", top: 0 }])], ["a"], info)
     expect(data.series).toEqual([])
   })
 

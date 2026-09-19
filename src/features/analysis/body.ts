@@ -51,9 +51,7 @@ export interface BodyweightTrend {
  * least-squares {@link weeklyRate}.
  */
 export function buildBodyweightTrend(measurements: Measurement[]): BodyweightTrend {
-  const sorted = [...measurements].sort(
-    (a, b) => a.measuredAt.getTime() - b.measuredAt.getTime(),
-  )
+  const sorted = [...measurements].sort((a, b) => a.measuredAt.getTime() - b.measuredAt.getTime())
 
   const points: BodyweightPoint[] = sorted.map((m, i) => {
     // Walk back over the window; entries are time-sorted so the day-gap grows
@@ -107,9 +105,7 @@ export interface MeasurementComparison {
 /** Index one circumference series to 100 at its own first recorded value. */
 function indexToBaseline(measurements: Measurement[]): { t: number; value: number }[] {
   if (measurements.length === 0) return []
-  const sorted = [...measurements].sort(
-    (a, b) => a.measuredAt.getTime() - b.measuredAt.getTime(),
-  )
+  const sorted = [...measurements].sort((a, b) => a.measuredAt.getTime() - b.measuredAt.getTime())
   const base = sorted[0].value
   if (base <= 0) return []
   return sorted.map((m) => ({

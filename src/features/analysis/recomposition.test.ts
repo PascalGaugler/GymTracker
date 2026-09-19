@@ -2,11 +2,7 @@ import { describe, expect, it } from "vitest"
 
 import type { Measurement, WorkoutSession } from "@/data/schema"
 
-import {
-  bodyweightIndexSeries,
-  buildRecomposition,
-  strengthIndexSeries,
-} from "./recomposition"
+import { bodyweightIndexSeries, buildRecomposition, strengthIndexSeries } from "./recomposition"
 
 const DAY = 86_400_000
 const T0 = new Date("2026-01-01T10:00:00").getTime()

@@ -212,11 +212,7 @@ function SessionForm({
         })}
       </div>
 
-      <Button
-        className="mt-5 h-12 w-full text-body-lg"
-        disabled={saving}
-        onClick={handleSave}
-      >
+      <Button className="mt-5 h-12 w-full text-body-lg" disabled={saving} onClick={handleSave}>
         {t("log.save")}
       </Button>
     </>

@@ -50,11 +50,7 @@ export function ExerciseEditorDialog({
             {t(exercise ? "manage.exercises.editTitle" : "manage.exercises.newTitle")}
           </DialogTitle>
           <DialogDescription>
-            {t(
-              exercise
-                ? "manage.exercises.editDescription"
-                : "manage.exercises.newDescription",
-            )}
+            {t(exercise ? "manage.exercises.editDescription" : "manage.exercises.newDescription")}
           </DialogDescription>
         </DialogHeader>
         <ExerciseForm
@@ -67,13 +63,7 @@ export function ExerciseEditorDialog({
   )
 }
 
-function ExerciseForm({
-  exercise,
-  onDone,
-}: {
-  exercise: Exercise | null
-  onDone: () => void
-}) {
+function ExerciseForm({ exercise, onDone }: { exercise: Exercise | null; onDone: () => void }) {
   const { t } = useTranslation()
   const { defaultWeightUnit } = useSettings()
   const [name, setName] = useState(exercise?.name ?? "")

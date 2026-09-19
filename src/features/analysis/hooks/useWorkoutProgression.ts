@@ -3,18 +3,13 @@ import { useLiveQuery } from "dexie-react-hooks"
 import { exerciseRepository, sessionRepository } from "@/data/repositories"
 import type { Workout } from "@/data/schema"
 
-import {
-  buildStrengthProgression,
-  type ProgressionData,
-} from "../strengthProgression"
+import { buildStrengthProgression, type ProgressionData } from "../strengthProgression"
 
 // Live per-workout strength progression for the selected workout: that workout's
 // sessions (filtered from all sessions) plus the exercise catalog for names/units,
 // built into top-set series. Refreshes the instant a session is saved. Returns
 // undefined while loading or when no workout is selected.
-export function useWorkoutProgression(
-  workout: Workout | undefined,
-): ProgressionData | undefined {
+export function useWorkoutProgression(workout: Workout | undefined): ProgressionData | undefined {
   return useLiveQuery(async () => {
     if (!workout) return undefined
     const [sessions, exercises] = await Promise.all([
