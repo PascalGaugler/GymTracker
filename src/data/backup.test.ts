@@ -1,11 +1,19 @@
 import { beforeEach, describe, expect, it } from "vitest"
+import { installMemoryStorage } from "../test/memoryStorage"
 import { resetDb } from "../test/resetDb"
-import { exportBackupJson, importBackup, importBackupJson } from "./backup"
+import { exportBackup, exportBackupJson, importBackup, importBackupJson } from "./backup"
 import { db } from "./db"
 import { measurementRepository } from "./repositories"
 import { seedIfEmpty } from "./seed"
+import { DEFAULT_SETTINGS, getSettings, reloadSettings, updateSettings } from "./settings"
 
-beforeEach(resetDb)
+const storage = installMemoryStorage()
+
+beforeEach(async () => {
+  await resetDb()
+  storage.clear()
+  reloadSettings()
+})
 
 describe("backup", () => {
   it("round-trips all data through JSON with dates intact", async () => {
@@ -48,6 +56,32 @@ describe("backup", () => {
 
     await importBackupJson(snapshot)
     expect(await db.measurements.count()).toBe(0)
+  })
+
+  it("carries preferences and restores them on import", async () => {
+    await seedIfEmpty()
+    updateSettings({ defaultWeightUnit: "lb", calorieIncompleteThreshold: 900 })
+
+    const json = await exportBackupJson()
+    updateSettings({ defaultWeightUnit: "kg", calorieIncompleteThreshold: 1500 })
+    await importBackupJson(json)
+
+    expect(getSettings()).toEqual({
+      defaultWeightUnit: "lb",
+      calorieIncompleteThreshold: 900,
+    })
+  })
+
+  it("imports a file without a settings block, leaving preferences alone", async () => {
+    await seedIfEmpty()
+    const payload: Record<string, unknown> = { ...(await exportBackup()) }
+    delete payload.settings
+    updateSettings({ calorieIncompleteThreshold: 1100 })
+
+    await importBackup(JSON.parse(JSON.stringify(payload)))
+
+    expect(getSettings().calorieIncompleteThreshold).toBe(1100)
+    expect(getSettings().defaultWeightUnit).toBe(DEFAULT_SETTINGS.defaultWeightUnit)
   })
 
   it("rejects an invalid payload before touching the database", async () => {

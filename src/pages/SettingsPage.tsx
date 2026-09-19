@@ -1,15 +1,5 @@
-import { useTranslation } from "react-i18next"
-
-import { PageHeader } from "./PageHeader"
-import { Placeholder } from "./Placeholder"
+import { SettingsView } from "@/features/settings/components/SettingsView"
 
 export function SettingsPage() {
-  const { t } = useTranslation()
-
-  return (
-    <>
-      <PageHeader overline={t("nav.settings")} title={t("settings.title")} />
-      <Placeholder>{t("settings.placeholder")}</Placeholder>
-    </>
-  )
+  return <SettingsView />
 }

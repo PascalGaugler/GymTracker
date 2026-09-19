@@ -26,3 +26,6 @@ dev-dist
 
 # Visual reference only — large prototype files, never imported (see CLAUDE.md)
 design-reference
+
+# Real backup exports are personal data — never commit them (see docs/architecture.md)
+gym-tracker-backup-*.json

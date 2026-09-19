@@ -22,7 +22,7 @@ CRUD) · **PWA early** (manifest/SW/fonts/persist in Phase 0) · German (`de`) d
 | 8   | Progress: Body chart              | done   | bodyweight trend+rate + measurements     | see Phase 8 notes ↓ |
 | 9   | Manage: exercise catalog          | done   | catalog CRUD + search                    | see Phase 9 notes ↓ |
 | 10  | Manage: plans + workouts          | done   | plan/workout/slot editor, set active     | see Phase 10 notes ↓ |
-| 11  | Settings + backup                 | todo   | export/import round-trips, prefs persist | —                   |
+| 11  | Settings + backup                 | done   | export/import round-trips, prefs persist | see Phase 11 notes ↓ |
 
 `Status` ∈ `todo · in_progress · done`. Flip to `done` ONLY after
 `npm run typecheck && npm run lint && npm run test` pass.
@@ -433,6 +433,32 @@ section if present.
 **Out of scope:** Yazio connection UI beyond a disabled placeholder; calories charts (Phase 2).
 **Done when:** export produces a Zod-valid JSON; import round-trips (dates intact) and restores state;
 threshold + units persist; gate passes.
+
+**Learnings (affect later phases):**
+
+- **Preferences are localStorage, not a Dexie store** (`src/data/settings.ts`): one tiny record, no
+  queries, no relations — a sixth store would have cost a schema version bump and a migration for
+  nothing. It still lives in `src/data` (persistence stays behind the seam) and exposes a
+  `getSettings`/`updateSettings`/`subscribeSettings` store; `useSettings()`
+  (`features/settings/hooks`) reads it through `useSyncExternalStore` — the settings analogue of the
+  `useLiveQuery` hooks. **Phase 2 reads `calorieIncompleteThreshold` from here.**
+- **`BackupSchema` gained an OPTIONAL `settings` block** — `BACKUP_VERSION` stays `1`, so files
+  exported before this phase still import (an absent block leaves preferences untouched).
+  Preferences are applied *after* the Dexie transaction commits, so a rejected import changes
+  nothing. **Any future setting is automatically part of the backup; new DATA stores are not — add
+  them to `exportBackup`/`importBackup` explicitly.**
+- **Unit preference = default for NEW exercises only.** `MeasurementUnit` is `kg|cm` and nothing
+  converts stored weights, so a global display unit would be a real feature (conversion in charts,
+  logs and inputs), not a setting. Deliberately out of scope; the copy says so.
+- **Import is a two-step confirm:** the file is `JSON.parse`d, then `BackupSchema.safeParse`d, and the
+  user confirms against a count summary before anything is replaced. Errors surface as toasts
+  (`notJson` vs. `invalid`) instead of a thrown import.
+- **`gym-tracker-backup-*.json` is gitignored** — real exports are personal data (docs/architecture.md).
+- **No language switch was built** (not in scope): `en` exists but is unreachable in the UI. That is
+  the obvious next small feature if you want it.
+- **Phase 1 of the product is feature-complete** — every screen in `docs/screens.md` is live. Open
+  polish items carried from earlier phases: branded PNG/apple-touch icons (P0) and lazy-loading the
+  Recharts-heavy Progress route to get the bundle under 500 kB (P5).
 
 ---
 

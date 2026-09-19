@@ -1,5 +1,6 @@
 import { z } from "zod"
 import { db } from "./db"
+import { getSettings, SettingsSchema, updateSettings } from "./settings"
 import {
   ExerciseSchema,
   MeasurementSchema,
@@ -23,6 +24,9 @@ export const BackupSchema = z.object({
   exercises: z.array(ExerciseSchema),
   sessions: z.array(WorkoutSessionSchema),
   measurements: z.array(MeasurementSchema),
+  // Optional so files written before preferences existed still import cleanly;
+  // an absent block simply leaves the current preferences alone.
+  settings: SettingsSchema.optional(),
 })
 export type Backup = z.infer<typeof BackupSchema>
 
@@ -42,6 +46,7 @@ export async function exportBackup(): Promise<Backup> {
     exercises,
     sessions,
     measurements,
+    settings: getSettings(),
   }
 }
 
@@ -72,6 +77,9 @@ export async function importBackup(data: unknown): Promise<void> {
       ])
     },
   )
+  // Preferences live outside IndexedDB, so they are restored after the data
+  // transaction commits — a failed import never touches them.
+  if (backup.settings) updateSettings(backup.settings)
 }
 
 export async function importBackupJson(json: string): Promise<void> {

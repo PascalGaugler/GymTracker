@@ -15,6 +15,7 @@ import {
 import { Input } from "@/components/ui/input"
 import { exerciseRepository } from "@/data/repositories"
 import { ExerciseType, type Exercise, WeightUnit } from "@/data/schema"
+import { useSettings } from "@/features/settings/hooks/useSettings"
 import { cn } from "@/lib/utils"
 
 import { useExerciseUsage } from "../hooks/useExerciseUsage"
@@ -74,9 +75,11 @@ function ExerciseForm({
   onDone: () => void
 }) {
   const { t } = useTranslation()
+  const { defaultWeightUnit } = useSettings()
   const [name, setName] = useState(exercise?.name ?? "")
   const [type, setType] = useState<Exercise["type"]>(exercise?.type ?? "barbell")
-  const [unit, setUnit] = useState<Exercise["unit"]>(exercise?.unit ?? "kg")
+  // New exercises start on the preferred unit; an existing one keeps its own.
+  const [unit, setUnit] = useState<Exercise["unit"]>(exercise?.unit ?? defaultWeightUnit)
   const [busy, setBusy] = useState(false)
   const [confirmingDelete, setConfirmingDelete] = useState(false)
   const usage = useExerciseUsage(exercise?.id)
