@@ -5,6 +5,7 @@ import { Link, Navigate, useNavigate, useParams } from "react-router-dom"
 import { toast } from "sonner"
 
 import { Button } from "@/components/ui/button"
+import { Overline } from "@/components/ui/overline"
 import { workoutRepository } from "@/data/repositories"
 import type { WorkoutExercise } from "@/data/schema"
 import { EmptyState } from "@/pages/EmptyState"
@@ -68,9 +69,7 @@ export function WorkoutSlotsView() {
 
       <div className="mb-5 flex items-start gap-3">
         <div className="min-w-0 flex-1">
-          <div className="font-mono text-micro tracking-[0.16em] text-primary uppercase">
-            {t("manage.workouts.overline", { n: workout.order + 1 })}
-          </div>
+          <Overline>{t("manage.workouts.overline", { n: workout.order + 1 })}</Overline>
           <h2 className="text-h2 font-semibold wrap-break-word">{workout.name}</h2>
         </div>
         <Button

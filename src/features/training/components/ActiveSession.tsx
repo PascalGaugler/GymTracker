@@ -5,6 +5,7 @@ import { useLocation, useNavigate } from "react-router-dom"
 import { toast } from "sonner"
 
 import { Button } from "@/components/ui/button"
+import { Overline } from "@/components/ui/overline"
 import { sessionRepository } from "@/data/repositories"
 import type { Exercise, LoggedSet, Workout, WorkoutSession } from "@/data/schema"
 
@@ -172,9 +173,7 @@ function SessionForm({
           <ArrowLeft aria-hidden="true" />
         </Button>
         <div className="min-w-0">
-          <div className="font-mono text-micro tracking-[0.16em] text-primary uppercase">
-            {t("nav.log")}
-          </div>
+          <Overline>{t("nav.log")}</Overline>
           <h1 className="text-h2 font-bold">{workout.name}</h1>
         </div>
       </header>

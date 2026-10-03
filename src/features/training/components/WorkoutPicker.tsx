@@ -3,6 +3,7 @@ import { useTranslation } from "react-i18next"
 import { useNavigate } from "react-router-dom"
 
 import { Badge } from "@/components/ui/badge"
+import { Overline } from "@/components/ui/overline"
 import { EmptyState } from "@/pages/EmptyState"
 import { PageHeader } from "@/pages/PageHeader"
 import { cn } from "@/lib/utils"
@@ -74,9 +75,9 @@ export function WorkoutPicker() {
               >
                 <div className="flex items-start justify-between gap-3">
                   <div className="min-w-0">
-                    <div className="font-mono text-micro tracking-[0.16em] text-primary uppercase">
+                    <Overline>
                       {t("log.rotation", { n: w.order + 1, total: workouts.length })}
-                    </div>
+                    </Overline>
                     <div className="mt-0.5 text-h3 font-semibold">{w.name}</div>
                   </div>
                   {isNext ? (

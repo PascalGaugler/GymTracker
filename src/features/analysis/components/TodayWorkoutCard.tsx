@@ -3,6 +3,7 @@ import { useTranslation } from "react-i18next"
 import { useNavigate } from "react-router-dom"
 
 import { Badge } from "@/components/ui/badge"
+import { Overline } from "@/components/ui/overline"
 import { useExerciseCatalog } from "@/features/training/hooks/useExerciseCatalog"
 import { useWorkoutRotation } from "@/features/training/hooks/useWorkoutRotation"
 
@@ -36,9 +37,7 @@ export function TodayWorkoutCard() {
       >
         <div className="flex items-start justify-between gap-3">
           <div className="min-w-0">
-            <div className="font-mono text-micro tracking-[0.16em] text-primary uppercase">
-              {t("log.rotation", { n: next.order + 1, total: workouts.length })}
-            </div>
+            <Overline>{t("log.rotation", { n: next.order + 1, total: workouts.length })}</Overline>
             <div className="mt-0.5 text-h3 font-semibold">{next.name}</div>
           </div>
           <span className="flex size-9 shrink-0 items-center justify-center rounded-full bg-primary-soft text-primary">

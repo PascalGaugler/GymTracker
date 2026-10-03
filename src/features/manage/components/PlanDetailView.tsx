@@ -5,6 +5,7 @@ import { Link, Navigate, useParams } from "react-router-dom"
 import { toast } from "sonner"
 
 import { Button } from "@/components/ui/button"
+import { Overline } from "@/components/ui/overline"
 import { planRepository, workoutRepository } from "@/data/repositories"
 import type { Workout } from "@/data/schema"
 import { EmptyState } from "@/pages/EmptyState"
@@ -62,11 +63,7 @@ export function PlanDetailView() {
 
       <div className="mb-5 flex items-start gap-3">
         <div className="min-w-0 flex-1">
-          {plan.isActive && (
-            <div className="font-mono text-micro tracking-[0.16em] text-primary uppercase">
-              {t("manage.plans.active")}
-            </div>
-          )}
+          {plan.isActive && <Overline>{t("manage.plans.active")}</Overline>}
           <h2 className="text-h2 font-semibold wrap-break-word">{plan.name}</h2>
         </div>
         <Button
