@@ -26,9 +26,9 @@ export function StatCard({
   const hasValue = value != null
 
   return (
-    <Card size="sm" className="min-w-0 gap-0 p-4">
-      <div className="flex items-start justify-between gap-2">
-        <span className="min-w-0 truncate text-caption font-semibold tracking-wide text-muted-foreground uppercase">
+    <Card size="sm" className="min-w-0 gap-0 p-3.5">
+      <div className="mb-2.5 flex flex-wrap items-center justify-between gap-x-2 gap-y-1.5">
+        <span className="max-w-full min-w-0 text-micro font-semibold tracking-wider text-muted-foreground uppercase hyphens-auto wrap-break-word">
           {label}
         </span>
         {badge}
@@ -36,15 +36,15 @@ export function StatCard({
 
       <div
         className={cn(
-          "mt-2 font-mono text-display font-semibold tabular-nums",
+          "flex flex-wrap items-baseline gap-x-1 font-mono text-h1 font-semibold tabular-nums",
           (!hasValue || muted) && "text-disabled",
         )}
       >
         {value ?? "—"}
-        {hasValue && unit && <small className="ml-1 text-body-lg text-subtle">{unit}</small>}
+        {hasValue && unit && <small className="text-body font-medium text-subtle">{unit}</small>}
       </div>
 
-      {sub && <div className="mt-1 truncate text-caption text-muted-foreground">{sub}</div>}
+      {sub && <div className="mt-2 text-caption text-subtle">{sub}</div>}
     </Card>
   )
 }

@@ -15,7 +15,7 @@ const badgeVariants = cva(
         status:
           "border-primary bg-primary font-mono text-micro font-semibold tracking-widest text-primary-foreground uppercase",
         neutral:
-          "border-border bg-surface-2 font-mono text-micro font-semibold tracking-normal text-subtle",
+          "border-border bg-surface-2 font-mono text-micro font-semibold tracking-normal text-muted-foreground",
         tally:
           "border-border bg-surface-2 font-mono text-caption font-semibold tabular-nums text-muted-foreground",
         tallyDone:
