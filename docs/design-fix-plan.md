@@ -18,6 +18,9 @@ These override the recommendations in §4 wherever they differ.
   even though the prototype has three. Every screen stays one tap away. No package may
   remove or merge a tab. O-07 only emphasises the Log tab within the four.
 - Execution order: WP-01 … WP-18, then O-11, then O-01 … O-09 (O-10 skipped), then WP-19.
+- **Number format (user, 2026-10-03):** decimals use a DOT in every locale ("80.4 kg"),
+  with a true minus "−" and an explicit "+" for signed values, via the shared signed-number
+  helper. Do not switch to the German decimal comma.
 - **Added during implementation (user, 2026-10-03):** O-11, Progress tab strip as in the
   prototype's `.segmented2.seg-grid`: short labels ("Recomp" · "Kraft" · "Körper") in an
   equal-width, non-scrolling grid, so all tabs are visible at 320. And on
