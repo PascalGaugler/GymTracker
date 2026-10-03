@@ -1,6 +1,5 @@
 import { format } from "date-fns"
 import { de } from "date-fns/locale"
-import type { ParseKeys } from "i18next"
 import { useTranslation } from "react-i18next"
 import {
   CartesianGrid,
@@ -13,15 +12,9 @@ import {
   YAxis,
 } from "recharts"
 
-import type { ComparisonType, MeasurementComparison } from "../body"
-
-// Waist (fat proxy, should fall) vs. chest/biceps (muscle proxy, should hold).
-// Distinct chart-palette colours; the labels reuse the measurement type strings.
-const SERIES: { key: ComparisonType; color: string; labelKey: ParseKeys }[] = [
-  { key: "waist", color: "var(--chart-5)", labelKey: "measurements.types.waist" },
-  { key: "chest", color: "var(--chart-1)", labelKey: "measurements.types.chest" },
-  { key: "biceps", color: "var(--chart-3)", labelKey: "measurements.types.biceps" },
-]
+import type { MeasurementComparison } from "../body"
+import { TooltipSwatch } from "./ChartSwatches"
+import { COMPARISON_SERIES, lineWidth, markerDot, SERIES_CUES } from "./chartCues"
 
 const axisTick = {
   fill: "var(--subtle)",
@@ -53,10 +46,9 @@ function ChartTooltip({ active, payload, label }: ChartTooltipProps) {
       </div>
       {rows.map((entry) => (
         <div key={String(entry.dataKey)} className="flex items-center gap-2">
-          <span
-            className="size-2 shrink-0 rounded-full"
-            style={{ background: entry.color }}
-            aria-hidden="true"
+          <TooltipSwatch
+            cue={COMPARISON_SERIES.find((s) => s.key === entry.dataKey)?.cue ?? SERIES_CUES[0]!}
+            color={entry.color ?? ""}
           />
           <span className="flex-1 truncate text-caption text-muted-foreground">{entry.name}</span>
           <span className="font-mono text-caption font-semibold tabular-nums">
@@ -109,16 +101,17 @@ export function MeasurementComparisonChart({ data }: { data: MeasurementComparis
           }}
         />
         <Tooltip content={<ChartTooltip />} cursor={{ stroke: "var(--border-strong)" }} />
-        {SERIES.filter((s) => data.present[s.key]).map((s) => (
+        {COMPARISON_SERIES.filter((s) => data.present[s.key]).map((s) => (
           <Line
             key={s.key}
             type="monotone"
             dataKey={s.key}
             name={t(s.labelKey)}
             stroke={s.color}
-            strokeWidth={2.6}
+            strokeWidth={lineWidth(s.cue)}
+            strokeDasharray={s.cue.dash}
             connectNulls
-            dot={{ r: 2.8, fill: s.color, strokeWidth: 0 }}
+            dot={markerDot(s.cue, s.color)}
             activeDot={{ r: 5, fill: "var(--background)", stroke: s.color, strokeWidth: 2.5 }}
             isAnimationActive={false}
           />

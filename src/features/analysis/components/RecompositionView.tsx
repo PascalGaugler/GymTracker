@@ -4,27 +4,9 @@ import { Card } from "@/components/ui/card"
 import { EmptyState } from "@/pages/EmptyState"
 
 import { useRecompositionData } from "../hooks/useRecompositionData"
+import { LegendSwatch } from "./ChartSwatches"
+import { SERIES_CUES } from "./chartCues"
 import { RecompositionChart } from "./RecompositionChart"
-
-// Legend swatch: a short line stub coloured (and dashed) like its series.
-function Swatch({ color, dashed, label }: { color: string; dashed?: boolean; label: string }) {
-  return (
-    <span className="inline-flex min-w-0 items-center gap-2">
-      <span
-        className="h-0.5 w-5 shrink-0 rounded-full"
-        style={
-          dashed
-            ? {
-                backgroundImage: `repeating-linear-gradient(to right, ${color} 0 5px, transparent 5px 9px)`,
-              }
-            : { background: color }
-        }
-        aria-hidden="true"
-      />
-      <span className="truncate text-caption text-muted-foreground">{label}</span>
-    </span>
-  )
-}
 
 // The recomposition (hero) view: the indexed strength-vs-bodyweight chart with a
 // legend and a one-line read of the thesis. Empty until there is something to
@@ -53,10 +35,14 @@ export function RecompositionView() {
       <RecompositionChart data={data} />
 
       <div className="flex flex-wrap items-center gap-x-5 gap-y-2">
-        <Swatch color="var(--recomp-strength)" label={t("progress.recomposition.strengthSeries")} />
-        <Swatch
+        <LegendSwatch
+          cue={SERIES_CUES[0]!}
+          color="var(--recomp-strength)"
+          label={t("progress.recomposition.strengthSeries")}
+        />
+        <LegendSwatch
+          cue={SERIES_CUES[1]!}
           color="var(--recomp-bodyweight)"
-          dashed
           label={t("progress.recomposition.bodyweightSeries")}
         />
       </div>

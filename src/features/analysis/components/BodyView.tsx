@@ -1,4 +1,3 @@
-import type { ParseKeys } from "i18next"
 import { Ruler } from "lucide-react"
 import { useTranslation } from "react-i18next"
 
@@ -7,23 +6,17 @@ import { Card } from "@/components/ui/card"
 import { MeasurementQuickAdd } from "@/features/measurements/components/MeasurementQuickAdd"
 import { EmptyState } from "@/pages/EmptyState"
 
-import type { ComparisonType } from "../body"
 import { useBodyData } from "../hooks/useBodyData"
 import { trendDir } from "../stats"
 import { BodyweightChart } from "./BodyweightChart"
+import { LegendSwatch } from "./ChartSwatches"
+import { COMPARISON_SERIES } from "./chartCues"
 import { MeasurementComparisonChart } from "./MeasurementComparisonChart"
 import { StatCard } from "./StatCard"
 import { TrendBadge } from "./TrendBadge"
 
 // Rates within ±this (kg/week) read as "flat" rather than up/down noise.
 const RATE_EPSILON = 0.05
-
-// Legend swatch colours mirror MeasurementComparisonChart's series.
-const LEGEND: { key: ComparisonType; color: string; labelKey: ParseKeys }[] = [
-  { key: "waist", color: "var(--chart-5)", labelKey: "measurements.types.waist" },
-  { key: "chest", color: "var(--chart-1)", labelKey: "measurements.types.chest" },
-  { key: "biceps", color: "var(--chart-3)", labelKey: "measurements.types.biceps" },
-]
 
 // Explicit-sign value with a proper minus glyph, e.g. "−1.4 kg".
 function signed(value: number, unit: string, digits = 1): string {
@@ -67,19 +60,6 @@ function RateCard({
       badge={badge}
       sub={sub}
     />
-  )
-}
-
-function Swatch({ color, label }: { color: string; label: string }) {
-  return (
-    <span className="inline-flex min-w-0 items-center gap-2">
-      <span
-        className="size-2.5 shrink-0 rounded-full"
-        style={{ background: color }}
-        aria-hidden="true"
-      />
-      <span className="truncate text-caption text-muted-foreground">{label}</span>
-    </span>
   )
 }
 
@@ -135,8 +115,8 @@ export function BodyView() {
           </p>
           <MeasurementComparisonChart data={comparison} />
           <div className="flex flex-wrap items-center gap-x-5 gap-y-2">
-            {LEGEND.filter((s) => comparison.present[s.key]).map((s) => (
-              <Swatch key={s.key} color={s.color} label={t(s.labelKey)} />
+            {COMPARISON_SERIES.filter((s) => comparison.present[s.key]).map((s) => (
+              <LegendSwatch key={s.key} cue={s.cue} color={s.color} label={t(s.labelKey)} />
             ))}
           </div>
         </Card>

@@ -13,9 +13,14 @@ import {
 } from "recharts"
 
 import type { RecompositionData } from "../recomposition"
+import { TooltipSwatch } from "./ChartSwatches"
+import { SERIES_CUES, lineWidth, markerDot } from "./chartCues"
 
 const STRENGTH = "var(--recomp-strength)" // blue, solid — holds / rises
 const BODYWEIGHT = "var(--recomp-bodyweight)" // violet, dashed — trends down
+
+const STRENGTH_CUE = SERIES_CUES[0]! // solid · circle
+const BODYWEIGHT_CUE = SERIES_CUES[1]! // dashed · square
 
 const axisTick = {
   fill: "var(--subtle)",
@@ -52,10 +57,9 @@ function ChartTooltip({ active, payload, label }: ChartTooltipProps) {
       </div>
       {rows.map((entry) => (
         <div key={String(entry.dataKey)} className="flex items-center gap-2">
-          <span
-            className="size-2 shrink-0 rounded-full"
-            style={{ background: entry.color }}
-            aria-hidden="true"
+          <TooltipSwatch
+            cue={entry.dataKey === "strength" ? STRENGTH_CUE : BODYWEIGHT_CUE}
+            color={entry.color ?? STRENGTH}
           />
           <span className="flex-1 text-caption text-muted-foreground">
             {entry.dataKey === "strength"
@@ -118,9 +122,9 @@ export function RecompositionChart({ data }: { data: RecompositionData }) {
           dataKey="strength"
           name={t("progress.recomposition.strengthSeries")}
           stroke={STRENGTH}
-          strokeWidth={2.6}
+          strokeWidth={lineWidth(STRENGTH_CUE)}
           connectNulls
-          dot={{ r: 2.8, fill: STRENGTH, strokeWidth: 0 }}
+          dot={markerDot(STRENGTH_CUE, STRENGTH)}
           activeDot={{ r: 5, fill: "var(--background)", stroke: STRENGTH, strokeWidth: 2.5 }}
           isAnimationActive={false}
         />
@@ -129,10 +133,10 @@ export function RecompositionChart({ data }: { data: RecompositionData }) {
           dataKey="bodyweight"
           name={t("progress.recomposition.bodyweightSeries")}
           stroke={BODYWEIGHT}
-          strokeWidth={2.6}
-          strokeDasharray="6 4"
+          strokeWidth={lineWidth(BODYWEIGHT_CUE)}
+          strokeDasharray={BODYWEIGHT_CUE.dash}
           connectNulls
-          dot={{ r: 2.8, fill: BODYWEIGHT, strokeWidth: 0 }}
+          dot={markerDot(BODYWEIGHT_CUE, BODYWEIGHT)}
           activeDot={{ r: 5, fill: "var(--background)", stroke: BODYWEIGHT, strokeWidth: 2.5 }}
           isAnimationActive={false}
         />

@@ -102,21 +102,24 @@ Six categorical series, each pairing a hue with a non-color cue (dash + marker) 
 stay legible on slate and under common color-vision deficiencies. Implementation lives in
 `docs/charts.md`; these are the colors.
 
-| Token       | Hex              | Cue                |
-| ----------- | ---------------- | ------------------ |
-| `--chart-1` | `#3b82f6` blue   | solid · circle     |
-| `--chart-2` | `#8b5cf6` violet | dashed · square    |
-| `--chart-3` | `#2dd4bf` teal   | dotted · triangle  |
-| `--chart-4` | `#fbbf24` amber  | dash-dot · diamond |
-| `--chart-5` | `#f472b6` pink   | long-dash · cross  |
-| `--chart-6` | `#a3e635` lime   | thin · star        |
+| Token       | Hex              | Cue                           |
+| ----------- | ---------------- | ----------------------------- |
+| `--chart-1` | `#3b82f6` blue   | solid · circle                |
+| `--chart-2` | `#8b5cf6` violet | dashed `7 5` · square         |
+| `--chart-3` | `#2dd4bf` teal   | dotted `2 5` · triangle       |
+| `--chart-4` | `#fbbf24` amber  | dash-dot `10 4 2 4` · diamond |
+| `--chart-5` | `#f472b6` pink   | long-dash `14 6` · cross      |
+| `--chart-6` | `#a3e635` lime   | thin (2px, not 2.6px) · star  |
+
+The cues live in `src/features/analysis/components/chartCues.tsx` (`SERIES_CUES`; glyph/swatch components in `ChartSwatches.tsx`). Lines,
+legends (`LegendSwatch`) and tooltips (`TooltipSwatch`) all show the same dash + glyph.
 
 **Recomposition pair** (defined explicitly, not borrowed from the categorical scale):
 
-| Token                 | Hex                      | Story         |
-| --------------------- | ------------------------ | ------------- |
-| `--recomp-strength`   | `#3b82f6` blue, solid    | holds / rises |
-| `--recomp-bodyweight` | `#8b5cf6` violet, dashed | trends down   |
+| Token                 | Hex                                     | Story         |
+| --------------------- | --------------------------------------- | ------------- |
+| `--recomp-strength`   | `#3b82f6` blue, solid · circle          | holds / rises |
+| `--recomp-bodyweight` | `#8b5cf6` violet, dashed `7 5` · square | trends down   |
 
 Both indexed to **100** at baseline on one shared axis — never dual y-axes.
 
