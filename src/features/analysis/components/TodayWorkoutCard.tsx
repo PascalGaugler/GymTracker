@@ -32,7 +32,9 @@ export function TodayWorkoutCard() {
       <h2 className="mb-3 text-h3 font-semibold">{t("dashboard.today.title")}</h2>
       <button
         type="button"
-        onClick={() => navigate(`/log/${crypto.randomUUID()}`, { state: { workoutId: next.id } })}
+        onClick={() =>
+          navigate(`/log/${crypto.randomUUID()}`, { state: { workoutId: next.id, returnTo: "/" } })
+        }
         className="w-full rounded-lg border border-border-strong bg-linear-155 from-surface-hero to-surface to-60% p-4.5 text-left shadow-card transition-transform duration-(--dur-fast) active:scale-99"
       >
         <div className="flex items-start justify-between gap-3">

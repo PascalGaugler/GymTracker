@@ -40,7 +40,7 @@ const de = {
     pick: {
       title: "Workout wählen",
       subtitle: "Rotation · {{total}} Workouts",
-      hint: "Als Nächstes dran: {{name}}. Wähle ein anderes, falls du eine Einheit überspringst oder nachholst.",
+      hint: "Als Nächstes ist <strong>{{name}}</strong> dran — oder wähle ein anderes, falls du eine Einheit überspringst oder nachholst.",
       next: "Als Nächstes",
     },
     rotation: "Rotation · {{n}} von {{total}}",

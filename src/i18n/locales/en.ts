@@ -42,7 +42,7 @@ const en: typeof de = {
     pick: {
       title: "Choose a workout",
       subtitle: "Rotation · {{total}} workouts",
-      hint: "Up next: {{name}}. Pick another if you're skipping or catching up.",
+      hint: "Up next: <strong>{{name}}</strong> — or pick another if you're skipping or catching up on a session.",
       next: "Up next",
     },
     rotation: "Rotation · {{n}} of {{total}}",
