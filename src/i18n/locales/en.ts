@@ -319,6 +319,7 @@ const en: typeof de = {
   common: {
     comingSoon: "Coming in a later phase",
     back: "Back",
+    close: "Close",
     phase2: "Phase 2",
   },
 }

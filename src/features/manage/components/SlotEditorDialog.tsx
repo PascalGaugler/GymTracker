@@ -206,7 +206,7 @@ function SlotForm({
                   aria-label={t("manage.slots.removeAlternative", {
                     name: nameById.get(id) ?? "",
                   })}
-                  className="flex size-11 shrink-0 items-center justify-center rounded-md text-muted-foreground transition-colors hover:text-foreground"
+                  className="flex size-12 shrink-0 items-center justify-center rounded-md text-muted-foreground transition-colors hover:text-foreground"
                   onClick={() => setAlternativeIds((ids) => ids.filter((alt) => alt !== id))}
                 >
                   <X className="size-4" />
@@ -230,7 +230,7 @@ function SlotForm({
               type="button"
               variant="destructive"
               disabled={busy}
-              className="h-11 sm:mr-auto"
+              className="sm:mr-auto"
               onClick={() => void handleDelete()}
             >
               {t("manage.slots.deleteConfirm")}
@@ -240,13 +240,13 @@ function SlotForm({
               type="button"
               variant="ghost"
               disabled={busy}
-              className="h-11 text-destructive hover:text-destructive sm:mr-auto"
+              className="text-destructive hover:text-destructive sm:mr-auto"
               onClick={() => setConfirmingDelete(true)}
             >
               {t("manage.slots.delete")}
             </Button>
           ))}
-        <Button type="submit" disabled={busy || !rangeValid} className="h-11">
+        <Button type="submit" disabled={busy || !rangeValid}>
           {t("manage.slots.save")}
         </Button>
       </DialogFooter>
@@ -280,7 +280,7 @@ function AlternativePicker({
         type="button"
         variant="outline"
         size="icon"
-        className="size-11 shrink-0"
+        className="shrink-0"
         aria-label={t("manage.slots.addAlternative")}
         onClick={() => onAdd(selectable)}
       >
@@ -304,10 +304,10 @@ function ExerciseSelect({
   onChange: (id: string) => void
 }) {
   return (
-    <div className="relative">
+    <div className="relative w-full min-w-0">
       <select
         aria-label={label}
-        className="h-11 w-full min-w-0 appearance-none truncate rounded-md border border-border bg-surface-2 pr-10 pl-3 text-body text-foreground outline-none focus:border-ring focus:ring-3 focus:ring-ring/50"
+        className="h-12 w-full max-w-full min-w-0 appearance-none truncate rounded-md border border-border bg-surface-2 pr-10 pl-3 text-body-lg text-foreground outline-none focus:border-ring focus:ring-3 focus:ring-ring/50"
         value={value}
         onChange={(e) => onChange(e.target.value)}
       >
@@ -337,7 +337,7 @@ function RepInput({
   return (
     <input
       aria-label={label}
-      className="h-11 min-w-0 flex-1 rounded-md border border-border bg-surface-2 px-3 text-center font-mono text-body tabular-nums outline-none focus:border-ring focus:ring-3 focus:ring-ring/50"
+      className="h-12 min-w-0 flex-1 rounded-md border border-border bg-surface-2 px-3 text-center font-mono text-body-lg tabular-nums outline-none focus:border-ring focus:ring-3 focus:ring-ring/50"
       inputMode="numeric"
       placeholder={label}
       value={value}

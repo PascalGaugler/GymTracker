@@ -317,6 +317,7 @@ const de = {
   common: {
     comingSoon: "Kommt in einer späteren Phase",
     back: "Zurück",
+    close: "Schließen",
     phase2: "Phase 2",
   },
 }
