@@ -21,7 +21,7 @@ shadcn `dark:` variants resolve.
 - Type scale → `text-display-xl`, `text-h1`, `text-body`, `text-micro`, … (line-height,
   tracking, and weight bake in where the spec defines them).
 - Radii → `rounded-sm|md|lg|xl|full`.
-- Elevation → `shadow-elev-1|2|3`, `shadow-inset-hi`.
+- Elevation → `shadow-elev-1|2|3`, `shadow-inset-hi`, `shadow-card`.
 
 Raw CSS variables (`var(--…)`) remain available for the cases utilities don't cover
 (`--primary-soft` focus rings, `--grid`, `--dur`, `--tap`).
@@ -32,15 +32,18 @@ Layered cool-slate darkness; color is reserved for meaning and data.
 
 ### Surfaces (base → raised)
 
-| Token                     | Hex         | Use                                    |
-| ------------------------- | ----------- | -------------------------------------- |
-| `--background`            | `#0a0c12`   | App base — cool near-black slate       |
-| `--surface` / `--card`    | `#11141d`   | Card / raised surface                  |
-| `--surface-2` / `--muted` | `#181c28`   | Higher raise: inputs, hover rows       |
-| `--surface-3`             | `#20253480` | Translucent overlays / progress tracks |
-| `--popover`               | `#141823`   | Menus, dropdowns                       |
-| `--sheet`                 | `#12161f`   | Bottom sheets / dialogs                |
-| `--input`                 | `#1b2030`   | Input fill                             |
+| Token                     | Hex                              | Use                                     |
+| ------------------------- | -------------------------------- | --------------------------------------- |
+| `--background`            | `#0a0c12`                        | App base — cool near-black slate        |
+| `--surface` / `--card`    | `#11141d`                        | Card / raised surface                   |
+| `--surface-2` / `--muted` | `#181c28`                        | Higher raise: inputs, hover rows        |
+| `--surface-3`             | `#20253480`                      | Translucent overlays / progress tracks  |
+| `--popover`               | `#141823`                        | Menus, dropdowns                        |
+| `--sheet`                 | `#12161f`                        | Bottom sheets / dialogs                 |
+| `--scrim`                 | `#02030799`                      | Sheet / dialog overlay (`bg-scrim`)     |
+| `--surface-hero`          | `#16203a`                        | Start stop of the "today" card gradient |
+| `--surface-primary`       | `color-mix(primary 8%, surface)` | Highlighted "next" workout card         |
+| `--input`                 | `#1b2030`                        | Input fill                              |
 
 ### Foreground (text levels)
 
@@ -87,6 +90,9 @@ Each ships with a `-soft` tinted-fill companion (≈13% alpha) for badges/backgr
 | `--success`                  | `#34d399` | `--success-soft` `#34d39922` |
 | `--warning`                  | `#fbbf24` | `--warning-soft` `#fbbf2422` |
 | `--danger` / `--destructive` | `#f5544b` | `--danger-soft` `#f5544b22`  |
+
+`--success-foreground` (`#06140d`) is the dark text colour on a solid `--success` fill
+(`text-success-foreground`).
 
 Trend direction is **context-aware**: bodyweight ▼ is success, not danger.
 
@@ -151,12 +157,13 @@ No custom spacing tokens are needed.
 
 **Elevation** — depth comes from hairline borders + soft shadows, **never glow**.
 
-| Utility           | Value                                 | Use                           |
-| ----------------- | ------------------------------------- | ----------------------------- |
-| `shadow-elev-1`   | `0 1px 2px /.45`                      | Resting cards                 |
-| `shadow-elev-2`   | `0 6px 18px -4px /.55`                | Popovers, menus               |
-| `shadow-elev-3`   | `0 18px 44px -8px /.65`               | Sheets, dialogs               |
-| `shadow-inset-hi` | `inset 0 1px 0 rgba(255,255,255,.04)` | Top highlight on raised cards |
+| Utility           | Value                                 | Use                                                   |
+| ----------------- | ------------------------------------- | ----------------------------------------------------- |
+| `shadow-elev-1`   | `0 1px 2px /.45`                      | Resting cards                                         |
+| `shadow-elev-2`   | `0 6px 18px -4px /.55`                | Popovers, menus                                       |
+| `shadow-elev-3`   | `0 18px 44px -8px /.65`               | Sheets, dialogs                                       |
+| `shadow-inset-hi` | `inset 0 1px 0 rgba(255,255,255,.04)` | Top highlight on raised cards                         |
+| `shadow-card`     | `shadow-inset-hi` + `shadow-elev-1`   | Resting raised cards: `Card`, list rows, empty states |
 
 ## Motion & touch
 
@@ -166,9 +173,7 @@ No custom spacing tokens are needed.
 
 ## Notes & follow-ups
 
-- **Fonts are loaded via Google Fonts `@import`**, mirroring the reference. This does not
-  work offline — before the PWA ships, self-host Space Grotesk + JetBrains Mono via
-  `@fontsource` packages and drop the remote import.
+- Fonts are self-hosted via `@fontsource-variable` (imported in `src/main.tsx`).
 - Custom hero surfaces (per-set weight input, stat card) and charts are built by hand from
   these tokens — see `docs/charts.md` and the component notes in the HTML reference. This
   doc covers tokens only; no prototype screens are ported.

@@ -28,6 +28,10 @@ describe("cn", () => {
     expect(cn("shadow-elev-1", "shadow-inset-hi")).toBe("shadow-inset-hi")
   })
 
+  it("lets shadow-card replace a resting shadow-elev class", () => {
+    expect(cn("shadow-elev-1", "shadow-card")).toBe("shadow-card")
+  })
+
   it("keeps a custom type-scale class when combined with weight and a colour override", () => {
     expect(cn("text-caption font-medium", "text-foreground")).toBe(
       "text-caption font-medium text-foreground",

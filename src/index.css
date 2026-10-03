@@ -47,6 +47,7 @@
   --warning-soft: #fbbf2422;
   --danger: #f5544b;
   --danger-soft: #f5544b22;
+  --success-foreground: #06140d; /* dark text on solid success */
 
   /* ---- Chart categorical palette (6 series) ---- */
   --chart-1: #3b82f6; /* blue   · solid     · circle   */
@@ -83,11 +84,21 @@
   /* ---- Radii: balanced; base = md ---- */
   --radius: 10px;
 
+  /* ---- Extra surfaces ---- */
+  --scrim: #02030799; /* sheet/dialog overlay */
+  --surface-hero: #16203a; /* start stop of the "today" card gradient */
+  --surface-primary: color-mix(
+    in oklch,
+    var(--primary) 8%,
+    var(--surface)
+  ); /* "next" workout card */
+
   /* ---- Elevation (dark): depth from shadow, never glow ---- */
   --elev-1: 0 1px 2px rgba(0, 0, 0, 0.45);
   --elev-2: 0 6px 18px -4px rgba(0, 0, 0, 0.55);
   --elev-3: 0 18px 44px -8px rgba(0, 0, 0, 0.65);
   --inset-hi: inset 0 1px 0 rgba(255, 255, 255, 0.04);
+  --elev-card: var(--inset-hi), var(--elev-1); /* raised card: top highlight + resting shadow */
 
   /* ---- Motion ---- */
   --dur-fast: 0.14s;
@@ -146,6 +157,9 @@
   --color-surface-2: var(--surface-2);
   --color-surface-3: var(--surface-3);
   --color-sheet: var(--sheet);
+  --color-scrim: var(--scrim);
+  --color-surface-hero: var(--surface-hero);
+  --color-surface-primary: var(--surface-primary);
   --color-border-strong: var(--border-strong);
   --color-grid: var(--grid);
 
@@ -163,6 +177,7 @@
   /* ---- Semantic ---- */
   --color-success: var(--success);
   --color-success-soft: var(--success-soft);
+  --color-success-foreground: var(--success-foreground);
   --color-warning: var(--warning);
   --color-warning-soft: var(--warning-soft);
   --color-danger: var(--danger);
@@ -211,6 +226,7 @@
   --shadow-elev-2: var(--elev-2);
   --shadow-elev-3: var(--elev-3);
   --shadow-inset-hi: var(--inset-hi);
+  --shadow-card: var(--elev-card);
 
   /* ---- Motion ---- */
   --ease-standard: cubic-bezier(0.4, 0, 0.2, 1);

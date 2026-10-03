@@ -22,7 +22,7 @@ const twMerge = extendTailwindMerge({
         "caption",
         "micro",
       ],
-      shadow: ["elev-1", "elev-2", "elev-3", "inset-hi"],
+      shadow: ["elev-1", "elev-2", "elev-3", "inset-hi", "card"],
     },
   },
 })
