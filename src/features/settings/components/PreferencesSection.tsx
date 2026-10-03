@@ -84,7 +84,7 @@ export function CaloriesSection() {
         </button>
         <label className="flex h-12 min-w-0 flex-1 items-center gap-1 rounded-md border border-border bg-surface-2 px-3 focus-within:border-ring focus-within:ring-3 focus-within:ring-ring/50">
           <input
-            className="min-w-0 flex-1 bg-transparent text-right font-mono text-body-lg tabular-nums outline-none"
+            className="-my-px h-12 min-w-0 flex-1 bg-transparent text-right font-mono text-body-lg tabular-nums outline-none"
             inputMode="numeric"
             aria-label={t("settings.calories.label")}
             value={draft}

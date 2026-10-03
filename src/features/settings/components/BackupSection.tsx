@@ -79,7 +79,7 @@ export function BackupSection() {
       <div className="flex flex-col gap-2">
         <Button
           variant="outline"
-          className="h-12 w-full"
+          className="w-full"
           disabled={busy}
           onClick={() => void handleExport()}
         >
@@ -89,7 +89,7 @@ export function BackupSection() {
 
         <Button
           variant="outline"
-          className="h-12 w-full"
+          className="w-full"
           disabled={busy}
           onClick={() => fileRef.current?.click()}
         >

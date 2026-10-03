@@ -161,13 +161,13 @@ function SlotRow({
   const { t } = useTranslation()
 
   return (
-    <li className="rounded-lg border border-border bg-surface shadow-elev-1">
+    <li className="rounded-lg border border-border bg-surface shadow-card">
       <button
         type="button"
         onClick={onEdit}
         className="flex min-h-(--tap) w-full items-center gap-3 rounded-t-lg p-4 text-left transition-colors hover:bg-surface-2"
       >
-        <span className="flex size-9 shrink-0 items-center justify-center rounded-md bg-surface-2 font-mono text-caption text-muted-foreground tabular-nums">
+        <span className="flex size-9 shrink-0 items-center justify-center rounded-full border border-border-strong font-mono text-caption text-muted-foreground tabular-nums">
           {index + 1}
         </span>
         <div className="min-w-0 flex-1">

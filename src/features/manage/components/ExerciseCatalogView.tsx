@@ -80,7 +80,7 @@ export function ExerciseCatalogView() {
             <button
               type="button"
               onClick={() => openEditor(exercise)}
-              className="flex w-full items-center gap-3 rounded-lg border border-border bg-surface p-3 text-left shadow-elev-1 transition-colors hover:border-border-strong"
+              className="flex w-full items-center gap-3 rounded-lg border border-border bg-surface p-3 text-left shadow-card transition-colors hover:border-border-strong"
             >
               <span className="min-w-0 flex-1 truncate text-body font-medium">{exercise.name}</span>
               <Badge>{t(TYPE_LABEL[exercise.type])}</Badge>

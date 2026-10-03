@@ -60,7 +60,7 @@ export function PlanListView() {
           <li
             key={plan.id}
             className={cn(
-              "rounded-lg border bg-surface shadow-elev-1",
+              "rounded-lg border bg-surface shadow-card",
               plan.isActive ? "border-primary" : "border-border",
             )}
           >
