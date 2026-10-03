@@ -77,7 +77,7 @@ const WORKOUTS: SeedWorkout[] = [
   },
 ]
 
-function buildSeed(): { exercises: Exercise[]; plan: TrainingPlan; workouts: Workout[] } {
+export function buildSeed(): { exercises: Exercise[]; plan: TrainingPlan; workouts: Workout[] } {
   const now = new Date()
 
   const exercises: Exercise[] = CATALOG.map((entry) =>
@@ -127,17 +127,18 @@ function buildSeed(): { exercises: Exercise[]; plan: TrainingPlan; workouts: Wor
  * seed was written, false if existing data was found and seeding was skipped.
  */
 export async function seedIfEmpty(): Promise<boolean> {
-  const isEmpty =
-    (await db.exercises.count()) === 0 &&
-    (await db.trainingPlans.count()) === 0 &&
-    (await db.workouts.count()) === 0
-  if (!isEmpty) return false
-
   const { exercises, plan, workouts } = buildSeed()
-  await db.transaction("rw", db.exercises, db.trainingPlans, db.workouts, async () => {
+  // The emptiness check lives inside the rw transaction so concurrent callers
+  // (StrictMode double effect, two tabs) are serialised and the second sees the first seed.
+  return db.transaction("rw", db.exercises, db.trainingPlans, db.workouts, async () => {
+    const isEmpty =
+      (await db.exercises.count()) === 0 &&
+      (await db.trainingPlans.count()) === 0 &&
+      (await db.workouts.count()) === 0
+    if (!isEmpty) return false
     await db.exercises.bulkPut(exercises)
     await db.trainingPlans.put(plan)
     await db.workouts.bulkPut(workouts)
+    return true
   })
-  return true
 }

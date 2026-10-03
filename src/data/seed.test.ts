@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, it } from "vitest"
 import { resetDb } from "../test/resetDb"
 import { db } from "./db"
-import { seedIfEmpty } from "./seed"
+import { buildSeed, seedIfEmpty } from "./seed"
 import { TrainingPlanSchema, WorkoutSchema } from "./schema"
 
 beforeEach(resetDb)
@@ -40,5 +40,19 @@ describe("seedIfEmpty", () => {
     expect(await seedIfEmpty()).toBe(false)
     expect(await db.exercises.count()).toBe(exerciseCount)
     expect(await db.trainingPlans.count()).toBe(1)
+  })
+})
+
+describe("seedIfEmpty concurrency", () => {
+  it("seeds exactly once when called concurrently", async () => {
+    const results = await Promise.all([seedIfEmpty(), seedIfEmpty()])
+    expect(results.filter(Boolean)).toHaveLength(1)
+
+    const plans = await db.trainingPlans.toArray()
+    expect(plans).toHaveLength(1)
+    expect(plans.filter((p) => p.isActive)).toHaveLength(1)
+    expect(await db.workouts.count()).toBe(3)
+    const { exercises } = buildSeed()
+    expect(await db.exercises.count()).toBe(exercises.length)
   })
 })
