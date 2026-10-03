@@ -28,6 +28,9 @@ export function WorkoutSlotsView() {
   const [editingWorkout, setEditingWorkout] = useState(false)
   const [editingSlot, setEditingSlot] = useState<WorkoutExercise | null>(null)
   const [slotOpen, setSlotOpen] = useState(false)
+  // Bumped on every open so the editor remounts: Radix keeps closed content mounted
+  // until its exit animation ends, which would leak a cancelled draft into the next open.
+  const [slotSession, setSlotSession] = useState(0)
 
   if (detail === undefined || catalog === undefined) return null
   if (detail === null) return <Navigate to="/manage/plans" replace />
@@ -38,6 +41,7 @@ export function WorkoutSlotsView() {
 
   function openSlot(slot: WorkoutExercise | null) {
     setEditingSlot(slot)
+    setSlotSession((n) => n + 1)
     setSlotOpen(true)
   }
 
@@ -127,6 +131,7 @@ export function WorkoutSlotsView() {
         onDeleted={() => navigate(`/manage/plans/${plan.id}`, { replace: true })}
       />
       <SlotEditorDialog
+        key={slotSession}
         workout={workout}
         slot={editingSlot}
         catalog={catalog}
