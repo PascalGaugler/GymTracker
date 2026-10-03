@@ -17,7 +17,12 @@ These override the recommendations in §4 wherever they differ.
 - **Bottom navigation keeps FOUR tabs** (Übersicht, Trainieren, Fortschritt, Verwalten),
   even though the prototype has three. Every screen stays one tap away. No package may
   remove or merge a tab. O-07 only emphasises the Log tab within the four.
-- Execution order: WP-01 … WP-18, then O-01 … O-09 (O-10 skipped), then WP-19.
+- Execution order: WP-01 … WP-18, then O-11, then O-01 … O-09 (O-10 skipped), then WP-19.
+- **Added during implementation (user, 2026-10-03):** O-11, Progress tab strip as in the
+  prototype's `.segmented2.seg-grid`: short labels ("Recomp" · "Kraft" · "Körper") in an
+  equal-width, non-scrolling grid, so all tabs are visible at 320. And on
+  `/progress/exercise/:id` the "Kraft" tab is highlighted, because the drilldown is entered from
+  there. Page titles (h1) keep the descriptive names.
 
 ## 1. Intro
 
