@@ -4,6 +4,11 @@ import { useTranslation } from "react-i18next"
 import { Link } from "react-router-dom"
 
 import { Card } from "@/components/ui/card"
+import {
+  SegmentedScroller,
+  segmentedItemVariants,
+  segmentedListVariants,
+} from "@/components/ui/segmented"
 import { useWorkoutRotation } from "@/features/training/hooks/useWorkoutRotation"
 import type { Workout } from "@/data/schema"
 import { cn } from "@/lib/utils"
@@ -22,26 +27,21 @@ function WorkoutSelector({
   onSelect: (id: string) => void
 }) {
   return (
-    <nav className="-mx-4 overflow-x-auto px-4 scrollbar-none [&::-webkit-scrollbar]:hidden">
-      <div className="inline-flex gap-1 rounded-lg bg-surface-2 p-1">
+    <SegmentedScroller>
+      <div className={segmentedListVariants()}>
         {workouts.map((w) => (
           <button
             key={w.id}
             type="button"
             onClick={() => onSelect(w.id)}
             aria-pressed={w.id === selectedId}
-            className={cn(
-              "flex min-h-(--tap) items-center rounded-md px-4 text-caption font-medium whitespace-nowrap transition-colors",
-              w.id === selectedId
-                ? "bg-surface text-foreground shadow-elev-1"
-                : "text-muted-foreground hover:text-foreground",
-            )}
+            className={segmentedItemVariants({ active: w.id === selectedId })}
           >
             {w.name}
           </button>
         ))}
       </div>
-    </nav>
+    </SegmentedScroller>
   )
 }
 

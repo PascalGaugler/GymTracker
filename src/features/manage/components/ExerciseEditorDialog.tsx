@@ -13,10 +13,10 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"
+import { segmentedItemVariants, segmentedListVariants } from "@/components/ui/segmented"
 import { exerciseRepository } from "@/data/repositories"
 import { ExerciseType, type Exercise, WeightUnit } from "@/data/schema"
 import { useSettings } from "@/features/settings/hooks/useSettings"
-import { cn } from "@/lib/utils"
 
 import { useExerciseUsage } from "../hooks/useExerciseUsage"
 
@@ -206,7 +206,7 @@ function SegmentedField<T extends string>({
   return (
     <div className="flex flex-col gap-1.5">
       <span className="text-caption font-medium text-muted-foreground">{label}</span>
-      <div className="flex flex-wrap gap-1.5">
+      <div className={segmentedListVariants({ layout: "wrap" })}>
         {options.map((opt) => {
           const active = opt === value
           return (
@@ -215,12 +215,7 @@ function SegmentedField<T extends string>({
               type="button"
               aria-pressed={active}
               onClick={() => onChange(opt)}
-              className={cn(
-                "min-h-(--tap) min-w-0 rounded-md border px-3 text-caption font-medium transition-colors",
-                active
-                  ? "border-primary bg-primary-soft text-primary"
-                  : "border-border bg-surface-2 text-muted-foreground hover:text-foreground",
-              )}
+              className={segmentedItemVariants({ active })}
             >
               {renderLabel(opt)}
             </button>

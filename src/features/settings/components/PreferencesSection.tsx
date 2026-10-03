@@ -4,6 +4,7 @@ import { useTranslation } from "react-i18next"
 
 import { updateSettings } from "@/data/settings"
 import { WeightUnit } from "@/data/schema"
+import { segmentedItemVariants, segmentedListVariants } from "@/components/ui/segmented"
 import { cn } from "@/lib/utils"
 
 import { useSettings } from "../hooks/useSettings"
@@ -21,7 +22,7 @@ export function UnitsSection() {
 
   return (
     <SettingsSection title={t("settings.units.title")} body={t("settings.units.body")}>
-      <div className="flex gap-1.5">
+      <div className={segmentedListVariants({ layout: "fill" })}>
         {WeightUnit.options.map((unit) => {
           const active = unit === defaultWeightUnit
           return (
@@ -30,12 +31,7 @@ export function UnitsSection() {
               type="button"
               aria-pressed={active}
               onClick={() => updateSettings({ defaultWeightUnit: unit })}
-              className={cn(
-                "min-h-(--tap) min-w-0 flex-1 rounded-md border px-3 font-mono text-body transition-colors",
-                active
-                  ? "border-primary bg-primary-soft text-primary"
-                  : "border-border bg-surface-2 text-muted-foreground hover:text-foreground",
-              )}
+              className={cn(segmentedItemVariants({ active }), "font-mono text-body")}
             >
               {unit}
             </button>

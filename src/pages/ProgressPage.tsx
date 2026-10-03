@@ -1,7 +1,11 @@
 import { useTranslation } from "react-i18next"
 import { NavLink, Outlet } from "react-router-dom"
 
-import { cn } from "@/lib/utils"
+import {
+  SegmentedScroller,
+  segmentedItemVariants,
+  segmentedListVariants,
+} from "@/components/ui/segmented"
 
 import { PageHeader } from "./PageHeader"
 import { Placeholder } from "./Placeholder"
@@ -22,26 +26,19 @@ function ProgressNav() {
   const { t } = useTranslation()
 
   return (
-    <nav className="-mx-4 mb-5 overflow-x-auto px-4 scrollbar-none [&::-webkit-scrollbar]:hidden">
-      <div className="inline-flex gap-1 rounded-lg bg-surface-2 p-1">
+    <SegmentedScroller className="mb-5">
+      <div className={segmentedListVariants()}>
         {TABS.map((tab) => (
           <NavLink
             key={tab.to}
             to={tab.to}
-            className={({ isActive }) =>
-              cn(
-                "flex min-h-(--tap) items-center rounded-md px-4 text-caption font-medium whitespace-nowrap transition-colors",
-                isActive
-                  ? "bg-surface text-foreground shadow-elev-1"
-                  : "text-muted-foreground hover:text-foreground",
-              )
-            }
+            className={({ isActive }) => segmentedItemVariants({ active: isActive })}
           >
             {t(tab.key)}
           </NavLink>
         ))}
       </div>
-    </nav>
+    </SegmentedScroller>
   )
 }
 
