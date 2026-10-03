@@ -100,6 +100,14 @@ export interface MeasurementComparison {
   yTicks: number[]
   /** Which series have data (drives which lines + legend entries render). */
   present: Record<ComparisonType, boolean>
+  /** Raw latest − first in cm, 1 decimal; null with fewer than 2 points. */
+  changeSinceStart: Record<ComparisonType, number | null>
+}
+
+function rawChange(measurements: Measurement[]): number | null {
+  if (measurements.length < 2) return null
+  const sorted = [...measurements].sort((a, b) => a.measuredAt.getTime() - b.measuredAt.getTime())
+  return round1(sorted[sorted.length - 1].value - sorted[0].value)
 }
 
 /** Index one circumference series to 100 at its own first recorded value. */
@@ -170,6 +178,11 @@ export function buildMeasurementComparison(
       waist: indexed.waist.length > 0,
       chest: indexed.chest.length > 0,
       biceps: indexed.biceps.length > 0,
+    },
+    changeSinceStart: {
+      waist: rawChange(series.waist),
+      chest: rawChange(series.chest),
+      biceps: rawChange(series.biceps),
     },
   }
 }

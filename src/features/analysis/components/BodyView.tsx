@@ -9,10 +9,11 @@ import { EmptyState } from "@/pages/EmptyState"
 import { useBodyData } from "../hooks/useBodyData"
 import { trendDir } from "../stats"
 import { BodyweightChart } from "./BodyweightChart"
-import { LegendSwatch } from "./ChartSwatches"
+import { LegendSwatch, TooltipSwatch } from "./ChartSwatches"
 import { COMPARISON_SERIES } from "./chartCues"
 import { MeasurementComparisonChart } from "./MeasurementComparisonChart"
 import { StatCard } from "./StatCard"
+import { StatTile } from "./StatTile"
 import { TrendBadge } from "./TrendBadge"
 
 // Rates within ±this (kg/week) read as "flat" rather than up/down noise.
@@ -113,6 +114,27 @@ export function BodyView() {
           <p className="font-mono text-micro tracking-normal text-subtle">
             {t("progress.body.comparison.caption")}
           </p>
+          <div className="@container grid grid-cols-3 gap-2">
+            {COMPARISON_SERIES.filter((s) => comparison.present[s.key]).map((s) => {
+              const change = comparison.changeSinceStart[s.key]
+              if (change == null) return null
+              const good = s.key === "waist" ? change < 0 : change > 0
+              return (
+                <StatTile
+                  key={s.key}
+                  value={`${change > 0 ? "+" : change < 0 ? "−" : ""}${Math.abs(change).toFixed(1)}`}
+                  unit="cm"
+                  label={
+                    <span className="flex min-w-0 items-center gap-1.5">
+                      <TooltipSwatch cue={s.cue} color={s.color} />
+                      <span className="truncate">{t(s.labelKey)}</span>
+                    </span>
+                  }
+                  tone={good ? "good" : "default"}
+                />
+              )
+            })}
+          </div>
           <MeasurementComparisonChart data={comparison} />
           <div className="flex flex-wrap items-center gap-x-5 gap-y-2">
             {COMPARISON_SERIES.filter((s) => comparison.present[s.key]).map((s) => (
