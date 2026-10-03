@@ -9,20 +9,21 @@ CRUD) · **PWA early** (manifest/SW/fonts/persist in Phase 0) · German (`de`) d
 
 ## Status
 
-| #   | Phase                             | Status | Done-when (short)                        | Learnings            |
-| --- | --------------------------------- | ------ | ---------------------------------------- | -------------------- |
-| 0   | Foundation (data + PWA + tooling) | done   | data layer + PWA + tooling green         | see Phase 0 notes ↓  |
-| 1   | App shell + nav + i18n            | done   | tab bar + routes render, seed runs once  | see Phase 1 notes ↓  |
-| 2   | Log session (hero input)          | done   | log + save a session, placeholders work  | see Phase 2 notes ↓  |
-| 3   | Measurements quick-add            | done   | sheet writes a Measurement               | see Phase 3 notes ↓  |
-| 4   | Dashboard cards                   | done   | live bodyweight + rate + quick actions   | see Phase 4 notes ↓  |
-| 5   | Progress: Recomposition chart     | done   | one-axis indexed strength vs bodyweight  | see Phase 5 notes ↓  |
-| 6   | Progress: Strength progression    | done   | per-workout top-set lines, swap-aware    | see Phase 6 notes ↓  |
-| 7   | Progress: Exercise drilldown      | done   | top-set line + min–max band              | see Phase 7 notes ↓  |
-| 8   | Progress: Body chart              | done   | bodyweight trend+rate + measurements     | see Phase 8 notes ↓  |
-| 9   | Manage: exercise catalog          | done   | catalog CRUD + search                    | see Phase 9 notes ↓  |
-| 10  | Manage: plans + workouts          | done   | plan/workout/slot editor, set active     | see Phase 10 notes ↓ |
-| 11  | Settings + backup                 | done   | export/import round-trips, prefs persist | see Phase 11 notes ↓ |
+| #   | Phase                             | Status | Done-when (short)                        | Learnings              |
+| --- | --------------------------------- | ------ | ---------------------------------------- | ---------------------- |
+| 0   | Foundation (data + PWA + tooling) | done   | data layer + PWA + tooling green         | see Phase 0 notes ↓    |
+| 1   | App shell + nav + i18n            | done   | tab bar + routes render, seed runs once  | see Phase 1 notes ↓    |
+| 2   | Log session (hero input)          | done   | log + save a session, placeholders work  | see Phase 2 notes ↓    |
+| 3   | Measurements quick-add            | done   | sheet writes a Measurement               | see Phase 3 notes ↓    |
+| 4   | Dashboard cards                   | done   | live bodyweight + rate + quick actions   | see Phase 4 notes ↓    |
+| 5   | Progress: Recomposition chart     | done   | one-axis indexed strength vs bodyweight  | see Phase 5 notes ↓    |
+| 6   | Progress: Strength progression    | done   | per-workout top-set lines, swap-aware    | see Phase 6 notes ↓    |
+| 7   | Progress: Exercise drilldown      | done   | top-set line + min–max band              | see Phase 7 notes ↓    |
+| 8   | Progress: Body chart              | done   | bodyweight trend+rate + measurements     | see Phase 8 notes ↓    |
+| 9   | Manage: exercise catalog          | done   | catalog CRUD + search                    | see Phase 9 notes ↓    |
+| 10  | Manage: plans + workouts          | done   | plan/workout/slot editor, set active     | see Phase 10 notes ↓   |
+| 11  | Settings + backup                 | done   | export/import round-trips, prefs persist | see Phase 11 notes ↓   |
+| DA  | Design alignment                  | todo   | prototype parity, 320px-clean, ci green  | see Design alignment ↓ |
 
 `Status` ∈ `todo · in_progress · done`. Flip to `done` ONLY after
 `npm run typecheck && npm run lint && npm run test` pass.
@@ -473,6 +474,19 @@ threshold + units persist; gate passes.
   one 1.1 MB chunk, 325 kB gzipped.
 - **Known cosmetic:** `favicon.svg` is a leftover purple bolt (`#863bff`, not a design token) and
   does not match the blue dumbbell app icon.
+
+## Design alignment — match the Claude Design prototype (post-Phase-11)
+
+**Status:** planned (`todo`) — not started.
+**Build:** the work packages in `docs/design-fix-plan.md` (WP-01…WP-19, plus OPTIONAL O-01…O-10
+only once the user answers its §4 open questions), in order; one package per session/commit.
+**Source:** `docs/design-audit.md` (47 consolidated findings; per-group detail in
+`docs/design-audit/`). Visual reference stays `design-reference/` (never imported).
+**Out of scope:** calories data / Yazio (product Phase 2), heatmap (product Phase 3).
+**Done when:** every non-optional WP is merged, every route is overflow-free at 320px and matches
+the prototype at 390px (iframe harness in the plan's §1), and `npm run ci` passes.
+
+**Learnings (affect later phases):** —
 
 ---
 
