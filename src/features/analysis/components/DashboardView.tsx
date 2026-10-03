@@ -8,6 +8,7 @@ import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { planRepository } from "@/data/repositories"
 import { MeasurementQuickAdd } from "@/features/measurements/components/MeasurementQuickAdd"
+import { formatSigned } from "@/lib/format"
 import { EmptyState } from "@/pages/EmptyState"
 import { PageHeader } from "@/pages/PageHeader"
 
@@ -21,12 +22,6 @@ import { TrendBadge } from "./TrendBadge"
 
 // Rates within ±this read as "flat" (kg/cm per week) rather than up/down noise.
 const RATE_EPSILON = 0.05
-
-// Explicit-sign value with a proper minus glyph, e.g. "−6.2 cm".
-function signed(value: number, unit: string, digits = 1): string {
-  const sign = value > 0 ? "+" : value < 0 ? "−" : ""
-  return `${sign}${Math.abs(value).toFixed(digits)} ${unit}`
-}
 
 // A live measurement card: latest value, weekly-rate trend badge, and the
 // total change since tracking began. Down is the desirable direction (a cut).
@@ -55,7 +50,7 @@ function MeasurementStat({
 
   const sub =
     count > 1 && changeSinceStart !== 0
-      ? t("dashboard.sinceStart", { value: signed(changeSinceStart, unit) })
+      ? t("dashboard.sinceStart", { value: `${formatSigned(changeSinceStart, 1)} ${unit}` })
       : undefined
 
   return <StatCard label={label} value={latest.toFixed(1)} unit={unit} badge={badge} sub={sub} />
@@ -83,7 +78,7 @@ function StrengthStat() {
   const delta = strength.latest - BASELINE_INDEX
   const badge = (
     <TrendBadge dir={trendDir(delta, INDEX_EPSILON)} good={delta >= 0}>
-      {signed(delta, "", 1).trim()}
+      {formatSigned(delta, 1)}
     </TrendBadge>
   )
 

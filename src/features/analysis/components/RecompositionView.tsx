@@ -1,6 +1,7 @@
 import { useTranslation } from "react-i18next"
 
 import { Card } from "@/components/ui/card"
+import { formatSigned } from "@/lib/format"
 import { EmptyState } from "@/pages/EmptyState"
 
 import { recompositionInsight } from "../insights"
@@ -15,7 +16,7 @@ import { TrendBadge } from "./TrendBadge"
 // legend and a one-line read of the thesis. Empty until there is something to
 // index (a logged session or a weigh-in).
 export function RecompositionView() {
-  const { t, i18n } = useTranslation()
+  const { t } = useTranslation()
   const data = useRecompositionData()
 
   if (data === undefined) return null
@@ -33,13 +34,9 @@ export function RecompositionView() {
   const strengthDelta = data.latestStrengthIndex == null ? null : data.latestStrengthIndex - 100
   const weightDelta = data.latestBodyweightIndex == null ? null : data.latestBodyweightIndex - 100
   const insight = recompositionInsight(strengthDelta, weightDelta)
-  const pct = new Intl.NumberFormat(i18n.language, {
-    maximumFractionDigits: 1,
-    signDisplay: "exceptZero",
-  })
   const params = {
-    strength: pct.format(strengthDelta ?? 0),
-    weight: pct.format(weightDelta ?? 0),
+    strength: formatSigned(strengthDelta ?? 0, 1),
+    weight: formatSigned(weightDelta ?? 0, 1),
   }
 
   return (

@@ -157,6 +157,18 @@ const en: typeof de = {
         caption: "Indexed to 100 at start · one axis",
         baseline: "Baseline = 100",
       },
+      insight: {
+        weightNote: "Daily values fluctuate — the trend matters, not a single day.",
+        waistBadge: "Waist {{value}}",
+        noWaist: "Measure your waist (at least twice) to compare fat and muscle trends.",
+        waistUp: "Waist is growing — check calories and diet.",
+        waistFlat: "Waist unchanged — no fat loss visible yet, give the deficit time.",
+        waistDown: "Waist down — fat loss is working. Also measure chest & biceps.",
+        waistDownMuscleUp: "Waist down, chest & biceps up — losing fat, building muscle.",
+        waistDownMuscleHolds: "Waist down, chest & biceps holding — losing fat, keeping muscle.",
+        waistDownMuscleDown:
+          "Waist down, but chest or biceps are shrinking — check protein and recovery.",
+      },
       empty: {
         title: "No body data yet",
         body: "Log your bodyweight and a few circumferences, and your trend will appear here.",

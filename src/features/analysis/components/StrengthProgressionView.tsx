@@ -15,6 +15,7 @@ import { cn } from "@/lib/utils"
 import { EmptyState } from "@/pages/EmptyState"
 
 import { useWorkoutProgression } from "../hooks/useWorkoutProgression"
+import { Insight } from "./Insight"
 import { StrengthProgressionChart } from "./StrengthProgressionChart"
 
 function WorkoutSelector({
@@ -125,7 +126,7 @@ function WorkoutProgression({ workout }: { workout: Workout }) {
         })}
       </div>
 
-      <p className="text-caption text-subtle">{t("progress.strength.swapHint")}</p>
+      <Insight>{t("progress.strength.swapHint")}</Insight>
     </Card>
   )
 }

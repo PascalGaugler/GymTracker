@@ -4,13 +4,16 @@ import { useTranslation } from "react-i18next"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 import { MeasurementQuickAdd } from "@/features/measurements/components/MeasurementQuickAdd"
+import { formatSigned } from "@/lib/format"
 import { EmptyState } from "@/pages/EmptyState"
 
 import { useBodyData } from "../hooks/useBodyData"
+import { bodyComparisonInsight, bodyweightInsight } from "../insights"
 import { trendDir } from "../stats"
 import { BodyweightChart } from "./BodyweightChart"
 import { LegendSwatch, TooltipSwatch } from "./ChartSwatches"
 import { COMPARISON_SERIES } from "./chartCues"
+import { Insight } from "./Insight"
 import { MeasurementComparisonChart } from "./MeasurementComparisonChart"
 import { StatCard } from "./StatCard"
 import { StatTile } from "./StatTile"
@@ -18,12 +21,6 @@ import { TrendBadge } from "./TrendBadge"
 
 // Rates within ±this (kg/week) read as "flat" rather than up/down noise.
 const RATE_EPSILON = 0.05
-
-// Explicit-sign value with a proper minus glyph, e.g. "−1.4 kg".
-function signed(value: number, unit: string, digits = 1): string {
-  const sign = value > 0 ? "+" : value < 0 ? "−" : ""
-  return `${sign}${Math.abs(value).toFixed(digits)} ${unit}`
-}
 
 // The bodyweight rate readout, reusing the dashboard StatCard/TrendBadge: latest
 // weight, weekly rate badge (down is the desirable direction in a cut), and the
@@ -50,7 +47,7 @@ function RateCard({
 
   const sub =
     changeSinceStart != null && changeSinceStart !== 0
-      ? t("dashboard.sinceStart", { value: signed(changeSinceStart, unit) })
+      ? t("dashboard.sinceStart", { value: `${formatSigned(changeSinceStart, 1)} ${unit}` })
       : undefined
 
   return (
@@ -90,6 +87,9 @@ export function BodyView() {
     )
   }
 
+  const weightBadge = bodyweightInsight(trend.changeSinceStart)
+  const comparisonInsight = bodyComparisonInsight(comparison.changeSinceStart)
+
   return (
     <div className="flex flex-col gap-4">
       {trend.latest != null && (
@@ -105,6 +105,17 @@ export function BodyView() {
               {t("progress.body.weight.caption")}
             </p>
             <BodyweightChart trend={trend} />
+            {weightBadge && (
+              <Insight
+                badge={
+                  <TrendBadge dir={weightBadge.dir} good={weightBadge.good}>
+                    {formatSigned(weightBadge.value, 1)} {trend.unit}
+                  </TrendBadge>
+                }
+              >
+                {t("progress.body.insight.weightNote")}
+              </Insight>
+            )}
           </Card>
         </>
       )}
@@ -122,7 +133,7 @@ export function BodyView() {
               return (
                 <StatTile
                   key={s.key}
-                  value={`${change > 0 ? "+" : change < 0 ? "−" : ""}${Math.abs(change).toFixed(1)}`}
+                  value={formatSigned(change, 1)}
                   unit="cm"
                   label={
                     <span className="flex min-w-0 items-center gap-1.5">
@@ -141,6 +152,19 @@ export function BodyView() {
               <LegendSwatch key={s.key} cue={s.cue} color={s.color} label={t(s.labelKey)} />
             ))}
           </div>
+          <Insight
+            badge={
+              comparisonInsight.badge && (
+                <TrendBadge dir={comparisonInsight.badge.dir} good={comparisonInsight.badge.good}>
+                  {t("progress.body.insight.waistBadge", {
+                    value: formatSigned(comparisonInsight.badge.value, 1),
+                  })}
+                </TrendBadge>
+              )
+            }
+          >
+            {t(comparisonInsight.textKey)}
+          </Insight>
         </Card>
       )}
 

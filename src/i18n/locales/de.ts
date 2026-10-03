@@ -154,6 +154,20 @@ const de = {
         caption: "Auf 100 zum Start indexiert · eine Achse",
         baseline: "Start = 100",
       },
+      insight: {
+        weightNote: "Tageswerte schwanken — der Trend zählt, nicht der einzelne Tag.",
+        waistBadge: "Taille {{value}}",
+        noWaist:
+          "Miss deine Taille (mindestens zweimal), um Fett- und Muskelverlauf zu vergleichen.",
+        waistUp: "Taille wächst — Kalorien und Ernährung prüfen.",
+        waistFlat: "Taille unverändert — noch kein Fettverlust sichtbar, gib dem Defizit Zeit.",
+        waistDown: "Taille runter — Fett verlieren läuft. Brust & Bizeps zusätzlich messen.",
+        waistDownMuscleUp: "Taille runter, Brust & Bizeps rauf — Fett verlieren, Muskel aufbauen.",
+        waistDownMuscleHolds:
+          "Taille runter, Brust & Bizeps halten — Fett verlieren, Muskel halten.",
+        waistDownMuscleDown:
+          "Taille runter, aber Brust oder Bizeps schrumpfen — Protein und Regeneration prüfen.",
+      },
       empty: {
         title: "Noch keine Körperdaten",
         body: "Erfasse dein Körpergewicht und ein paar Umfänge, dann erscheint hier dein Verlauf.",
