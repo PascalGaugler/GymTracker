@@ -36,7 +36,7 @@ export function PlanListView() {
           {plans ? t("manage.plans.count", { count: plans.length }) : ""}
         </p>
         <Button
-          className="size-11 shrink-0"
+          className="shrink-0"
           size="icon"
           aria-label={t("manage.plans.add")}
           onClick={() => setCreating(true)}

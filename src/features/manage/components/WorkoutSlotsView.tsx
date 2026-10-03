@@ -72,7 +72,7 @@ export function WorkoutSlotsView() {
         <Button
           variant="outline"
           size="icon"
-          className="size-11 shrink-0"
+          className="shrink-0"
           aria-label={t("manage.workouts.editTitle")}
           onClick={() => setEditingWorkout(true)}
         >
@@ -83,7 +83,7 @@ export function WorkoutSlotsView() {
       <div className="mb-3 flex items-center justify-between gap-2">
         <h3 className="min-w-0 truncate text-h3 font-semibold">{t("manage.slots.title")}</h3>
         <Button
-          className="size-11 shrink-0"
+          className="shrink-0"
           size="icon"
           aria-label={t("manage.slots.add")}
           onClick={() => openSlot(null)}

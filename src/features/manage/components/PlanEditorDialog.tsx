@@ -127,7 +127,6 @@ function PlanForm({
         </span>
         <Input
           autoFocus={!plan}
-          className="h-11"
           value={name}
           placeholder={t("manage.plans.fields.namePlaceholder")}
           onChange={(e) => setName(e.target.value)}
@@ -150,7 +149,7 @@ function PlanForm({
               type="button"
               variant="destructive"
               disabled={busy}
-              className="h-11 sm:mr-auto"
+              className="sm:mr-auto"
               onClick={() => void handleDelete()}
             >
               {t("manage.plans.deleteAnyway")}
@@ -160,13 +159,13 @@ function PlanForm({
               type="button"
               variant="ghost"
               disabled={busy}
-              className="h-11 text-destructive hover:text-destructive sm:mr-auto"
+              className="text-destructive hover:text-destructive sm:mr-auto"
               onClick={() => setConfirmingDelete(true)}
             >
               {t("manage.plans.delete")}
             </Button>
           ))}
-        <Button type="submit" disabled={busy || !trimmed} className="h-11">
+        <Button type="submit" disabled={busy || !trimmed}>
           {t("manage.plans.save")}
         </Button>
       </DialogFooter>

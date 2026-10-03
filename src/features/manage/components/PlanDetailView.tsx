@@ -72,7 +72,7 @@ export function PlanDetailView() {
         <Button
           variant="outline"
           size="icon"
-          className="size-11 shrink-0"
+          className="shrink-0"
           aria-label={t("manage.plans.editTitle")}
           onClick={() => setEditingPlan(true)}
         >
@@ -81,7 +81,7 @@ export function PlanDetailView() {
       </div>
 
       {!plan.isActive && (
-        <Button variant="outline" className="mb-5 h-11 w-full" onClick={() => void activate()}>
+        <Button variant="outline" className="mb-5 w-full" onClick={() => void activate()}>
           {t("manage.plans.activate")}
         </Button>
       )}
@@ -89,7 +89,7 @@ export function PlanDetailView() {
       <div className="mb-3 flex items-center justify-between gap-2">
         <h3 className="min-w-0 truncate text-h3 font-semibold">{t("manage.workouts.title")}</h3>
         <Button
-          className="size-11 shrink-0"
+          className="shrink-0"
           size="icon"
           aria-label={t("manage.workouts.add")}
           onClick={() => setAddingWorkout(true)}

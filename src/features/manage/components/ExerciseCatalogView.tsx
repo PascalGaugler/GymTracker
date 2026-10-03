@@ -35,13 +35,13 @@ export function ExerciseCatalogView() {
     <>
       <div className="mb-4 flex items-center gap-2">
         <Input
-          className="h-11 flex-1"
+          className="flex-1"
           value={query}
           placeholder={t("manage.exercises.search")}
           onChange={(e) => setQuery(e.target.value)}
         />
         <Button
-          className="size-11 shrink-0"
+          className="shrink-0"
           size="icon"
           aria-label={t("manage.exercises.add")}
           onClick={() => openEditor(null)}
