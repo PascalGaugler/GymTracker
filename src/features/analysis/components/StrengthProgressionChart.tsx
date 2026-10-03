@@ -108,7 +108,7 @@ export function StrengthProgressionChart({
         {visible.map((s) => (
           <Line
             key={s.exerciseId}
-            type="monotone"
+            type="stepAfter"
             dataKey={s.exerciseId}
             name={s.name}
             stroke={s.color}

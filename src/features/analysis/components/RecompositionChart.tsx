@@ -114,7 +114,7 @@ export function RecompositionChart({ data }: { data: RecompositionData }) {
         />
         <Tooltip content={<ChartTooltip />} cursor={{ stroke: "var(--border-strong)" }} />
         <Line
-          type="monotone"
+          type="stepAfter"
           dataKey="strength"
           name={t("progress.recomposition.strengthSeries")}
           stroke={STRENGTH}

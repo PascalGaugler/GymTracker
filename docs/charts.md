@@ -34,7 +34,8 @@ less work looks like more), whereas the top set is robust to a missing/fatigue s
 user trains a fixed rep target (~7–8, double progression: hold reps, raise load when
 exceeded), so top-set weight at a steady rep target is a clean strength proxy. Expect
 stair-stepped lines (flat then a jump), which is correct double progression. Average may
-be offered as a toggle, but top set is the default.
+be offered as a toggle, but top set is the default. Strength series render as `stepAfter`
+steps; bodyweight/measurement series stay smoothed.
 
 > Reps are not tracked (deliberate — avoids cheat-rep temptation), so estimated 1RM is not
 > available. Top-set weight is the best available proxy and is treated as a proxy, not a

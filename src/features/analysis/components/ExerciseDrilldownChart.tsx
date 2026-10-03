@@ -100,7 +100,7 @@ export function ExerciseDrilldownChart({ data, unit }: { data: DrilldownData; un
           cursor={{ stroke: "var(--border-strong)" }}
         />
         <Area
-          type="monotone"
+          type="stepAfter"
           dataKey="band"
           stroke="none"
           fill={BAND}
@@ -109,7 +109,7 @@ export function ExerciseDrilldownChart({ data, unit }: { data: DrilldownData; un
           activeDot={false}
         />
         <Line
-          type="monotone"
+          type="stepAfter"
           dataKey="top"
           stroke={LINE}
           strokeWidth={2.6}
