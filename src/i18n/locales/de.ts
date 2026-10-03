@@ -84,7 +84,7 @@ const de = {
     },
     placeholder: "Diagramme erscheinen, sobald du Trainings und Messungen erfasst hast.",
     recomposition: {
-      caption: "Kraft-Index und Körpergewicht, beide auf 100 zum Start indexiert.",
+      caption: "Beide auf 100 indexiert · eine Achse",
       strengthSeries: "Kraft-Index",
       bodyweightSeries: "Körpergewicht",
       baseline: "Start = 100",
@@ -94,7 +94,7 @@ const de = {
       },
     },
     strength: {
-      caption: "Top-Satz je Übung in diesem Workout. Stufen = doppelte Progression.",
+      caption: "Top-Satz je Einheit · Stufen = doppelte Progression",
       swapHint: "Getauschte Übung startet als neue Linie — ohne Brücke zur alten.",
       openExercise: "{{name}} im Detail ansehen",
       empty: {
@@ -107,7 +107,7 @@ const de = {
       },
     },
     exercise: {
-      caption: "Top-Satz (Linie) über dem Min–Max-Bereich der Sätze je Einheit.",
+      caption: "Top-Satz (Linie) · Min–Max der Sätze (Band)",
       topSet: "Top-Satz",
       range: "Bereich",
       empty: {
@@ -117,13 +117,12 @@ const de = {
     },
     body: {
       weight: {
-        caption: "Rohwerte (Punkte) mit 7-Tage-Schnitt (Linie) — der Schnitt zeigt den Trend.",
+        caption: "Rohwerte (Punkte) · 7-Tage-Schnitt (Linie)",
         raw: "Gewicht",
         trend: "7-Tage-Schnitt",
       },
       comparison: {
-        caption:
-          "Umfänge auf 100 zum Start indexiert: Taille (Fett) runter, Brust/Bizeps (Muskel) halten.",
+        caption: "Auf 100 zum Start indexiert · eine Achse",
         baseline: "Start = 100",
       },
       empty: {

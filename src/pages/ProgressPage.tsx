@@ -1,5 +1,5 @@
 import { useTranslation } from "react-i18next"
-import { NavLink, Outlet } from "react-router-dom"
+import { NavLink, Outlet, useLocation } from "react-router-dom"
 
 import {
   SegmentedScroller,
@@ -42,12 +42,24 @@ function ProgressNav() {
   )
 }
 
+const VIEW_SEGMENTS = ["recomposition", "strength", "exercise", "body"] as const
+
+// The title names the active sub-view; the overline stays "Fortschritt".
+function useViewTitle(): string {
+  const { t } = useTranslation()
+  const { pathname } = useLocation()
+  const seg = pathname.split("/")[2]
+  const view = VIEW_SEGMENTS.find((v) => v === seg)
+  return view ? t(`progress.tabs.${view}`) : t("progress.title")
+}
+
 export function ProgressPage() {
   const { t } = useTranslation()
+  const title = useViewTitle()
 
   return (
     <>
-      <PageHeader overline={t("nav.progress")} title={t("progress.title")} />
+      <PageHeader overline={t("nav.progress")} title={title} />
       <ProgressNav />
       <Outlet />
     </>

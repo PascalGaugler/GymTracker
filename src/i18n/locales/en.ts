@@ -86,7 +86,7 @@ const en: typeof de = {
     },
     placeholder: "Charts appear once you've logged sessions and measurements.",
     recomposition: {
-      caption: "Strength index and bodyweight, both indexed to 100 at the start.",
+      caption: "Both indexed to 100 · one axis",
       strengthSeries: "Strength index",
       bodyweightSeries: "Bodyweight",
       baseline: "Baseline = 100",
@@ -96,7 +96,7 @@ const en: typeof de = {
       },
     },
     strength: {
-      caption: "Top set per exercise in this workout. Steps = double progression.",
+      caption: "Top set per session · steps = double progression",
       swapHint: "A swapped exercise starts as a new line — no bridge to the old one.",
       openExercise: "View {{name}} in detail",
       empty: {
@@ -109,7 +109,7 @@ const en: typeof de = {
       },
     },
     exercise: {
-      caption: "Top set (line) over the min–max range of the session's sets.",
+      caption: "Top set (line) · set min–max (band)",
       topSet: "Top set",
       range: "Range",
       empty: {
@@ -119,14 +119,12 @@ const en: typeof de = {
     },
     body: {
       weight: {
-        caption:
-          "Raw weigh-ins (points) with a 7-day average (line) — the average shows the trend.",
+        caption: "Raw weigh-ins (dots) · 7-day average (line)",
         raw: "Weight",
         trend: "7-day average",
       },
       comparison: {
-        caption:
-          "Circumferences indexed to 100 at the start: waist (fat) down, chest/biceps (muscle) holding.",
+        caption: "Indexed to 100 at start · one axis",
         baseline: "Baseline = 100",
       },
       empty: {

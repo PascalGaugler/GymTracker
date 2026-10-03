@@ -45,8 +45,10 @@ export function RecompositionView() {
   }
 
   return (
-    <Card className="gap-4 p-4">
-      <p className="text-caption text-muted-foreground">{t("progress.recomposition.caption")}</p>
+    <Card className="gap-3.5 px-3.5 pt-4.5 pb-4">
+      <p className="font-mono text-micro tracking-normal text-subtle">
+        {t("progress.recomposition.caption")}
+      </p>
 
       <RecompositionChart data={data} />
 

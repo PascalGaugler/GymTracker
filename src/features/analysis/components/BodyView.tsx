@@ -119,8 +119,8 @@ export function BodyView() {
             ratePerWeek={trend.ratePerWeek}
             changeSinceStart={trend.changeSinceStart}
           />
-          <Card className="gap-4 p-4">
-            <p className="text-caption text-muted-foreground">
+          <Card className="gap-3.5 px-3.5 pt-4.5 pb-4">
+            <p className="font-mono text-micro tracking-normal text-subtle">
               {t("progress.body.weight.caption")}
             </p>
             <BodyweightChart trend={trend} />
@@ -129,8 +129,8 @@ export function BodyView() {
       )}
 
       {hasComparison && (
-        <Card className="gap-4 p-4">
-          <p className="text-caption text-muted-foreground">
+        <Card className="gap-3.5 px-3.5 pt-4.5 pb-4">
+          <p className="font-mono text-micro tracking-normal text-subtle">
             {t("progress.body.comparison.caption")}
           </p>
           <MeasurementComparisonChart data={comparison} />

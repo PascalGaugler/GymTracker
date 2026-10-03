@@ -75,8 +75,10 @@ function WorkoutProgression({ workout }: { workout: Workout }) {
   }
 
   return (
-    <Card className="gap-4 p-4">
-      <p className="text-caption text-muted-foreground">{t("progress.strength.caption")}</p>
+    <Card className="gap-3.5 px-3.5 pt-4.5 pb-4">
+      <p className="font-mono text-micro tracking-normal text-subtle">
+        {t("progress.strength.caption")}
+      </p>
 
       <StrengthProgressionChart data={data} visible={visible} />
 
@@ -89,7 +91,7 @@ function WorkoutProgression({ workout }: { workout: Workout }) {
             <div
               key={s.exerciseId}
               className={cn(
-                "inline-flex min-h-(--tap) max-w-full items-center rounded-full border transition-colors",
+                "inline-flex min-h-(--tap) max-w-full items-center rounded-xl border transition-colors",
                 on ? "bg-surface-2" : "border-border",
               )}
               style={on ? { borderColor: s.color } : undefined}
@@ -99,7 +101,7 @@ function WorkoutProgression({ workout }: { workout: Workout }) {
                 onClick={() => toggle(s.exerciseId)}
                 aria-pressed={on}
                 className={cn(
-                  "inline-flex min-w-0 items-center gap-2 self-stretch rounded-l-full pr-2 pl-3 text-caption font-medium",
+                  "inline-flex min-w-0 items-center gap-2 self-stretch rounded-l-xl py-1 pr-2 pl-3 text-caption font-medium",
                   on ? "" : "text-subtle",
                 )}
                 style={on ? { color: s.color } : undefined}
@@ -109,12 +111,12 @@ function WorkoutProgression({ workout }: { workout: Workout }) {
                   style={{ background: on ? s.color : "var(--border-strong)" }}
                   aria-hidden="true"
                 />
-                <span className="truncate">{s.name}</span>
+                <span className="line-clamp-2 text-left wrap-break-word">{s.name}</span>
               </button>
               <Link
                 to={`/progress/exercise/${s.exerciseId}`}
                 aria-label={t("progress.strength.openExercise", { name: s.name })}
-                className="flex min-w-(--tap) shrink-0 items-center justify-center self-stretch rounded-r-full border-l border-border text-subtle hover:text-foreground"
+                className="flex min-w-(--tap) shrink-0 items-center justify-center self-stretch rounded-r-xl border-l border-border text-subtle hover:text-foreground"
               >
                 <ChevronRight className="size-4" aria-hidden="true" />
               </Link>
