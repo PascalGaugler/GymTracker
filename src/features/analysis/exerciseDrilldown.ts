@@ -24,6 +24,10 @@ export interface DrilldownData {
   yDomain: [number, number]
   yTicks: number[]
   sessionCount: number
+  /** Top set of the most recent session; null with no history. */
+  latestTop: number | null
+  /** Latest top set minus the FIRST session's top set (fixed start, never rolling); null under 2 sessions. */
+  changeSinceStart: number | null
 }
 
 /** Group the exercise's sets by session, then derive top + min–max per session. */
@@ -45,5 +49,15 @@ export function buildExerciseDrilldown(history: ExerciseDataPoint[]): DrilldownD
 
   const { domain, ticks } = customWeightAxis(points.flatMap((p) => [p.min, p.top]))
 
-  return { points, yDomain: domain, yTicks: ticks, sessionCount: points.length }
+  const first = points[0]
+  const last = points[points.length - 1]
+  return {
+    points,
+    yDomain: domain,
+    yTicks: ticks,
+    sessionCount: points.length,
+    latestTop: last ? last.top : null,
+    // Rounded to kill float noise (e.g. 102.25 − 100 = 2.25 exactly, but 0.1+0.2 style sums).
+    changeSinceStart: points.length >= 2 ? Math.round((last.top - first.top) * 100) / 100 : null,
+  }
 }

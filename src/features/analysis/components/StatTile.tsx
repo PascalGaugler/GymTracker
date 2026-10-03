@@ -13,7 +13,8 @@ export function StatTile({
   value: string
   unit?: string
   label: ReactNode
-  tone?: "default" | "good"
+  // default = full foreground; muted = prototype's neutral delta; good = success
+  tone?: "default" | "muted" | "good"
 }) {
   return (
     <div className="min-w-0 rounded-md border border-border bg-surface-2 p-2.5">
@@ -21,6 +22,7 @@ export function StatTile({
         className={cn(
           "flex flex-wrap items-baseline gap-x-0.5 font-mono text-body-lg font-semibold tabular-nums @xs:text-h2",
           tone === "good" && "text-success",
+          tone === "muted" && "text-muted-foreground",
         )}
       >
         <span>{value}</span>

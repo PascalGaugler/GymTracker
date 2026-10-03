@@ -117,6 +117,11 @@ const en: typeof de = {
       caption: "Top set (line) · set min–max (band)",
       topSet: "Top set",
       range: "Range",
+      stats: {
+        current: "Current",
+        sinceStart: "since start",
+        sessions: "Sessions",
+      },
       empty: {
         title: "No drilldown data yet",
         body: "Once you've logged this exercise, its history will appear here.",

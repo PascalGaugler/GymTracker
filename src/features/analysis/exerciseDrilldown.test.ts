@@ -48,6 +48,27 @@ describe("buildExerciseDrilldown", () => {
     expect(data.points[0]).toEqual({ t: day(0).getTime(), top: 100, min: 100, band: [100, 100] })
   })
 
+  it("derives the latest top set and the change since the first session", () => {
+    const data = buildExerciseDrilldown([
+      point("s1", 0, 100, 1),
+      point("s1", 0, 90, 2),
+      point("s2", 3, 102.5, 1),
+      point("s3", 6, 101.25, 1),
+      point("s3", 6, 99, 2),
+    ])
+    expect(data.latestTop).toBe(101.25)
+    expect(data.changeSinceStart).toBe(1.25)
+  })
+
+  it("has no change since start with fewer than two sessions", () => {
+    const empty = buildExerciseDrilldown([])
+    expect(empty.latestTop).toBeNull()
+    expect(empty.changeSinceStart).toBeNull()
+    const one = buildExerciseDrilldown([point("s1", 0, 100, 1)])
+    expect(one.latestTop).toBe(100)
+    expect(one.changeSinceStart).toBeNull()
+  })
+
   it("brackets the min and the top set with a padded axis", () => {
     const data = buildExerciseDrilldown([point("s1", 0, 100, 1), point("s1", 0, 90, 2)])
     expect(data.yDomain[0]).toBeLessThanOrEqual(90)

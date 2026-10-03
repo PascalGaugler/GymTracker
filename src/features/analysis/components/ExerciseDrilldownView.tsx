@@ -7,6 +7,7 @@ import { EmptyState } from "@/pages/EmptyState"
 
 import { useExerciseDrilldown } from "../hooks/useExerciseDrilldown"
 import { useExercisesWithHistory, type ExerciseOption } from "../hooks/useExercisesWithHistory"
+import { StatTile } from "./StatTile"
 import { ExerciseDrilldownChart } from "./ExerciseDrilldownChart"
 
 function ExercisePicker({
@@ -51,11 +52,31 @@ function Drilldown({ exerciseId }: { exerciseId: string }) {
     )
   }
 
+  const change = drilldown.data.changeSinceStart
+
   return (
     <Card className="gap-3.5 px-3.5 pt-4.5 pb-4">
       <p className="font-mono text-micro tracking-normal text-subtle">
         {t("progress.exercise.caption")}
       </p>
+      <div className="@container grid grid-cols-3 gap-2">
+        <StatTile
+          value={String(drilldown.data.latestTop)}
+          unit={drilldown.unit}
+          label={t("progress.exercise.stats.current")}
+        />
+        <StatTile
+          value={
+            change == null ? "–" : `${change > 0 ? "+" : change < 0 ? "−" : ""}${Math.abs(change)}`
+          }
+          label={t("progress.exercise.stats.sinceStart")}
+          tone={change != null && change > 0 ? "good" : "default"}
+        />
+        <StatTile
+          value={String(drilldown.data.sessionCount)}
+          label={t("progress.exercise.stats.sessions")}
+        />
+      </div>
       <ExerciseDrilldownChart data={drilldown.data} unit={drilldown.unit} />
     </Card>
   )

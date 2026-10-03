@@ -130,7 +130,7 @@ export function BodyView() {
                       <span className="truncate">{t(s.labelKey)}</span>
                     </span>
                   }
-                  tone={good ? "good" : "default"}
+                  tone={good ? "good" : "muted"}
                 />
               )
             })}

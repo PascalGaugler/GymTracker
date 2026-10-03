@@ -115,6 +115,11 @@ const de = {
       caption: "Top-Satz (Linie) · Min–Max der Sätze (Band)",
       topSet: "Top-Satz",
       range: "Bereich",
+      stats: {
+        current: "Aktuell",
+        sinceStart: "seit Start",
+        sessions: "Einheiten",
+      },
       empty: {
         title: "Noch keine Einzeldaten",
         body: "Sobald du diese Übung geloggt hast, erscheint hier ihr Verlauf.",
