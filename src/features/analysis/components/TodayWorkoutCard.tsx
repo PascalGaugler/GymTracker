@@ -2,6 +2,7 @@ import { ChevronRight, Dumbbell } from "lucide-react"
 import { useTranslation } from "react-i18next"
 import { useNavigate } from "react-router-dom"
 
+import { Badge } from "@/components/ui/badge"
 import { useExerciseCatalog } from "@/features/training/hooks/useExerciseCatalog"
 import { useWorkoutRotation } from "@/features/training/hooks/useWorkoutRotation"
 
@@ -47,18 +48,9 @@ export function TodayWorkoutCard() {
 
         <div className="mt-3 flex flex-wrap gap-1.5">
           {names.slice(0, CHIP_LIMIT).map((name, i) => (
-            <span
-              key={i}
-              className="rounded-md bg-surface-2 px-2 py-1 text-caption text-muted-foreground"
-            >
-              {name}
-            </span>
+            <Badge key={i}>{name}</Badge>
           ))}
-          {names.length > CHIP_LIMIT && (
-            <span className="rounded-md bg-surface-2 px-2 py-1 text-caption text-subtle">
-              +{names.length - CHIP_LIMIT}
-            </span>
-          )}
+          {names.length > CHIP_LIMIT && <Badge variant="more">+{names.length - CHIP_LIMIT}</Badge>}
         </div>
 
         <div className="mt-3 flex items-center gap-1 text-label font-medium text-primary">

@@ -1,6 +1,6 @@
 import { useTranslation } from "react-i18next"
 
-import { cn } from "@/lib/utils"
+import { Badge } from "@/components/ui/badge"
 
 import { SetRow } from "./SetRow"
 
@@ -44,14 +44,9 @@ export function ExerciseLogCard({
               : t("log.setsOnly", { sets: targetSets })}
           </div>
         </div>
-        <div
-          className={cn(
-            "shrink-0 font-mono text-caption tabular-nums",
-            complete ? "text-success" : "text-subtle",
-          )}
-        >
+        <Badge variant={complete ? "tallyDone" : "tally"}>
           {done}/{targetSets}
-        </div>
+        </Badge>
       </div>
 
       <div className="flex flex-col gap-2">

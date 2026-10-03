@@ -1,10 +1,10 @@
-import type { ReactNode } from "react"
 import { format } from "date-fns"
 import { de } from "date-fns/locale"
 import { useLiveQuery } from "dexie-react-hooks"
 import { Ruler } from "lucide-react"
 import { useTranslation } from "react-i18next"
 
+import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { planRepository } from "@/data/repositories"
 import { MeasurementQuickAdd } from "@/features/measurements/components/MeasurementQuickAdd"
@@ -97,15 +97,6 @@ function StrengthStat() {
   )
 }
 
-// Neutral "not yet" pill for the cards whose data lands in a later phase.
-function SoonPill({ children }: { children: ReactNode }) {
-  return (
-    <span className="inline-flex shrink-0 items-center rounded-full border border-border bg-surface-2 px-2.5 py-1 font-mono text-micro font-semibold tracking-normal text-subtle">
-      {children}
-    </span>
-  )
-}
-
 // The dashboard: headline stat cards + quick actions. Strength index and
 // calories are placeholders (their math/integration arrive in P5 and Phase 2).
 export function DashboardView() {
@@ -155,7 +146,7 @@ export function DashboardView() {
           label={t("dashboard.cards.calories")}
           value={null}
           muted
-          badge={<SoonPill>{t("common.phase2")}</SoonPill>}
+          badge={<Badge variant="neutral">{t("dashboard.cards.soon")}</Badge>}
           sub={t("dashboard.cards.caloriesSoon")}
         />
       </div>

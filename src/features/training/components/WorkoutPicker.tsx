@@ -2,6 +2,7 @@ import { ChevronRight } from "lucide-react"
 import { useTranslation } from "react-i18next"
 import { useNavigate } from "react-router-dom"
 
+import { Badge } from "@/components/ui/badge"
 import { EmptyState } from "@/pages/EmptyState"
 import { PageHeader } from "@/pages/PageHeader"
 import { cn } from "@/lib/utils"
@@ -79,9 +80,7 @@ export function WorkoutPicker() {
                     <div className="mt-0.5 text-h3 font-semibold">{w.name}</div>
                   </div>
                   {isNext ? (
-                    <span className="shrink-0 rounded-full bg-primary-soft px-2.5 py-1 font-mono text-micro tracking-[0.16em] text-primary uppercase">
-                      {t("log.pick.next")}
-                    </span>
+                    <Badge variant="status">{t("log.pick.next")}</Badge>
                   ) : (
                     <ChevronRight className="size-5 shrink-0 text-subtle" aria-hidden="true" />
                   )}
@@ -93,17 +92,10 @@ export function WorkoutPicker() {
 
                 <div className="mt-3 flex flex-wrap gap-1.5">
                   {names.slice(0, CHIP_LIMIT).map((name, i) => (
-                    <span
-                      key={i}
-                      className="rounded-md bg-surface-2 px-2 py-1 text-caption text-muted-foreground"
-                    >
-                      {name}
-                    </span>
+                    <Badge key={i}>{name}</Badge>
                   ))}
                   {names.length > CHIP_LIMIT && (
-                    <span className="rounded-md bg-surface-2 px-2 py-1 text-caption text-subtle">
-                      +{names.length - CHIP_LIMIT}
-                    </span>
+                    <Badge variant="more">+{names.length - CHIP_LIMIT}</Badge>
                   )}
                 </div>
               </button>
