@@ -30,11 +30,11 @@ export function ExerciseLogCard({
   const complete = done === targetSets
 
   return (
-    <div className="rounded-lg border border-border bg-surface p-4 shadow-elev-1">
+    <div className="rounded-lg border border-border bg-surface p-4 shadow-card">
       <div className="mb-3 flex items-start justify-between gap-3">
         <div className="min-w-0">
           <div className="text-h3 font-semibold">{name}</div>
-          <div className="mt-0.5 font-mono text-caption text-muted-foreground">
+          <div className="mt-0.5 font-mono text-caption text-subtle">
             {repRange
               ? t("log.setsRepRange", {
                   sets: targetSets,
@@ -49,7 +49,7 @@ export function ExerciseLogCard({
         </Badge>
       </div>
 
-      <div className="flex flex-col gap-2">
+      <div className="@container flex flex-col gap-2.5">
         {Array.from({ length: targetSets }, (_, i) => (
           <SetRow
             key={i}
