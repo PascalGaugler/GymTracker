@@ -81,6 +81,11 @@ const de = {
       strength: "Kraft je Workout",
       exercise: "Einzelübung",
       body: "Körpermaße",
+      short: {
+        recomposition: "Recomp",
+        strength: "Kraft",
+        body: "Körper",
+      },
     },
     placeholder: "Diagramme erscheinen, sobald du Trainings und Messungen erfasst hast.",
     recomposition: {

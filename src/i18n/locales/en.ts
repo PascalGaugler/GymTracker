@@ -83,6 +83,11 @@ const en: typeof de = {
       strength: "Strength per workout",
       exercise: "Single exercise",
       body: "Body",
+      short: {
+        recomposition: "Recomp",
+        strength: "Strength",
+        body: "Body",
+      },
     },
     placeholder: "Charts appear once you've logged sessions and measurements.",
     recomposition: {
