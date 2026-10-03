@@ -14,7 +14,7 @@ export function EmptyState({
   children?: ReactNode
 }) {
   return (
-    <div className="rounded-lg border border-border bg-surface p-6 text-center shadow-elev-1">
+    <div className="rounded-lg border border-border bg-surface p-6 text-center shadow-card">
       <h2 className="text-h3 font-semibold">{title}</h2>
       <p className="mt-1 text-body text-muted-foreground">{body}</p>
       {steps && steps.length > 0 && (

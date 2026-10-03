@@ -19,7 +19,7 @@ export function SettingsSection({
   return (
     <section
       className={cn(
-        "rounded-lg border border-border bg-surface p-4 shadow-elev-1",
+        "rounded-lg border border-border bg-surface p-4 shadow-card",
         muted && "opacity-70",
       )}
     >
