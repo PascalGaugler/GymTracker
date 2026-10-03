@@ -93,6 +93,25 @@ const de = {
       strengthSeries: "Kraft-Index",
       bodyweightSeries: "Körpergewicht",
       baseline: "Start = 100",
+      insight: {
+        badge: {
+          strengthUp: "Kraft steigt",
+          strengthHolds: "Kraft hält",
+          strengthDown: "Kraft sinkt",
+          weightUp: "Gewicht steigt",
+        },
+        noBaseline: "Der Kraft-Index startet nach 3 Einheiten je Übung.",
+        noBodyweight: "Noch keine Gewichtsdaten — wieg dich, um den Vergleich zu sehen.",
+        thesis: "Gewicht {{weight}} %, Kraft {{strength}} % seit Start — Recomposition läuft.",
+        holding: "Gewicht {{weight}} %, Kraft hält ({{strength}} %) — Recomposition läuft.",
+        strengthLost:
+          "Gewicht {{weight}} %, aber auch die Kraft {{strength}} % — Defizit und Regeneration prüfen.",
+        strengthUp: "Kraft {{strength}} %, Gewicht hält noch ({{weight}} %).",
+        weightUp:
+          "Gewicht {{weight}} %, Kraft {{strength}} % — kein Defizit-Effekt, Kalorien prüfen.",
+        strengthDown: "Kraft {{strength}} % bei stabilem Gewicht — Regeneration prüfen.",
+        noTrend: "Noch kein klarer Trend — mehr Daten sammeln.",
+      },
       empty: {
         title: "Noch nichts zu zeigen",
         body: "Logge ein paar Trainings und wieg dich, dann erscheint hier dein Recomposition-Verlauf.",

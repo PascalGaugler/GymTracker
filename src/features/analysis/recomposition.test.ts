@@ -120,6 +120,7 @@ describe("buildRecomposition", () => {
     expect(data.hasStrength).toBe(false)
     expect(data.hasBodyweight).toBe(false)
     expect(data.latestStrengthIndex).toBeNull()
+    expect(data.latestBodyweightIndex).toBeNull()
   })
 
   it("merges both series onto one shared axis and exposes the latest index", () => {
@@ -143,6 +144,7 @@ describe("buildRecomposition", () => {
     expect(data.points[1].strength).toBeNull()
     expect(data.points[1].bodyweight).not.toBeNull()
     expect(data.latestStrengthIndex).toBe(data.points[2].strength)
+    expect(data.latestBodyweightIndex).toBe(data.points[3].bodyweight)
     // Shared axis brackets the 100 baseline.
     expect(data.yDomain[0]).toBeLessThanOrEqual(100)
     expect(data.yDomain[1]).toBeGreaterThanOrEqual(100)

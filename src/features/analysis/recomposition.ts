@@ -33,6 +33,8 @@ export interface RecompositionData {
   hasBodyweight: boolean
   /** Most recent strength-index value, for the dashboard card. */
   latestStrengthIndex: number | null
+  /** Most recent bodyweight-index value (100 = baseline). */
+  latestBodyweightIndex: number | null
 }
 
 function round1(n: number): number {
@@ -182,5 +184,6 @@ export function buildRecomposition(
     hasStrength: strength.length > 0,
     hasBodyweight: bw.length > 0,
     latestStrengthIndex: strength.length > 0 ? strength[strength.length - 1].value : null,
+    latestBodyweightIndex: bw.length > 0 ? bw[bw.length - 1].value : null,
   }
 }

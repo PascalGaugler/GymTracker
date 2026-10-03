@@ -95,6 +95,26 @@ const en: typeof de = {
       strengthSeries: "Strength index",
       bodyweightSeries: "Bodyweight",
       baseline: "Baseline = 100",
+      insight: {
+        badge: {
+          strengthUp: "Strength up",
+          strengthHolds: "Strength holds",
+          strengthDown: "Strength down",
+          weightUp: "Weight up",
+        },
+        noBaseline: "The strength index starts after 3 sessions per exercise.",
+        noBodyweight: "No bodyweight data yet — weigh in to see the comparison.",
+        thesis:
+          "Weight {{weight}}%, strength {{strength}}% since start — recomposition is on track.",
+        holding:
+          "Weight {{weight}}%, strength holding ({{strength}}%) — recomposition is on track.",
+        strengthLost:
+          "Weight {{weight}}%, but strength {{strength}}% too — check deficit and recovery.",
+        strengthUp: "Strength {{strength}}%, weight holding ({{weight}}%).",
+        weightUp: "Weight {{weight}}%, strength {{strength}}% — no deficit effect, check calories.",
+        strengthDown: "Strength {{strength}}% at stable weight — check recovery.",
+        noTrend: "No clear trend yet — keep collecting data.",
+      },
       empty: {
         title: "Nothing to show yet",
         body: "Log a few sessions and weigh in, and your recomposition trend will appear here.",
