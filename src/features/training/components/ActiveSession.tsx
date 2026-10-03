@@ -165,7 +165,7 @@ function SessionForm({
       <header className="mb-4 flex items-center gap-3">
         <Button
           variant="ghost"
-          size="icon-lg"
+          size="icon"
           aria-label={t("common.back")}
           onClick={() => navigate("/log")}
         >

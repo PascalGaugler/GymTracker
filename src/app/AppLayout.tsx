@@ -27,7 +27,7 @@ export function AppLayout() {
           <Dumbbell size={22} className="shrink-0 text-primary" aria-hidden="true" />
           <span className="truncate font-display text-h3 font-semibold">Gym Tracker</span>
         </NavLink>
-        <Button asChild variant="ghost" size="icon-lg" aria-label={t("nav.settings")}>
+        <Button asChild variant="ghost" size="icon" aria-label={t("nav.settings")}>
           <NavLink
             to="/settings"
             className={({ isActive }) => cn("shrink-0", isActive && "text-primary")}
