@@ -154,7 +154,7 @@ export function DashboardView() {
       <TodayWorkoutCard />
 
       <MeasurementQuickAdd>
-        <Button variant="outline" className="mt-6 h-12 w-full text-body-lg">
+        <Button variant="outline" size="lg" className="mt-3 w-full">
           <Ruler aria-hidden="true" />
           {t("measurements.quickAdd")}
         </Button>
