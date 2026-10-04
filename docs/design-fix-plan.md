@@ -21,6 +21,8 @@ These override the recommendations in §4 wherever they differ.
 - **Number format (user, 2026-10-03):** decimals use a DOT in every locale ("80.4 kg"),
   with a true minus "−" and an explicit "+" for signed values, via the shared signed-number
   helper. Do not switch to the German decimal comma.
+- **O-07 reverted (user, 2026-10-04):** the filled Log tile looked off with four tabs, so
+  all four tabs are styled alike again.
 - **Final-audit decisions (user, 2026-10-04):** the Log set-input value stays
   RIGHT-aligned (decimals line up across sets), unlike the prototype. The Dashboard waist
   badge stays a RATE (cm/Wo), not the prototype's % change. The Log session header overline

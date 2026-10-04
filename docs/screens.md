@@ -46,7 +46,7 @@ the numeric input itself follows the custom gym-input pattern.
 
 ## Navigation notes
 
-- Bottom tab bar destinations: Dashboard, Log, Progress, Manage (always four; Log is emphasised). The `<nav>` landmark is labelled "Hauptnavigation" (`nav.primary`). Settings via header icon.
+- Bottom tab bar destinations: Dashboard, Log, Progress, Manage (always four, all styled alike; no emphasised tab). The `<nav>` landmark is labelled "Hauptnavigation" (`nav.primary`). Settings via header icon.
 - SPA fallback must be configured on the host so deep links / refreshes resolve (see
   architecture.md, hosting).
 
