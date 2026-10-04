@@ -29,14 +29,16 @@ desktop content is capped at 640px. Every interactive element is >= 48px except 
 
 | Verdict  | Count |
 | -------- | ----- |
-| RESOLVED | 61    |
-| PARTIAL  | 4     |
+| RESOLVED | 64    |
+| PARTIAL  | 0     |
 | OPEN     | 0     |
-| ACCEPTED | 11    |
+| ACCEPTED | 12    |
+
+Counts are after loop-back round 1 (section 6); before it they were 61 RESOLVED / 4 PARTIAL / 0 OPEN / 11 ACCEPTED.
 
 New differences found by this pass (F-): **9** (F-01..F-05 from part A, F-06..F-09 from part B).
-No blockers. No APP BUG (overflow, clipping, dropped class) remains; the only tap-target issue is the
-2px shortfall in F-06.
+After round 1: 7 RESOLVED (F-01, F-03, F-04, F-05, F-06, F-07, F-09), 2 ACCEPTED (F-02, F-08), 0 open.
+No blockers. No APP BUG (overflow, clipping, dropped class, tap target) remains.
 
 ## 3. All original IDs
 
@@ -44,65 +46,65 @@ Verdict key: RESOLVED / PARTIAL / OPEN / ACCEPTED (intentional: rule, user decis
 
 ### Tokens / shell (T-)
 
-| ID   | Cons. | Element                | Verdict  | Evidence / reason                                                                                                                             |
-| ---- | ----- | ---------------------- | -------- | --------------------------------------------------------------------------------------------------------------------------------------------- |
-| T-01 | X-01  | tap targets            | RESOLVED | All screens measured >= 48px (header gear, sheet/dialog close 48x48, Manage icon buttons 48x48, dialog fields and buttons 48). Residual: F-06 |
-| T-02 | X-02  | sheet chrome           | RESOLVED | Sheet bg rgb(18,22,31) = `--sheet`, scrim rgba(2,3,7,.6), grab pill. Radius 20 vs 24: ACCEPTED (C-2 token)                                    |
-| T-03 | X-04  | card surface           | RESOLVED | Chart cards radius 14px, border rgb(35,41,54), padding 18/14/16 = prototype `.chart-card`                                                     |
-| T-04 | X-05  | overline colour        | RESOLVED | `AKTIV` / `ROTATION` / header overlines rgb(105,112,127), mono 11px; only the Recomposition CTA is primary                                    |
-| T-05 | X-06  | type scale             | ACCEPTED | Nearest-token rule C-3 (28 vs 30 etc.)                                                                                                        |
-| T-06 | X-07  | Log tab emphasis       | ACCEPTED | Four tabs + solid tile, no glow: user decision Q10, glow forbidden                                                                            |
-| T-07 | X-08  | segmented active state | RESOLVED | Progress strip and workout selector: active bg rgb(59,130,246), fg rgb(6,16,31), 13px; dialogs and Settings use the same solid pill           |
-| T-08 | X-09  | radius tiers           | RESOLVED | Buttons 10px, stepper 6px (part A), tab triggers 6px in a 10px track (= prototype `.segmented2`)                                              |
-| T-09 | X-10  | warn badge tone        | ACCEPTED | Not built, no caller (YAGNI)                                                                                                                  |
-| T-10 | X-11  | fonts doc note         | RESOLVED | No Google Fonts note left in `docs/design-system.md`                                                                                          |
+| ID   | Cons. | Element                | Verdict  | Evidence / reason                                                                                                                                                         |
+| ---- | ----- | ---------------------- | -------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| T-01 | X-01  | tap targets            | RESOLVED | All screens measured >= 48px (header gear, sheet/dialog close 48x48, Manage icon buttons 48x48, dialog fields and buttons 48). Residual F-06 → RESOLVED in FP-2 (0afee6e) |
+| T-02 | X-02  | sheet chrome           | RESOLVED | Sheet bg rgb(18,22,31) = `--sheet`, scrim rgba(2,3,7,.6), grab pill. Radius 20 vs 24: ACCEPTED (C-2 token)                                                                |
+| T-03 | X-04  | card surface           | RESOLVED | Chart cards radius 14px, border rgb(35,41,54), padding 18/14/16 = prototype `.chart-card`                                                                                 |
+| T-04 | X-05  | overline colour        | RESOLVED | `AKTIV` / `ROTATION` / header overlines rgb(105,112,127), mono 11px; only the Recomposition CTA is primary                                                                |
+| T-05 | X-06  | type scale             | ACCEPTED | Nearest-token rule C-3 (28 vs 30 etc.)                                                                                                                                    |
+| T-06 | X-07  | Log tab emphasis       | ACCEPTED | Four tabs + solid tile, no glow: user decision Q10, glow forbidden                                                                                                        |
+| T-07 | X-08  | segmented active state | RESOLVED | Progress strip and workout selector: active bg rgb(59,130,246), fg rgb(6,16,31), 13px; dialogs and Settings use the same solid pill                                       |
+| T-08 | X-09  | radius tiers           | RESOLVED | Buttons 10px, stepper 6px (part A), tab triggers 6px in a 10px track (= prototype `.segmented2`)                                                                          |
+| T-09 | X-10  | warn badge tone        | ACCEPTED | Not built, no caller (YAGNI)                                                                                                                                              |
+| T-10 | X-11  | fonts doc note         | RESOLVED | No Google Fonts note left in `docs/design-system.md`                                                                                                                      |
 
 ### Dashboard (D-)
 
-| ID   | Cons. | Element                     | Verdict  | Evidence / reason                                                                                                                                                                                        |
-| ---- | ----- | --------------------------- | -------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| D-01 | X-12  | stat label hidden at 320    | RESOLVED | All four labels visible at 320, no overflow (part A)                                                                                                                                                     |
-| D-02 | X-12  | stat label truncated at 390 | RESOLVED | Label row wraps; badge placement detail: F-03                                                                                                                                                            |
-| D-03 | D-03  | Recomposition preview       | PARTIAL  | Card, thesis, chart present; chart readability: F-01                                                                                                                                                     |
-| D-04 | D-04  | tappable stat cards         | RESOLVED | Weight is a button (opens sheet), Taille / Kraft-Index are links                                                                                                                                         |
-| D-05 | D-05  | goal bar                    | PARTIAL  | Implemented (`StatCard` `goal` prop); Settings "Ziel" row verified at 320/390 (input, unit, "Entfernen" fit, 48px). Bar itself not seen: no target stored and writes are forbidden. Check by hand (FP-2) |
-| D-06 | D-06  | CTA row                     | RESOLVED | 48px, primary-soft bg                                                                                                                                                                                    |
-| D-07 | X-13  | go tile                     | RESOLVED | Solid primary tile, radius 10                                                                                                                                                                            |
-| D-08 | D-08  | Heute dran surface          | RESOLVED | Gradient 155deg, border rgb(51,58,75), radius 14 = prototype                                                                                                                                             |
-| D-09 | X-16  | chips pill + border         | RESOLVED | radius 9999, border rgb(35,41,54)                                                                                                                                                                        |
-| D-10 | D-10  | weight sheet + keypad       | ACCEPTED | User decision Q11 (keypad declined)                                                                                                                                                                      |
-| D-11 | X-02  | sheet background            | RESOLVED | see T-02                                                                                                                                                                                                 |
-| D-12 | X-02  | sheet radius                | RESOLVED | see T-02                                                                                                                                                                                                 |
-| D-13 | X-02  | sheet shadow                | RESOLVED | see T-02                                                                                                                                                                                                 |
-| D-14 | X-02  | scrim                       | RESOLVED | see T-02                                                                                                                                                                                                 |
-| D-15 | X-02  | grab handle                 | RESOLVED | see T-02                                                                                                                                                                                                 |
-| D-16 | X-01  | header icon                 | RESOLVED | 48x48                                                                                                                                                                                                    |
-| D-17 | X-01  | other chrome taps           | RESOLVED | see T-01                                                                                                                                                                                                 |
-| D-18 | X-07  | Log FAB                     | ACCEPTED | see T-06                                                                                                                                                                                                 |
-| D-19 | X-05  | overline colour             | RESOLVED | see T-04                                                                                                                                                                                                 |
-| D-20 | X-04  | card surface                | RESOLVED | see T-03                                                                                                                                                                                                 |
-| D-21 | D-21  | empty state                 | ACCEPTED | No prototype reference; not re-verifiable without clearing data                                                                                                                                          |
-| D-22 | D-22  | calories pill copy          | RESOLVED | "Bald"                                                                                                                                                                                                   |
+| ID   | Cons. | Element                     | Verdict  | Evidence / reason                                                                                                                                                                                                                                                                              |
+| ---- | ----- | --------------------------- | -------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| D-01 | X-12  | stat label hidden at 320    | RESOLVED | All four labels visible at 320, no overflow (part A)                                                                                                                                                                                                                                           |
+| D-02 | X-12  | stat label truncated at 390 | RESOLVED | Label row wraps; badge placement detail: F-03                                                                                                                                                                                                                                                  |
+| D-03 | D-03  | Recomposition preview       | RESOLVED | Card, thesis, chart present; chart readability: F-01 → RESOLVED in FP-1 (1b7acc2)                                                                                                                                                                                                              |
+| D-04 | D-04  | tappable stat cards         | RESOLVED | Weight is a button (opens sheet), Taille / Kraft-Index are links                                                                                                                                                                                                                               |
+| D-05 | D-05  | goal bar                    | RESOLVED | Implemented (`StatCard` `goal` prop); Settings "Ziel" row verified at 320/390 (input, unit, "Entfernen" fit, 48px). Bar itself not seen in the first pass (no target stored). → RESOLVED in FP-2 (0afee6e): hand-checked with a stored target at 320/390, no defect; target cleared afterwards |
+| D-06 | D-06  | CTA row                     | RESOLVED | 48px, primary-soft bg                                                                                                                                                                                                                                                                          |
+| D-07 | X-13  | go tile                     | RESOLVED | Solid primary tile, radius 10                                                                                                                                                                                                                                                                  |
+| D-08 | D-08  | Heute dran surface          | RESOLVED | Gradient 155deg, border rgb(51,58,75), radius 14 = prototype                                                                                                                                                                                                                                   |
+| D-09 | X-16  | chips pill + border         | RESOLVED | radius 9999, border rgb(35,41,54)                                                                                                                                                                                                                                                              |
+| D-10 | D-10  | weight sheet + keypad       | ACCEPTED | User decision Q11 (keypad declined)                                                                                                                                                                                                                                                            |
+| D-11 | X-02  | sheet background            | RESOLVED | see T-02                                                                                                                                                                                                                                                                                       |
+| D-12 | X-02  | sheet radius                | RESOLVED | see T-02                                                                                                                                                                                                                                                                                       |
+| D-13 | X-02  | sheet shadow                | RESOLVED | see T-02                                                                                                                                                                                                                                                                                       |
+| D-14 | X-02  | scrim                       | RESOLVED | see T-02                                                                                                                                                                                                                                                                                       |
+| D-15 | X-02  | grab handle                 | RESOLVED | see T-02                                                                                                                                                                                                                                                                                       |
+| D-16 | X-01  | header icon                 | RESOLVED | 48x48                                                                                                                                                                                                                                                                                          |
+| D-17 | X-01  | other chrome taps           | RESOLVED | see T-01                                                                                                                                                                                                                                                                                       |
+| D-18 | X-07  | Log FAB                     | ACCEPTED | see T-06                                                                                                                                                                                                                                                                                       |
+| D-19 | X-05  | overline colour             | RESOLVED | see T-04                                                                                                                                                                                                                                                                                       |
+| D-20 | X-04  | card surface                | RESOLVED | see T-03                                                                                                                                                                                                                                                                                       |
+| D-21 | D-21  | empty state                 | ACCEPTED | No prototype reference; not re-verifiable without clearing data                                                                                                                                                                                                                                |
+| D-22 | D-22  | calories pill copy          | RESOLVED | "Bald"                                                                                                                                                                                                                                                                                         |
 
 ### Log (L-)
 
-| ID   | Cons. | Element                          | Verdict  | Evidence / reason                                                     |
-| ---- | ----- | -------------------------------- | -------- | --------------------------------------------------------------------- |
-| L-01 | L-01  | set input at 320                 | RESOLVED | 0 of 18 inputs clipped (66px wide at 320)                             |
-| L-02 | L-02  | hero input size/weight/alignment | PARTIAL  | 22px/600 (proto 24 = ACCEPTED C-3); right-aligned vs proto left: F-02 |
-| L-03 | X-13  | done index                       | RESOLVED | Filled success circle, dark text, 34px                                |
-| L-04 | L-04  | tally chip                       | RESOLVED | Pill + border, done = success tint                                    |
-| L-05 | L-05  | session header                   | PARTIAL  | Border, centred title, spacer ok; overline text differs: F-04         |
-| L-06 | L-06  | rest timer                       | ACCEPTED | User decision Q9 (declined)                                           |
-| L-07 | X-13  | filled input border              | RESOLVED | Primary border when filled                                            |
-| L-08 | X-09  | stepper radius                   | RESOLVED | 6px, 48x48                                                            |
-| L-09 | L-09  | progress fill                    | RESOLVED | primary to accent gradient                                            |
-| L-10 | X-14  | unit/meta colour                 | RESOLVED | `text-subtle`                                                         |
-| L-11 | X-05  | picker overline                  | RESOLVED | grey                                                                  |
-| L-12 | X-12  | picker overline wrap             | RESOLVED | single line, badge wraps below                                        |
-| L-13 | L-13  | picker close                     | ACCEPTED | Picker is a tab destination (docs/screens.md)                         |
-| L-14 | L-14  | back target                      | RESOLVED | `returnTo: "/"` from Heute dran (source)                              |
-| L-15 | L-15  | hint copy                        | RESOLVED | bold workout name                                                     |
+| ID   | Cons. | Element                          | Verdict  | Evidence / reason                                                                                                                              |
+| ---- | ----- | -------------------------------- | -------- | ---------------------------------------------------------------------------------------------------------------------------------------------- |
+| L-01 | L-01  | set input at 320                 | RESOLVED | 0 of 18 inputs clipped (66px wide at 320)                                                                                                      |
+| L-02 | L-02  | hero input size/weight/alignment | ACCEPTED | 22px/600 (proto 24 = ACCEPTED C-3); right-aligned vs proto left: F-02 → ACCEPTED (user decision 2026-10-04: right-aligned so decimals line up) |
+| L-03 | X-13  | done index                       | RESOLVED | Filled success circle, dark text, 34px                                                                                                         |
+| L-04 | L-04  | tally chip                       | RESOLVED | Pill + border, done = success tint                                                                                                             |
+| L-05 | L-05  | session header                   | RESOLVED | Border, centred title, spacer ok; overline text differs: F-04 → RESOLVED in FP-3 (1b8fcdc)                                                     |
+| L-06 | L-06  | rest timer                       | ACCEPTED | User decision Q9 (declined)                                                                                                                    |
+| L-07 | X-13  | filled input border              | RESOLVED | Primary border when filled                                                                                                                     |
+| L-08 | X-09  | stepper radius                   | RESOLVED | 6px, 48x48                                                                                                                                     |
+| L-09 | L-09  | progress fill                    | RESOLVED | primary to accent gradient                                                                                                                     |
+| L-10 | X-14  | unit/meta colour                 | RESOLVED | `text-subtle`                                                                                                                                  |
+| L-11 | X-05  | picker overline                  | RESOLVED | grey                                                                                                                                           |
+| L-12 | X-12  | picker overline wrap             | RESOLVED | single line, badge wraps below                                                                                                                 |
+| L-13 | L-13  | picker close                     | ACCEPTED | Picker is a tab destination (docs/screens.md)                                                                                                  |
+| L-14 | L-14  | back target                      | RESOLVED | `returnTo: "/"` from Heute dran (source)                                                                                                       |
+| L-15 | L-15  | hint copy                        | RESOLVED | bold workout name                                                                                                                              |
 
 ### Progress (P-)
 
@@ -114,7 +116,7 @@ Verdict key: RESOLVED / PARTIAL / OPEN / ACCEPTED (intentional: rule, user decis
 | P-04 | P-04  | series glyphs          | RESOLVED | Distinct marker + dash per series on lines, legend and tooltip (circle, square, triangle, diamond, cross, star)                                                  |
 | P-05 | P-05  | insight boxes          | RESOLVED | Recomposition ("Kraft steigt", Gewicht −6.5 %, Kraft +54.9 %), Body weight and comparison ("Taille −3.8"); Strength has the swap note box, same as the prototype |
 | P-06 | P-06  | drilldown stat tiles   | RESOLVED | Aktuell / seit Start (+22.5) / Einheiten tiles, 3-col at 320 and 390                                                                                             |
-| P-07 | P-07  | body delta tiles       | RESOLVED | Per-measurement signed delta + marker, true minus (U+2212). 320 wrap of unit: F-07                                                                               |
+| P-07 | P-07  | body delta tiles       | RESOLVED | Per-measurement signed delta + marker, true minus (U+2212). 320 wrap of unit: F-07 → RESOLVED in FP-2 (0afee6e)                                                  |
 | P-08 | X-14  | caption style          | RESOLVED | Mono grey notes in all four views, terse copy                                                                                                                    |
 | P-09 | P-09  | recomp noise           | RESOLVED | Smoothed display line (O-08); dense dots: F-01                                                                                                                   |
 | P-10 | P-10  | indexed vs raw axis    | ACCEPTED | docs/charts.md allows both; app indexes to 100                                                                                                                   |
@@ -145,21 +147,22 @@ Verdict key: RESOLVED / PARTIAL / OPEN / ACCEPTED (intentional: rule, user decis
 
 ### New differences (F-)
 
-| ID   | Screen                        | Element                              | Severity | Verdict         | Evidence                                                                                                                                   |
-| ---- | ----------------------------- | ------------------------------------ | -------- | --------------- | ------------------------------------------------------------------------------------------------------------------------------------------ |
-| F-01 | Dashboard preview, Recomp tab | per-session dots, baseline label     | med      | OPEN            | 48 dots form a beaded smear; "Start = 100" label sits on the bodyweight line (`app-progress-recomp-320-390`, part A dashboard shots)       |
-| F-02 | Log                           | set value alignment                  | low      | OPEN (decision) | right-aligned, prototype left                                                                                                              |
-| F-03 | Dashboard                     | TrendBadge size and placement        | low      | OPEN            | 11px, 4/10px padding wraps below the label at 390; waist badge shows cm/Wo, not %                                                          |
-| F-04 | Log                           | session header overline              | low      | OPEN            | "TRAINIEREN" vs "ROTATION · n VON N"                                                                                                       |
-| F-05 | shell, desktop                | nav spans full 1280, content 640     | low      | OPEN            | tab icons far from the content column                                                                                                      |
-| F-06 | Progress strength, drilldown  | toggle chip halves, "im Detail" link | low      | OPEN            | inner buttons / links 46.4px high inside a 48px bordered container (`Bankdrücken 120x46`, `im Detail 48x46`); about 2px under the tap rule |
-| F-07 | Progress body                 | delta tile at 320                    | low      | OPEN            | "-3.8" and "cm" stack on two lines at 320 (one line at 390)                                                                                |
-| F-08 | Progress drilldown            | exercise chip row                    | low      | ACCEPTED        | horizontal inner scroller as in the prototype, no page overflow                                                                            |
-| F-09 | Manage slots / plan rows      | long names                           | low      | OPEN            | "Schrägbankdrück…" truncated at 320 and 390 although the row could wrap to two lines                                                       |
+| ID   | Screen                        | Element                              | Severity | Verdict  | Evidence                                                                                                                                                                 |
+| ---- | ----------------------------- | ------------------------------------ | -------- | -------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| F-01 | Dashboard preview, Recomp tab | per-session dots, baseline label     | med      | RESOLVED | → RESOLVED in FP-1 (1b7acc2). 48 dots form a beaded smear; "Start = 100" label sits on the bodyweight line (`app-progress-recomp-320-390`, part A dashboard shots)       |
+| F-02 | Log                           | set value alignment                  | low      | ACCEPTED | right-aligned, prototype left. User decision 2026-10-04 (decimals line up)                                                                                               |
+| F-03 | Dashboard                     | TrendBadge size and placement        | low      | RESOLVED | → RESOLVED in FP-4 (0eb2ee0); waist badge rate ACCEPTED (user decision). 11px, 4/10px padding wraps below the label at 390; waist badge shows cm/Wo, not %               |
+| F-04 | Log                           | session header overline              | low      | RESOLVED | → RESOLVED in FP-3 (1b8fcdc). "TRAINIEREN" vs "ROTATION · n VON N"                                                                                                       |
+| F-05 | shell, desktop                | nav spans full 1280, content 640     | low      | RESOLVED | → RESOLVED in FP-4 (0eb2ee0). tab icons far from the content column                                                                                                      |
+| F-06 | Progress strength, drilldown  | toggle chip halves, "im Detail" link | low      | RESOLVED | → RESOLVED in FP-2 (0afee6e). inner buttons / links 46.4px high inside a 48px bordered container (`Bankdrücken 120x46`, `im Detail 48x46`); about 2px under the tap rule |
+| F-07 | Progress body                 | delta tile at 320                    | low      | RESOLVED | → RESOLVED in FP-2 (0afee6e). "-3.8" and "cm" stack on two lines at 320 (one line at 390)                                                                                |
+| F-08 | Progress drilldown            | exercise chip row                    | low      | ACCEPTED | horizontal inner scroller as in the prototype, no page overflow                                                                                                          |
+| F-09 | Manage slots / plan rows      | long names                           | low      | RESOLVED | → RESOLVED in FP-2 (0afee6e). "Schrägbankdrück…" truncated at 320 and 390 although the row could wrap to two lines                                                       |
 
 ## 4. Still open (in scope)
 
-Four packages, each doable by one agent. Run `npm run ci` after each.
+Nothing. All four fix packages (FP-1..FP-4) landed in loop-back round 1 (section 6); the original
+package briefs are kept below for history.
 
 **FP-1: Chart density and clarity (F-01, D-03)**
 
@@ -186,20 +189,36 @@ Four packages, each doable by one agent. Run `npm run ci` after each.
 
 ## 5. Accepted differences
 
-| Item                                                           | Reason                                                                      |
-| -------------------------------------------------------------- | --------------------------------------------------------------------------- |
-| T-05 type sizes 28/36/22 vs 30/32/26                           | Rule: tokens only, nearest-token mapping (fix plan C-3)                     |
-| Sheet/dialog radius 20 vs 24; overline tracking .16em vs .14em | Documented tokens (`--radius-xl`, `--text-micro`)                           |
-| Tap sizes 48 vs prototype 33 to 46 (strip, steppers, go tile)  | Rule: CLAUDE.md `--tap` 48px                                                |
-| T-06 / D-18 Log tab: four tabs, solid tile, no glow            | User decision (four tabs, Q10); design-system rule against glow             |
-| D-10 weight sheet + keypad                                     | User decision Q11                                                           |
-| L-06 rest timer                                                | User decision Q9                                                            |
-| L-13 picker close                                              | Documented IA (picker is a tab)                                             |
-| T-09 warn badge                                                | No caller (YAGNI)                                                           |
-| D-21 empty state                                               | No prototype reference                                                      |
-| P-10 indexed body chart axis                                   | docs/charts.md allows either                                                |
-| P-11 raw + 7-day MA                                            | Rule (docs/charts.md); the prototype breaks it                              |
-| P-12 three Progress tabs, drilldown by route                   | Documented IA; tab labels per user decision O-11                            |
-| F-08 scrolling chip row on the drilldown                       | Same as prototype, no page overflow                                         |
-| Dot decimals, true minus, explicit plus                        | User decision (2026-10-03)                                                  |
-| Not verified live (no data writes allowed)                     | goal bar with a stored target, import-confirm dialog, empty/first-run state |
+| Item                                                           | Reason                                                          |
+| -------------------------------------------------------------- | --------------------------------------------------------------- |
+| T-05 type sizes 28/36/22 vs 30/32/26                           | Rule: tokens only, nearest-token mapping (fix plan C-3)         |
+| Sheet/dialog radius 20 vs 24; overline tracking .16em vs .14em | Documented tokens (`--radius-xl`, `--text-micro`)               |
+| Tap sizes 48 vs prototype 33 to 46 (strip, steppers, go tile)  | Rule: CLAUDE.md `--tap` 48px                                    |
+| T-06 / D-18 Log tab: four tabs, solid tile, no glow            | User decision (four tabs, Q10); design-system rule against glow |
+| D-10 weight sheet + keypad                                     | User decision Q11                                               |
+| L-06 rest timer                                                | User decision Q9                                                |
+| L-13 picker close                                              | Documented IA (picker is a tab)                                 |
+| T-09 warn badge                                                | No caller (YAGNI)                                               |
+| D-21 empty state                                               | No prototype reference                                          |
+| P-10 indexed body chart axis                                   | docs/charts.md allows either                                    |
+| P-11 raw + 7-day MA                                            | Rule (docs/charts.md); the prototype breaks it                  |
+| P-12 three Progress tabs, drilldown by route                   | Documented IA; tab labels per user decision O-11                |
+| F-08 scrolling chip row on the drilldown                       | Same as prototype, no page overflow                             |
+| F-02 / L-02 set input right-aligned (decimals line up)         | User decision (2026-10-04)                                      |
+| F-03 waist badge shows a rate, not %                           | User decision (2026-10-04)                                      |
+| Dot decimals, true minus, explicit plus                        | User decision (2026-10-03)                                      |
+| Not verified live (no data writes allowed)                     | import-confirm dialog, empty/first-run state                    |
+
+## 6. Loop-back round 1 (2026-10-04)
+
+Four fix packages from section 4, one commit each. Round 2 was not needed: nothing in scope remains open.
+
+| Package | Commit    | Items                  | Result                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            |
+| ------- | --------- | ---------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| FP-2    | `0afee6e` | F-06, F-07, F-09, D-05 | Strength toggle chip halves and "im Detail" chevron links are 48px (inset box-shadow instead of a border). StatTile value + unit `flex-wrap` with a nowrap value and `@max-[16rem]:text-body` step-down, so "−10.6 cm", "+12.5 cm", "102.25 kg" never clip at 320. Exercise / workout names `line-clamp-2 wrap-break-word` in WorkoutSlotsView, PlanDetailView, ExerciseCatalogView. Goal bar hand-checked with a stored target at 320 / 390: no defect, target cleared afterwards. All RESOLVED. |
+| FP-1    | `1b7acc2` | F-01, D-03             | Strength line without per-point dots, preview without markers, full chart bodyweight marker every 8th point plus the last; "Start = 100" label moved to `insideBottomRight` (no overlap). RESOLVED.                                                                                                                                                                                                                                                                                               |
+| FP-4    | `0eb2ee0` | F-03, F-05             | TrendBadge padding `px-1.5 py-0.5` (Körpergewicht and Kraft-Index wrap below the label at 390, as in the prototype). Header content constrained to `max-w-screen-sm` like the tab bar and main at 1280. RESOLVED. The waist badge stays longer than the prototype's because it shows a rate: ACCEPTED (user decision).                                                                                                                                                                            |
+| FP-3    | `1b8fcdc` | F-04, L-05             | Header overline shows "Rotation · n von N" via `useWorkoutRotation`, with a `nav.log` fallback. RESOLVED.                                                                                                                                                                                                                                                                                                                                                                                         |
+| none    | none      | F-02, L-02             | Set-input alignment: ACCEPTED (user decision 2026-10-04: right-aligned so decimals line up).                                                                                                                                                                                                                                                                                                                                                                                                      |
+
+Final verdicts (76 original IDs): 64 RESOLVED, 0 PARTIAL, 0 OPEN, 12 ACCEPTED. New F- items: 7 RESOLVED, 2 ACCEPTED.
