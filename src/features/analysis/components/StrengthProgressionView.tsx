@@ -92,10 +92,10 @@ function WorkoutProgression({ workout }: { workout: Workout }) {
             <div
               key={s.exerciseId}
               className={cn(
-                "inline-flex min-h-(--tap) max-w-full items-center rounded-xl border transition-colors",
-                on ? "bg-surface-2" : "border-border",
+                "inline-flex min-h-(--tap) max-w-full items-center rounded-xl transition-colors",
+                on && "bg-surface-2",
               )}
-              style={on ? { borderColor: s.color } : undefined}
+              style={{ boxShadow: `inset 0 0 0 1px ${on ? s.color : "var(--border)"}` }}
             >
               <button
                 type="button"

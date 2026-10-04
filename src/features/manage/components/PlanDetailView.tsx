@@ -157,7 +157,9 @@ function WorkoutRow({
           {index + 1}
         </span>
         <div className="min-w-0 flex-1">
-          <div className="truncate text-body-lg font-medium">{workout.name}</div>
+          <div className="line-clamp-2 text-body-lg font-medium wrap-break-word">
+            {workout.name}
+          </div>
           <div className="mt-0.5 font-mono text-caption text-muted-foreground">
             {t("manage.workouts.summary", {
               exercises: workout.exercises.length,

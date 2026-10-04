@@ -171,7 +171,7 @@ function SlotRow({
           {index + 1}
         </span>
         <div className="min-w-0 flex-1">
-          <div className="truncate text-body-lg font-medium">
+          <div className="line-clamp-2 wrap-break-word text-body-lg font-medium">
             {name ?? t("manage.slots.unknownExercise")}
           </div>
           <div className="mt-0.5 font-mono text-caption text-muted-foreground">
