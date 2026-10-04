@@ -10,6 +10,17 @@ const SURFACE =
 const INTERACTIVE =
   "cursor-pointer outline-none transition-[border-color,transform] duration-(--dur-fast) ease-standard hover:border-border-strong focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 active:scale-99"
 
+interface StatCardGoal {
+  /** 0–1, already clamped. */
+  progress: number
+  /** Visible mono caption, left ("Start 90"). */
+  startLabel: string
+  /** Visible mono caption, right ("Ziel 80 kg"). */
+  targetLabel: string
+  /** Spoken form appended to the accessible name ("Ziel 80.0 kg, 62 %"). */
+  spoken: string
+}
+
 interface StatCardProps {
   label: string
   /** Formatted value, or null to show the no-data em-dash. */
@@ -17,6 +28,8 @@ interface StatCardProps {
   unit?: string
   badge?: ReactNode
   sub?: string
+  /** Progress bar toward a target; replaces `sub` (prototype: goal ? bar : sub). */
+  goal?: StatCardGoal
   muted?: boolean
   /** Renders the card as a link to this route. */
   to?: string
@@ -40,6 +53,7 @@ export function StatCard({
   unit,
   badge,
   sub,
+  goal,
   muted = false,
   to,
   actionHint,
@@ -75,12 +89,28 @@ export function StatCard({
         )}
       </span>
 
-      {sub && (
+      {goal ? (
+        <>
+          <span className="sr-only">, {goal.spoken}</span>
+          <span aria-hidden="true" className="mt-3 block">
+            <span className="block h-1.5 overflow-hidden rounded-full bg-surface-2">
+              <span
+                className="block h-full rounded-full bg-linear-to-r from-accent to-primary transition-[width] duration-(--dur) ease-standard"
+                style={{ width: `${Math.round(goal.progress * 100)}%` }}
+              />
+            </span>
+            <span className="mt-1.5 flex flex-wrap justify-between gap-x-2 font-mono text-micro text-subtle">
+              <span>{goal.startLabel}</span>
+              <span className="text-primary">{goal.targetLabel}</span>
+            </span>
+          </span>
+        </>
+      ) : sub ? (
         <>
           <span className="sr-only">, </span>
           <span className="mt-2 block text-caption text-subtle">{sub}</span>
         </>
-      )}
+      ) : null}
       {actionHint && <span className="sr-only"> – {actionHint}</span>}
     </>
   )

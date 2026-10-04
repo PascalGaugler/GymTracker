@@ -4,14 +4,14 @@ import { PageHeader } from "@/pages/PageHeader"
 
 import { useSettings } from "../hooks/useSettings"
 import { BackupSection } from "./BackupSection"
-import { CaloriesSection, UnitsSection } from "./PreferencesSection"
+import { CaloriesSection, GoalSection, UnitsSection } from "./PreferencesSection"
 import { SettingsSection } from "./SettingsSection"
 
 // Settings: the backup surface plus the handful of preferences the app has.
 // Yazio stays a disabled placeholder until the Phase 2 integration exists.
 export function SettingsView() {
   const { t } = useTranslation()
-  const { calorieIncompleteThreshold } = useSettings()
+  const { calorieIncompleteThreshold, targetWeight } = useSettings()
 
   return (
     <>
@@ -20,6 +20,7 @@ export function SettingsView() {
       <div className="flex flex-col gap-4">
         <BackupSection />
         <UnitsSection />
+        <GoalSection key={targetWeight ?? "none"} />
         {/* Keyed by the stored value so its input reseeds when a backup import
             replaces preferences from outside this screen. */}
         <CaloriesSection key={calorieIncompleteThreshold} />

@@ -21,6 +21,9 @@ const de = {
       soon: "Bald",
       strengthBaseline: "ggü. Start (100)",
       caloriesSoon: "Yazio-Sync folgt in Phase 2",
+      goalStart: "Start {{value}}",
+      goalTarget: "Ziel {{value}}",
+      goalSpoken: "Ziel {{target}} kg, {{percent}} %",
     },
     ratePerWeek: "{{value}} {{unit}}/Wo",
     sinceStart: "{{value}} seit Start",
@@ -356,6 +359,13 @@ const de = {
     units: {
       title: "Einheiten",
       body: "Voreinstellung für neue Übungen. Bereits erfasste Gewichte werden nicht umgerechnet.",
+    },
+    goal: {
+      title: "Ziel",
+      body: "Zielgewicht für den Fortschrittsbalken im Dashboard. Das Startgewicht ist deine erste Messung.",
+      label: "Zielgewicht",
+      unit: "kg",
+      clear: "Entfernen",
     },
     calories: {
       title: "Kalorien",

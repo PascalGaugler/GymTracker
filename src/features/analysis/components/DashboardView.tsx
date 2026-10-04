@@ -9,11 +9,12 @@ import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { planRepository } from "@/data/repositories"
 import { MeasurementQuickAdd } from "@/features/measurements/components/MeasurementQuickAdd"
-import { formatSigned } from "@/lib/format"
+import { formatDecimal, formatSigned } from "@/lib/format"
 import { EmptyState } from "@/pages/EmptyState"
 import { PageHeader } from "@/pages/PageHeader"
 
 import { useMeasurementStats } from "../hooks/useMeasurementStats"
+import type { GoalProgress } from "../goal"
 import { useStrengthIndex } from "../hooks/useStrengthIndex"
 import { BASELINE_INDEX } from "../recomposition"
 import { trendDir, type MeasurementSummary } from "../stats"
@@ -32,12 +33,15 @@ function MeasurementStat({
   summary,
   loading,
   action,
+  goal,
 }: {
   label: string
   summary: MeasurementSummary | null
   loading: boolean
   /** Makes the card interactive: a route link, or (no `to`) a quick-add trigger. */
   action: { actionHint: string; to?: string }
+  /** Bodyweight only: progress toward the target weight. */
+  goal?: GoalProgress | null
 }) {
   const { t } = useTranslation()
   const card = (props: Omit<ComponentProps<typeof StatCard>, "label" | "to" | "actionHint">) => {
@@ -62,7 +66,19 @@ function MeasurementStat({
       ? t("dashboard.sinceStart", { value: `${formatSigned(changeSinceStart, 1)} ${unit}` })
       : undefined
 
-  return card({ value: latest.toFixed(1), unit, badge, sub })
+  const goalProp = goal
+    ? {
+        progress: goal.progress,
+        startLabel: t("dashboard.cards.goalStart", { value: formatDecimal(goal.start, 2) }),
+        targetLabel: t("dashboard.cards.goalTarget", { value: formatDecimal(goal.target, 2) }),
+        spoken: t("dashboard.cards.goalSpoken", {
+          target: formatDecimal(goal.target, 2),
+          percent: Math.round(goal.progress * 100),
+        }),
+      }
+    : undefined
+
+  return card({ value: latest.toFixed(1), unit, badge, sub, goal: goalProp })
 }
 
 // Index moves within ±this read as "flat" rather than up/down noise.
@@ -139,6 +155,7 @@ export function DashboardView() {
           label={t("dashboard.cards.bodyweight")}
           summary={stats?.bodyweight ?? null}
           loading={loading}
+          goal={stats?.bodyweightGoal}
           action={{ actionHint: t("dashboard.cards.bodyweightAdd") }}
         />
         <MeasurementStat

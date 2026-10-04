@@ -23,6 +23,9 @@ const en: typeof de = {
       soon: "Soon",
       strengthBaseline: "vs. baseline (100)",
       caloriesSoon: "Yazio sync arrives in Phase 2",
+      goalStart: "Start {{value}}",
+      goalTarget: "Goal {{value}}",
+      goalSpoken: "Goal {{target}} kg, {{percent}} %",
     },
     ratePerWeek: "{{value}} {{unit}}/wk",
     sinceStart: "{{value}} since start",
@@ -356,6 +359,13 @@ const en: typeof de = {
     units: {
       title: "Units",
       body: "Default for new exercises. Weights you already logged are never converted.",
+    },
+    goal: {
+      title: "Goal",
+      body: "Target weight for the progress bar on the Dashboard. The start weight is your first measurement.",
+      label: "Target weight",
+      unit: "kg",
+      clear: "Clear",
     },
     calories: {
       title: "Calories",

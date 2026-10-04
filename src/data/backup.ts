@@ -79,7 +79,8 @@ export async function importBackup(data: unknown): Promise<void> {
   )
   // Preferences live outside IndexedDB, so they are restored after the data
   // transaction commits — a failed import never touches them.
-  if (backup.settings) updateSettings(backup.settings)
+  // An absent optional field in the block means "not set", so it clears a local value.
+  if (backup.settings) updateSettings({ targetWeight: undefined, ...backup.settings })
 }
 
 export async function importBackupJson(json: string): Promise<void> {

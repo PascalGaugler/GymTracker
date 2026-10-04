@@ -29,7 +29,8 @@ bar** with four destinations; settings is reached from a header icon, not a tab.
   - `/manage/exercises` — exercise catalog (list/search).
   - `/manage/exercises/:exerciseId` — create/edit a catalog exercise (name, type, unit).
 - `/settings` — **Settings** (header, not a tab): export/import backup, unit preferences,
-  the calorie incomplete-day threshold, and the Yazio connection (Phase 2).
+  the bodyweight goal ("Ziel" row: target weight in kg, set or clear; drives the Dashboard
+  goal bar), the calorie incomplete-day threshold, and the Yazio connection (Phase 2).
 
 ## Quick-add measurements
 
