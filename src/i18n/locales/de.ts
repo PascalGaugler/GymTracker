@@ -1,6 +1,7 @@
 // German (default locale). User data (exercise names, notes) is never translated.
 const de = {
   nav: {
+    primary: "Hauptnavigation",
     dashboard: "Übersicht",
     log: "Trainieren",
     progress: "Fortschritt",
@@ -19,7 +20,7 @@ const de = {
       strengthOpen: "Verlauf anzeigen",
       noData: "Noch keine Daten",
       soon: "Bald",
-      strengthBaseline: "ggü. Start (100)",
+      strengthBaseline: "Baseline 100 · {{value}} %",
       caloriesSoon: "Yazio-Sync folgt in Phase 2",
       goalStart: "Start {{value}}",
       goalTarget: "Ziel {{value}}",

@@ -7,20 +7,26 @@ bar** with four destinations; settings is reached from a header icon, not a tab.
 
 - `/` — **Dashboard.** Landing screen. On-track summary as stat cards (bodyweight +
   weekly rate, waist trend, strength index, later calories) and quick actions (log weight,
-  start today's workout). Hosts empty/first-run states.
+  start today's workout). Hosts empty/first-run states. Shows a recomposition preview (one-line
+  thesis + mini chart, only once both series have a baseline) linking to
+  `/progress/recomposition`. The bodyweight, waist and strength-index cards are tappable
+  (bodyweight opens quick-add, the others link to their trend); the bodyweight card shows a
+  goal bar when a goal is set in Settings. The strength card reads "Baseline 100 · +x.x %".
 - `/log` — **Log.** The gym screen. Shows today's suggested workout (via rotation) or a
   picker; tapping in opens the active session with per-set weight inputs and last-time
   placeholders.
   - `/log/:sessionId` — the active/editable session (also used to open a past session to
     correct it).
-- `/progress` — **Progress.** Analysis hub with sub-views (segmented control or nested
-  routes):
+- `/progress` — **Progress.** Analysis hub with nested-route sub-views. The tab strip is an
+  equal-width, non-scrolling grid with short labels ("Recomp" · "Kraft" · "Körper") so all
+  three fit at 320; page titles keep the long names. Each view ends in an insight box (trend
+  pill + plain-language takeaway):
   - `/progress/recomposition` — the hero indexed strength-vs-bodyweight chart (default).
   - `/progress/strength` — per-workout exercise lines (workout selector, toggleable,
     swap-aware).
-  - `/progress/exercise/:exerciseId` — single-exercise drilldown with the min–max band.
+  - `/progress/exercise/:exerciseId` — single-exercise drilldown with the min–max band and stat tiles; entered from "Kraft", which stays highlighted.
   - `/progress/body` — smoothed bodyweight trend + rate, and the measurements chart
-    (waist-down vs. muscle-holding).
+    (waist-down vs. muscle-holding), with insight boxes and measurement tiles.
 - `/manage` — **Manage** (plans, workouts, exercises):
   - `/manage/plans` — plan list (create, set active, archive).
   - `/manage/plans/:planId` — workouts within a plan.
@@ -40,7 +46,7 @@ the numeric input itself follows the custom gym-input pattern.
 
 ## Navigation notes
 
-- Bottom tab bar destinations: Dashboard, Log, Progress, Manage. Settings via header icon.
+- Bottom tab bar destinations: Dashboard, Log, Progress, Manage (always four; Log is emphasised). The `<nav>` landmark is labelled "Hauptnavigation" (`nav.primary`). Settings via header icon.
 - SPA fallback must be configured on the host so deep links / refreshes resolve (see
   architecture.md, hosting).
 

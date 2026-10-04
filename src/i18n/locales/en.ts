@@ -3,6 +3,7 @@ import type de from "./de"
 // English (optional). Mirrors the German key structure exactly.
 const en: typeof de = {
   nav: {
+    primary: "Main navigation",
     dashboard: "Dashboard",
     log: "Log",
     progress: "Progress",
@@ -21,7 +22,7 @@ const en: typeof de = {
       strengthOpen: "Show trend",
       noData: "No data yet",
       soon: "Soon",
-      strengthBaseline: "vs. baseline (100)",
+      strengthBaseline: "Baseline 100 · {{value}} %",
       caloriesSoon: "Yazio sync arrives in Phase 2",
       goalStart: "Start {{value}}",
       goalTarget: "Goal {{value}}",

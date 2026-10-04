@@ -168,6 +168,50 @@ No custom spacing tokens are needed.
 | `shadow-inset-hi` | `inset 0 1px 0 rgba(255,255,255,.04)` | Top highlight on raised cards                         |
 | `shadow-card`     | `shadow-inset-hi` + `shadow-elev-1`   | Resting raised cards: `Card`, list rows, empty states |
 
+## Components
+
+Reusable primitives live in `src/components/ui/` (presentational, tokens only). Feature
+widgets built on the same tokens live next to their feature.
+
+- **Button** (`button.tsx`): sizes `default` 48px, `lg` 56px, `icon` 48px square. There are
+  no smaller sizes, so every button meets the `--tap` target.
+- **Segmented** (`segmented.tsx`): shared "pick one" styling, presentational only (the
+  consumer owns the element and its aria). `segmentedListVariants` layouts: `inline`,
+  `wrap`, `fill` (equal-width grid, non-scrolling: Progress tabs "Recomp · Kraft · Körper").
+  `segmentedItemVariants({ active })` for items, `pickChipVariants` for standalone chips,
+  `SegmentedScroller` for a strip that may exceed the viewport (it owns the overflow).
+- **Badge** (`badge.tsx`): non-interactive pills. Variants: `tag`, `more`, `status`
+  (solid primary, mono uppercase), `neutral`, `tally`, `tallyDone` (success).
+- **Overline** (`overline.tsx`): mono uppercase eyebrow, `text-subtle` by default,
+  `tone="primary"` for the one deliberate blue overline (Dashboard preview). The 0.16em
+  tracking comes from the `text-micro` token; never add an arbitrary `tracking-[…]`.
+- **Card** and list rows: `shadow-card` (inset highlight + `elev-1`). Sheet and Dialog:
+  `bg-sheet` + `shadow-elev-3` over a `bg-scrim` overlay.
+- **StatCard** (`features/analysis`): Dashboard stat. Label + optional trend badge, big mono
+  value + unit, muted sub-line, or a goal bar (`goal` prop: accent-to-primary gradient fill on
+  a `surface-2` track, start/target mono labels). Static, a link (`to`) or a button trigger
+  (`actionHint`, appended as visually hidden text).
+- **StatTile** (`features/analysis`): compact readout (mono value + unit over a micro
+  label) on `surface-2`; tones `default`, `muted`, `good`. Used for the Body and exercise
+  drilldown tiles; place it in an `@container` parent, the value steps up at `@xs`.
+- **Insight** (`features/analysis`): plain-language takeaway under a chart, a `surface-2`
+  box with an optional `TrendBadge` and one caption line.
+- **Chart cues** (`chartCues.tsx`, `ChartSwatches.tsx`): per-series dash + marker pairing,
+  shared by lines, legends (`LegendSwatch`) and tooltips (`TooltipSwatch`); see the chart
+  palette above.
+
+**Class merging:** `cn()` uses `tailwind-merge` extended with our custom `text-*` scale and
+`shadow-*` names (`src/lib/utils.ts`). Add any new type-scale or shadow token there too, or
+`cn()` will treat it as a colour and silently drop classes.
+
+### Nearest-token mapping
+
+When porting from the prototype, map its raw values to the nearest token instead of
+introducing new ones: a one-off px font size becomes the closest `text-*` step, a bespoke
+radius the closest `rounded-*`, a bespoke shadow `shadow-card` or `shadow-elev-*`, an rgba
+overlay `bg-scrim`, a hard-coded hex the matching colour token. Add a token only when no
+existing one fits, in `src/index.css` and in this document.
+
 ## Motion & touch
 
 - `--ease-standard` (`ease-standard` utility) = `cubic-bezier(.4,0,.2,1)`.

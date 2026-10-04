@@ -112,7 +112,7 @@ function StrengthStat() {
       {...link}
       value={strength.latest.toFixed(1)}
       badge={badge}
-      sub={t("dashboard.cards.strengthBaseline")}
+      sub={t("dashboard.cards.strengthBaseline", { value: formatSigned(delta, 1) })}
     />
   )
 }

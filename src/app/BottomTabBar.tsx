@@ -21,7 +21,7 @@ export function BottomTabBar() {
 
   return (
     <nav
-      aria-label={t("nav.dashboard")}
+      aria-label={t("nav.primary")}
       className="flex-none border-t border-border bg-surface"
       style={{ paddingBottom: "env(safe-area-inset-bottom)" }}
     >
