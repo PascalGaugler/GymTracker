@@ -1,0 +1,40 @@
+# Runs the same gate as `npm run ci` locally (typecheck + lint + test + format check),
+# plus a production build, on every push and pull request. Deployment is NOT done here:
+# Cloudflare Pages builds and deploys `main` itself via its GitHub integration.
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+# A newer push to the same branch/PR cancels the run that is still going.
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+# Least privilege: the job only needs to read the code.
+permissions:
+  contents: read
+
+jobs:
+  ci:
+    name: Typecheck, lint, test, format, build
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-node@v5
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Typecheck, lint, test, format check
+        run: npm run ci
+
+      - name: Production build
+        run: npm run build

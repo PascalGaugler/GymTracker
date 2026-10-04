@@ -1,0 +1,18 @@
+# Weekly dependency update PRs. CI runs on each one; merge the green ones.
+version: 2
+updates:
+  - package-ecosystem: npm
+    directory: /
+    schedule:
+      interval: weekly
+    # One PR for all minor/patch bumps instead of one per package; majors stay separate
+    # because they can contain breaking changes.
+    groups:
+      minor-and-patch:
+        update-types: [minor, patch]
+    open-pull-requests-limit: 5
+
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
