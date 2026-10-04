@@ -19,8 +19,15 @@ import { SERIES_CUES, lineWidth, markerDot } from "./chartCues"
 const STRENGTH = "var(--recomp-strength)" // blue, solid — holds / rises
 const BODYWEIGHT = "var(--recomp-bodyweight)" // violet, dashed — trends down
 
+// Charts at or below this height are the Dashboard preview.
+const COMPACT_MAX_HEIGHT = 200
+
 const STRENGTH_CUE = SERIES_CUES[0]! // solid · circle
 const BODYWEIGHT_CUE = SERIES_CUES[1]! // dashed · square
+
+// ~90 daily weigh-ins would fuse into a band: mark only every Nth point + the last.
+const MARKER_EVERY = 8
+const drawBodyweightMarker = markerDot(BODYWEIGHT_CUE, BODYWEIGHT)
 
 const axisTick = {
   fill: "var(--subtle)",
@@ -108,6 +115,15 @@ export function RecompositionChart({
   height?: number
 }) {
   const { t } = useTranslation()
+  // Compact (decorative) preview: no per-point markers, the lines carry the story.
+  const lastIndex = data.points.length - 1
+  const bodyweightDot = (props: { cx?: number; cy?: number; index?: number }) =>
+    props.index != null && (props.index % MARKER_EVERY === 0 || props.index === lastIndex) ? (
+      drawBodyweightMarker(props)
+    ) : (
+      <g key={props.index} />
+    )
+  const compact = height <= COMPACT_MAX_HEIGHT
 
   return (
     <ResponsiveContainer width="100%" height={height}>
@@ -137,7 +153,8 @@ export function RecompositionChart({
           strokeDasharray="2 4"
           label={{
             value: t("progress.recomposition.baseline"),
-            position: "insideTopRight",
+            position: "insideBottomRight",
+            dy: -4,
             fill: "var(--subtle)",
             fontSize: 9,
             fontFamily: "var(--font-mono)",
@@ -151,7 +168,7 @@ export function RecompositionChart({
           stroke={STRENGTH}
           strokeWidth={lineWidth(STRENGTH_CUE)}
           connectNulls
-          dot={markerDot(STRENGTH_CUE, STRENGTH)}
+          dot={false}
           activeDot={{ r: 5, fill: "var(--background)", stroke: STRENGTH, strokeWidth: 2.5 }}
           isAnimationActive={false}
         />
@@ -163,7 +180,7 @@ export function RecompositionChart({
           strokeWidth={lineWidth(BODYWEIGHT_CUE)}
           strokeDasharray={BODYWEIGHT_CUE.dash}
           connectNulls
-          dot={markerDot(BODYWEIGHT_CUE, BODYWEIGHT)}
+          dot={compact ? false : bodyweightDot}
           activeDot={{ r: 5, fill: "var(--background)", stroke: BODYWEIGHT, strokeWidth: 2.5 }}
           isAnimationActive={false}
         />
