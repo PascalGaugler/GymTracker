@@ -23,6 +23,13 @@ const en: typeof de = {
     },
     ratePerWeek: "{{value}} {{unit}}/wk",
     sinceStart: "{{value}} since start",
+    recomposition: {
+      open: "Open",
+      thesis:
+        "Strength <strength>{{strength}} %</strength> · Weight <weight>{{weight}} %</weight> over {{count}} weeks",
+      thesis_one:
+        "Strength <strength>{{strength}} %</strength> · Weight <weight>{{weight}} %</weight> over {{count}} week",
+    },
     today: {
       title: "Up today",
       cta: "Start workout",

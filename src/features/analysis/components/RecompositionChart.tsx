@@ -79,11 +79,17 @@ function ChartTooltip({ active, payload, label }: ChartTooltipProps) {
 // 100 at the fixed baseline, on ONE shared axis (never dual axes). Built in
 // Recharts with our tokens; nulls are bridged so each series reads as a
 // continuous line across the other's dates.
-export function RecompositionChart({ data }: { data: RecompositionData }) {
+export function RecompositionChart({
+  data,
+  height = 280,
+}: {
+  data: RecompositionData
+  height?: number
+}) {
   const { t } = useTranslation()
 
   return (
-    <ResponsiveContainer width="100%" height={280}>
+    <ResponsiveContainer width="100%" height={height}>
       <LineChart data={data.points} margin={{ top: 16, right: 14, bottom: 4, left: -12 }}>
         <CartesianGrid stroke="var(--grid)" vertical={false} />
         <XAxis

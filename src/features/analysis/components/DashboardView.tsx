@@ -16,6 +16,7 @@ import { useMeasurementStats } from "../hooks/useMeasurementStats"
 import { useStrengthIndex } from "../hooks/useStrengthIndex"
 import { BASELINE_INDEX } from "../recomposition"
 import { trendDir, type MeasurementSummary } from "../stats"
+import { RecompositionPreview } from "./RecompositionPreview"
 import { StatCard } from "./StatCard"
 import { TodayWorkoutCard } from "./TodayWorkoutCard"
 import { TrendBadge } from "./TrendBadge"
@@ -145,6 +146,8 @@ export function DashboardView() {
           sub={t("dashboard.cards.caloriesSoon")}
         />
       </div>
+
+      <RecompositionPreview />
 
       <TodayWorkoutCard />
 

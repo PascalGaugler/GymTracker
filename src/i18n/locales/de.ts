@@ -21,6 +21,13 @@ const de = {
     },
     ratePerWeek: "{{value}} {{unit}}/Wo",
     sinceStart: "{{value}} seit Start",
+    recomposition: {
+      open: "Öffnen",
+      thesis:
+        "Kraft <strength>{{strength}} %</strength> · Gewicht <weight>{{weight}} %</weight> über {{count}} Wochen",
+      thesis_one:
+        "Kraft <strength>{{strength}} %</strength> · Gewicht <weight>{{weight}} %</weight> über {{count}} Woche",
+    },
     today: {
       title: "Heute dran",
       cta: "Workout starten",
