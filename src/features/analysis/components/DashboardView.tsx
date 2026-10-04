@@ -1,3 +1,4 @@
+import type { ComponentProps } from "react"
 import { format } from "date-fns"
 import { de } from "date-fns/locale"
 import { useLiveQuery } from "dexie-react-hooks"
@@ -30,15 +31,22 @@ function MeasurementStat({
   label,
   summary,
   loading,
+  action,
 }: {
   label: string
   summary: MeasurementSummary | null
   loading: boolean
+  /** Makes the card interactive: a route link, or (no `to`) a quick-add trigger. */
+  action: { actionHint: string; to?: string }
 }) {
   const { t } = useTranslation()
+  const card = (props: Omit<ComponentProps<typeof StatCard>, "label" | "to" | "actionHint">) => {
+    const el = <StatCard label={label} to={action.to} actionHint={action.actionHint} {...props} />
+    return action.to ? el : <MeasurementQuickAdd>{el}</MeasurementQuickAdd>
+  }
 
-  if (loading) return <StatCard label={label} value={null} />
-  if (!summary) return <StatCard label={label} value={null} sub={t("dashboard.cards.noData")} />
+  if (loading) return card({ value: null })
+  if (!summary) return card({ value: null, sub: t("dashboard.cards.noData") })
 
   const { latest, unit, ratePerWeek, changeSinceStart, count } = summary
 
@@ -54,7 +62,7 @@ function MeasurementStat({
       ? t("dashboard.sinceStart", { value: `${formatSigned(changeSinceStart, 1)} ${unit}` })
       : undefined
 
-  return <StatCard label={label} value={latest.toFixed(1)} unit={unit} badge={badge} sub={sub} />
+  return card({ value: latest.toFixed(1), unit, badge, sub })
 }
 
 // Index moves within ±this read as "flat" rather than up/down noise.
@@ -66,15 +74,15 @@ function StrengthStat() {
   const { t } = useTranslation()
   const strength = useStrengthIndex()
 
-  if (strength === undefined) return <StatCard label={t("dashboard.cards.strength")} value={null} />
+  const link = {
+    label: t("dashboard.cards.strength"),
+    to: "/progress/recomposition",
+    actionHint: t("dashboard.cards.strengthOpen"),
+  }
+
+  if (strength === undefined) return <StatCard {...link} value={null} />
   if (strength === null)
-    return (
-      <StatCard
-        label={t("dashboard.cards.strength")}
-        value={null}
-        sub={t("dashboard.cards.noData")}
-      />
-    )
+    return <StatCard {...link} value={null} sub={t("dashboard.cards.noData")} />
 
   const delta = strength.latest - BASELINE_INDEX
   const badge = (
@@ -85,7 +93,7 @@ function StrengthStat() {
 
   return (
     <StatCard
-      label={t("dashboard.cards.strength")}
+      {...link}
       value={strength.latest.toFixed(1)}
       badge={badge}
       sub={t("dashboard.cards.strengthBaseline")}
@@ -131,11 +139,13 @@ export function DashboardView() {
           label={t("dashboard.cards.bodyweight")}
           summary={stats?.bodyweight ?? null}
           loading={loading}
+          action={{ actionHint: t("dashboard.cards.bodyweightAdd") }}
         />
         <MeasurementStat
           label={t("dashboard.cards.waist")}
           summary={stats?.waist ?? null}
           loading={loading}
+          action={{ to: "/progress/body", actionHint: t("dashboard.cards.waistOpen") }}
         />
         <StrengthStat />
         <StatCard
