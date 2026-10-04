@@ -37,7 +37,12 @@ function formatDate(t: number): string {
 interface ChartTooltipProps {
   active?: boolean
   label?: number | string
-  payload?: { dataKey?: string | number; value?: number | null; color?: string }[]
+  payload?: {
+    dataKey?: string | number
+    value?: number | null
+    color?: string
+    payload?: { strength?: number | null }
+  }[]
 }
 
 // Tooltip matching the design-reference popover: date header + a coloured row
@@ -55,22 +60,38 @@ function ChartTooltip({ active, payload, label }: ChartTooltipProps) {
       <div className="mb-1 font-mono text-micro tracking-normal text-subtle">
         {formatDate(label as number)}
       </div>
-      {rows.map((entry) => (
-        <div key={String(entry.dataKey)} className="flex items-center gap-2">
-          <TooltipSwatch
-            cue={entry.dataKey === "strength" ? STRENGTH_CUE : BODYWEIGHT_CUE}
-            color={entry.color ?? STRENGTH}
-          />
-          <span className="flex-1 text-caption text-muted-foreground">
-            {entry.dataKey === "strength"
-              ? t("progress.recomposition.strengthSeries")
-              : t("progress.recomposition.bodyweightSeries")}
-          </span>
-          <span className="font-mono text-caption font-semibold tabular-nums">
-            {(entry.value as number).toFixed(1)}
-          </span>
-        </div>
-      ))}
+      {rows.map((entry) => {
+        const isStrength = entry.dataKey === "strengthDisplay"
+        const raw = entry.payload?.strength
+        return (
+          <div key={String(entry.dataKey)}>
+            <div className="flex items-center gap-2">
+              <TooltipSwatch
+                cue={isStrength ? STRENGTH_CUE : BODYWEIGHT_CUE}
+                color={entry.color ?? STRENGTH}
+              />
+              <span className="flex-1 text-caption text-muted-foreground">
+                {isStrength
+                  ? t("progress.recomposition.strengthSmoothed")
+                  : t("progress.recomposition.bodyweightSeries")}
+              </span>
+              <span className="font-mono text-caption font-semibold tabular-nums">
+                {(entry.value as number).toFixed(1)}
+              </span>
+            </div>
+            {isStrength && raw != null && (
+              <div className="flex items-center gap-2 pl-5">
+                <span className="flex-1 text-caption text-subtle">
+                  {t("progress.recomposition.strengthRaw")}
+                </span>
+                <span className="font-mono text-caption tabular-nums text-muted-foreground">
+                  {raw.toFixed(1)}
+                </span>
+              </div>
+            )}
+          </div>
+        )
+      })}
     </div>
   )
 }
@@ -125,7 +146,7 @@ export function RecompositionChart({
         <Tooltip content={<ChartTooltip />} cursor={{ stroke: "var(--border-strong)" }} />
         <Line
           type="stepAfter"
-          dataKey="strength"
+          dataKey="strengthDisplay"
           name={t("progress.recomposition.strengthSeries")}
           stroke={STRENGTH}
           strokeWidth={lineWidth(STRENGTH_CUE)}

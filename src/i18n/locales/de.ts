@@ -101,6 +101,8 @@ const de = {
     recomposition: {
       caption: "Beide auf 100 indexiert · eine Achse",
       strengthSeries: "Kraft-Index",
+      strengthSmoothed: "Kraft-Index (Ø 3 Einheiten)",
+      strengthRaw: "Einzelwert",
       bodyweightSeries: "Körpergewicht",
       baseline: "Start = 100",
       insight: {

@@ -103,6 +103,8 @@ const en: typeof de = {
     recomposition: {
       caption: "Both indexed to 100 · one axis",
       strengthSeries: "Strength index",
+      strengthSmoothed: "Strength index (avg of 3)",
+      strengthRaw: "This session",
       bodyweightSeries: "Bodyweight",
       baseline: "Baseline = 100",
       insight: {
