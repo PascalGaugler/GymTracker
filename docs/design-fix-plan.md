@@ -21,6 +21,10 @@ These override the recommendations in §4 wherever they differ.
 - **Number format (user, 2026-10-03):** decimals use a DOT in every locale ("80.4 kg"),
   with a true minus "−" and an explicit "+" for signed values, via the shared signed-number
   helper. Do not switch to the German decimal comma.
+- **Final-audit decisions (user, 2026-10-04):** the Log set-input value stays
+  RIGHT-aligned (decimals line up across sets), unlike the prototype. The Dashboard waist
+  badge stays a RATE (cm/Wo), not the prototype's % change. The Log session header overline
+  shows the rotation position ("ROTATION · n VON N") as in the prototype (FP-3).
 - **Added during implementation (user, 2026-10-03):** O-11, Progress tab strip as in the
   prototype's `.segmented2.seg-grid`: short labels ("Recomp" · "Kraft" · "Körper") in an
   equal-width, non-scrolling grid, so all tabs are visible at 320. And on
