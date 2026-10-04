@@ -6,12 +6,12 @@ import { NavLink } from "react-router-dom"
 
 import { cn } from "@/lib/utils"
 
-type TabItem = { to: string; labelKey: ParseKeys; icon: LucideIcon }
+type TabItem = { to: string; labelKey: ParseKeys; icon: LucideIcon; emphasis?: boolean }
 
 // Primary navigation. Settings is reached from the header, not a tab (screens.md).
 const TABS: TabItem[] = [
   { to: "/", labelKey: "nav.dashboard", icon: House },
-  { to: "/log", labelKey: "nav.log", icon: Dumbbell },
+  { to: "/log", labelKey: "nav.log", icon: Dumbbell, emphasis: true },
   { to: "/progress", labelKey: "nav.progress", icon: LineChart },
   { to: "/manage", labelKey: "nav.manage", icon: SlidersHorizontal },
 ]
@@ -26,19 +26,26 @@ export function BottomTabBar() {
       style={{ paddingBottom: "env(safe-area-inset-bottom)" }}
     >
       <ul className="mx-auto grid max-w-screen-sm grid-cols-4">
-        {TABS.map(({ to, labelKey, icon: Icon }) => (
+        {TABS.map(({ to, labelKey, icon: Icon, emphasis }) => (
           <li key={to} className="min-w-0">
             <NavLink
               to={to}
               end={to === "/"}
               className={({ isActive }) =>
                 cn(
-                  "flex min-h-(--tap) w-full min-w-0 flex-col items-center justify-center gap-1 px-1 py-2 text-center text-caption font-medium transition-colors",
+                  "flex min-h-(--tap) w-full min-w-0 flex-col items-center justify-center px-1 py-px text-center text-caption font-medium transition-colors",
                   isActive ? "text-primary" : "text-subtle hover:text-foreground",
                 )
               }
             >
-              <Icon size={22} className="shrink-0" aria-hidden="true" />
+              <span
+                className={cn(
+                  "flex size-10 shrink-0 items-center justify-center",
+                  emphasis && "rounded-md bg-primary text-primary-foreground shadow-elev-2",
+                )}
+              >
+                <Icon size={22} aria-hidden="true" />
+              </span>
               <span className="max-w-full truncate">{t(labelKey)}</span>
             </NavLink>
           </li>
