@@ -11,6 +11,7 @@ import type { Exercise, LoggedSet, Workout, WorkoutSession } from "@/data/schema
 
 import { useExerciseCatalog } from "../hooks/useExerciseCatalog"
 import { useLastSession, useSession, useWorkout } from "../hooks/useSessionLog"
+import { useWorkoutRotation } from "../hooks/useWorkoutRotation"
 import { ExerciseLogCard } from "./ExerciseLogCard"
 
 interface LocationState {
@@ -106,6 +107,11 @@ function SessionForm({
   const { t } = useTranslation()
   const navigate = useNavigate()
 
+  // Rotation position within the active plan; a workout outside it (archived plan,
+  // removed workout) falls back to the generic "Log" overline.
+  const rotation = useWorkoutRotation()
+  const inRotation = rotation?.workouts.find((w) => w.id === workoutId)
+
   // Entered weights, keyed by slot id → one string per set.
   const [values, setValues] = useState(() => buildInitialValues(workout, session))
   const [saving, setSaving] = useState(false)
@@ -181,7 +187,11 @@ function SessionForm({
           <ArrowLeft aria-hidden="true" />
         </Button>
         <div className="min-w-0 flex-1 text-center">
-          <Overline>{t("nav.log")}</Overline>
+          <Overline>
+            {inRotation && rotation
+              ? t("log.rotation", { n: inRotation.order + 1, total: rotation.workouts.length })
+              : t("nav.log")}
+          </Overline>
           <h1 className="truncate text-h3">{workout.name}</h1>
         </div>
         {/* Balances the back button so the title is centred (rest-timer slot). */}
