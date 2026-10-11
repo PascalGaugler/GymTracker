@@ -1,3 +1,11 @@
+import { format } from "date-fns"
+import { de } from "date-fns/locale"
+
+// Dashboard/Log overline date label: "Montag · 8. Mai", `de` locale.
+export function formatDayLong(date: Date): string {
+  return format(date, "EEEE · d. MMMM", { locale: de })
+}
+
 // Rounds to `decimals` places and drops trailing zeros: 88.10000000000001 → "88.1",
 // 62.55 → "62.55", 80 → "80". Stored values can carry float drift from older
 // records, so anything read back from the DB is formatted before it reaches the UI.

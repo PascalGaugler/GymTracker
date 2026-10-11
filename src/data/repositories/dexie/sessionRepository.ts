@@ -15,11 +15,22 @@ export const sessionRepository: SessionRepository = {
   getRecent: (limit) => db.sessions.orderBy("date").reverse().limit(limit).toArray(),
 
   // Compound index gives the most recent session of a workout (placeholders + rotation).
-  getLastForWorkout: (workoutId) =>
+  // With `before`, the upper bound is exclusive — a session logged exactly at `before`
+  // (e.g. the session being edited) is excluded, so backfilling a past day looks at
+  // what came strictly before it.
+  getLastForWorkout: (workoutId, before) =>
     db.sessions
       .where("[workoutId+date]")
-      .between([workoutId, Dexie.minKey], [workoutId, Dexie.maxKey])
+      .between(
+        [workoutId, Dexie.minKey],
+        [workoutId, before ?? Dexie.maxKey],
+        true,
+        before === undefined,
+      )
       .last(),
+
+  // Rotation for a past day: the most recent session overall, strictly before `date`.
+  getLastBefore: (date) => db.sessions.where("date").below(date).last(),
 
   async getExerciseHistory(exerciseId) {
     // Sets are embedded; at a few hundred sessions, load + flatten in memory.

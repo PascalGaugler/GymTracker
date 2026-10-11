@@ -7,12 +7,12 @@ Build **one phase at a time**, in order; never build ahead.
 
 ## Status
 
-| #   | Phase                                             | Status | Done-when (short)                                   | Learnings |
-| --- | ------------------------------------------------- | ------ | --------------------------------------------------- | --------- |
-| DN1 | Data layer + selected-day state (no UI)           | todo   | new repo methods + day context tested, ci green     | —         |
-| DN2 | Dashboard navigation (calendar sheet + swipe)     | todo   | calendar + swipe + header change the selected day   | —         |
-| DN3 | Dashboard content as of day + day-aware quick-add | todo   | cards as of day; quick-add prefill + replace/delete | —         |
-| DN4 | Day-aware Log tab + Dashboard workout card        | todo   | Log opens the day's session or a backfill picker    | —         |
+| #   | Phase                                             | Status | Done-when (short)                                   | Learnings                                                                                                                                                 |
+| --- | ------------------------------------------------- | ------ | --------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| DN1 | Data layer + selected-day state (no UI)           | done   | new repo methods + day context tested, ci green     | Context split: `dayContext.ts` + `SelectedDayContext.tsx` + `useSelectedDay.ts` (react-refresh rule); file names must differ by more than case (Windows). |
+| DN2 | Dashboard navigation (calendar sheet + swipe)     | todo   | calendar + swipe + header change the selected day   | —                                                                                                                                                         |
+| DN3 | Dashboard content as of day + day-aware quick-add | todo   | cards as of day; quick-add prefill + replace/delete | —                                                                                                                                                         |
+| DN4 | Day-aware Log tab + Dashboard workout card        | todo   | Log opens the day's session or a backfill picker    | —                                                                                                                                                         |
 
 `Status` ∈ `todo · in_progress · done`. Flip to `done` ONLY after `npm run ci` passes.
 

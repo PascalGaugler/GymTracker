@@ -179,6 +179,73 @@ describe("sessionRepository", () => {
     expect(await sessionRepository.countSessionsForWorkout(workoutId)).toBe(2)
     expect(await sessionRepository.countSessionsForWorkout(crypto.randomUUID())).toBe(0)
   })
+
+  describe("getLastForWorkout with a `before` boundary (backfill rotation)", () => {
+    it("excludes a session exactly at `before`, includes an earlier same-day one", async () => {
+      const exact = makeSession(new Date("2026-05-08T10:00:00"), 82.5)
+      const earlierSameDay = makeSession(new Date("2026-05-08T08:00:00"), 81)
+      await sessionRepository.save(earlierSameDay)
+      await sessionRepository.save(exact)
+
+      const last = await sessionRepository.getLastForWorkout(workoutId, exact.date)
+      expect(last?.id).toBe(earlierSameDay.id)
+    })
+
+    it("ignores sessions from other workouts", async () => {
+      const otherWorkoutId = crypto.randomUUID()
+      const other: WorkoutSession = {
+        ...makeSession(new Date("2026-05-07T10:00:00"), 60),
+        workoutId: otherWorkoutId,
+      }
+      const mine = makeSession(new Date("2026-05-01T10:00:00"), 80)
+      await sessionRepository.save(other)
+      await sessionRepository.save(mine)
+
+      const last = await sessionRepository.getLastForWorkout(
+        workoutId,
+        new Date("2026-05-08T00:00:00"),
+      )
+      expect(last?.id).toBe(mine.id)
+    })
+
+    it("still returns the overall latest when `before` is omitted", async () => {
+      const older = makeSession(new Date("2026-05-01T10:00:00"), 80)
+      const newer = makeSession(new Date("2026-05-08T10:00:00"), 82.5)
+      await sessionRepository.save(older)
+      await sessionRepository.save(newer)
+
+      expect((await sessionRepository.getLastForWorkout(workoutId))?.id).toBe(newer.id)
+    })
+
+    it("returns undefined when nothing precedes `before`", async () => {
+      await sessionRepository.save(makeSession(new Date("2026-05-08T10:00:00"), 82.5))
+      const last = await sessionRepository.getLastForWorkout(
+        workoutId,
+        new Date("2026-05-01T00:00:00"),
+      )
+      expect(last).toBeUndefined()
+    })
+  })
+
+  describe("getLastBefore", () => {
+    it("returns the latest session strictly before a date, across workouts", async () => {
+      const otherWorkoutId = crypto.randomUUID()
+      const earlier: WorkoutSession = {
+        ...makeSession(new Date("2026-05-01T10:00:00"), 80),
+        workoutId: otherWorkoutId,
+      }
+      const exact = makeSession(new Date("2026-05-08T10:00:00"), 82.5)
+      await sessionRepository.save(earlier)
+      await sessionRepository.save(exact)
+
+      expect((await sessionRepository.getLastBefore(exact.date))?.id).toBe(earlier.id)
+    })
+
+    it("returns undefined with no prior session", async () => {
+      await sessionRepository.save(makeSession(new Date("2026-05-08T10:00:00"), 82.5))
+      expect(await sessionRepository.getLastBefore(new Date("2026-05-01T00:00:00"))).toBeUndefined()
+    })
+  })
 })
 
 // The core promise of the plan/workout editor: a plan is only a template.
@@ -247,5 +314,91 @@ describe("measurementRepository", () => {
     const series = await measurementRepository.getByType("bodyweight")
     expect(series.map((m) => m.value)).toEqual([84, 83.4])
     expect((await measurementRepository.getLatest("bodyweight"))?.id).toBe(latest.id)
+  })
+
+  describe("getByDate", () => {
+    it("includes the start and end of the calendar day, excludes neighbouring days", async () => {
+      const day = new Date("2026-05-08T00:00:00")
+      const startOfDay = await measurementRepository.add({
+        type: "bodyweight",
+        value: 83,
+        unit: "kg",
+        measuredAt: new Date("2026-05-08T00:00:00.000"),
+        source: "manual",
+      })
+      const endOfDay = await measurementRepository.add({
+        type: "waist",
+        value: 80,
+        unit: "cm",
+        measuredAt: new Date("2026-05-08T23:59:59.999"),
+        source: "manual",
+      })
+      await measurementRepository.add({
+        type: "bodyweight",
+        value: 84,
+        unit: "kg",
+        measuredAt: new Date("2026-05-07T23:59:59.999"),
+        source: "manual",
+      })
+      await measurementRepository.add({
+        type: "waist",
+        value: 79,
+        unit: "cm",
+        measuredAt: new Date("2026-05-09T00:00:00.000"),
+        source: "manual",
+      })
+
+      const onDay = await measurementRepository.getByDate(day)
+      expect(onDay.map((m) => m.id).sort()).toEqual([startOfDay.id, endOfDay.id].sort())
+    })
+
+    it("returns an empty array when nothing was recorded that day", async () => {
+      expect(await measurementRepository.getByDate(new Date("2026-05-08T12:00:00"))).toEqual([])
+    })
+  })
+
+  describe("save", () => {
+    it("replaces an existing measurement by id", async () => {
+      const original = await measurementRepository.add({
+        type: "bodyweight",
+        value: 84,
+        unit: "kg",
+        measuredAt: new Date("2026-05-08T07:00:00"),
+        source: "manual",
+      })
+
+      await measurementRepository.save({ ...original, value: 83.2 })
+
+      const [stored] = await measurementRepository.getByType("bodyweight")
+      expect(stored.value).toBe(83.2)
+      expect(await measurementRepository.getByType("bodyweight")).toHaveLength(1)
+    })
+
+    it("validates on write (rejects a non-positive value)", async () => {
+      const original = await measurementRepository.add({
+        type: "bodyweight",
+        value: 84,
+        unit: "kg",
+        measuredAt: new Date("2026-05-08T07:00:00"),
+        source: "manual",
+      })
+      await expect(measurementRepository.save({ ...original, value: 0 })).rejects.toThrow()
+    })
+  })
+
+  describe("remove", () => {
+    it("deletes a measurement by id", async () => {
+      const measurement = await measurementRepository.add({
+        type: "bodyweight",
+        value: 84,
+        unit: "kg",
+        measuredAt: new Date("2026-05-08T07:00:00"),
+        source: "manual",
+      })
+
+      await measurementRepository.remove(measurement.id)
+
+      expect(await measurementRepository.getByType("bodyweight")).toEqual([])
+    })
   })
 })

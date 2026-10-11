@@ -47,7 +47,14 @@ export interface SessionRepository {
   getAll(): Promise<WorkoutSession[]>
   getByDate(date: Date): Promise<WorkoutSession[]>
   getRecent(limit: number): Promise<WorkoutSession[]>
-  getLastForWorkout(workoutId: string): Promise<WorkoutSession | undefined>
+  /**
+   * The most recent session of a workout. Without `before`, the latest overall
+   * (unchanged behaviour). With `before`, the latest strictly before that date —
+   * drives placeholders/rotation when backfilling a past day.
+   */
+  getLastForWorkout(workoutId: string, before?: Date): Promise<WorkoutSession | undefined>
+  /** The most recent session overall, strictly before `date` — rotation for a past day. */
+  getLastBefore(date: Date): Promise<WorkoutSession | undefined>
   getExerciseHistory(exerciseId: string): Promise<ExerciseDataPoint[]>
   /** How many sessions contain at least one logged set for this exercise. */
   countSessionsForExercise(exerciseId: string): Promise<number>
@@ -59,5 +66,10 @@ export interface SessionRepository {
 export interface MeasurementRepository {
   getByType(type: MeasurementType): Promise<Measurement[]>
   getLatest(type: MeasurementType): Promise<Measurement | undefined>
+  /** Every measurement (any type) recorded on that calendar day. */
+  getByDate(date: Date): Promise<Measurement[]>
   add(input: Omit<Measurement, "id">): Promise<Measurement>
+  /** Validates, then replaces by id (backfill edits an existing entry in place). */
+  save(measurement: Measurement): Promise<void>
+  remove(id: string): Promise<void>
 }

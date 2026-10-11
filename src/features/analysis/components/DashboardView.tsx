@@ -1,6 +1,4 @@
 import type { ComponentProps } from "react"
-import { format } from "date-fns"
-import { de } from "date-fns/locale"
 import { useLiveQuery } from "dexie-react-hooks"
 import { Ruler } from "lucide-react"
 import { useTranslation } from "react-i18next"
@@ -9,7 +7,7 @@ import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { planRepository } from "@/data/repositories"
 import { MeasurementQuickAdd } from "@/features/measurements/components/MeasurementQuickAdd"
-import { formatDecimal, formatSigned } from "@/lib/format"
+import { formatDayLong, formatDecimal, formatSigned } from "@/lib/format"
 import { EmptyState } from "@/pages/EmptyState"
 import { PageHeader } from "@/pages/PageHeader"
 
@@ -123,7 +121,7 @@ export function DashboardView() {
   const { t } = useTranslation()
   const plans = useLiveQuery(() => planRepository.getAll(), [])
   const stats = useMeasurementStats()
-  const today = format(new Date(), "EEEE · d. MMMM", { locale: de })
+  const today = formatDayLong(new Date())
 
   if (plans === undefined) return null
 

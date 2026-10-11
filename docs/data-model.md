@@ -177,7 +177,11 @@ export interface ExerciseDataPoint {
 export interface SessionRepository {
   getByDate(date: Date): Promise<WorkoutSession[]>
   getRecent(limit: number): Promise<WorkoutSession[]>
-  getLastForWorkout(workoutId: string): Promise<WorkoutSession | undefined>
+  // Without `before`: unchanged, overall latest. With `before`: latest strictly
+  // before that date — drives rotation/placeholders when backfilling a past day.
+  getLastForWorkout(workoutId: string, before?: Date): Promise<WorkoutSession | undefined>
+  // Latest session overall, strictly before `date` — rotation suggestion for a past day.
+  getLastBefore(date: Date): Promise<WorkoutSession | undefined>
   getExerciseHistory(exerciseId: string): Promise<ExerciseDataPoint[]>
   save(session: WorkoutSession): Promise<void>
 }
@@ -185,7 +189,13 @@ export interface SessionRepository {
 export interface MeasurementRepository {
   getByType(type: MeasurementType): Promise<Measurement[]>
   getLatest(type: MeasurementType): Promise<Measurement | undefined>
+  // Every measurement (any type) recorded on that calendar day — one
+  // [type+measuredAt] range query per MeasurementType, flattened in memory.
+  getByDate(date: Date): Promise<Measurement[]>
   add(input: Omit<Measurement, "id">): Promise<Measurement>
+  // Validates, then replaces by id (backfill: edit an existing day's entry in place).
+  save(measurement: Measurement): Promise<void>
+  remove(id: string): Promise<void>
 }
 
 // ExerciseRepository, PlanRepository, WorkoutRepository follow the same shape.
@@ -208,11 +218,19 @@ export const sessionRepository: SessionRepository = {
 
   getRecent: (limit) => db.sessions.orderBy("date").reverse().limit(limit).toArray(),
 
-  getLastForWorkout: (workoutId) =>
+  // `before` makes the upper bound exclusive — strictly earlier sessions only.
+  getLastForWorkout: (workoutId, before) =>
     db.sessions
       .where("[workoutId+date]")
-      .between([workoutId, Dexie.minKey], [workoutId, Dexie.maxKey])
+      .between(
+        [workoutId, Dexie.minKey],
+        [workoutId, before ?? Dexie.maxKey],
+        true,
+        before === undefined,
+      )
       .last(),
+
+  getLastBefore: (date) => db.sessions.where("date").below(date).last(),
 
   async getExerciseHistory(exerciseId) {
     // Sets are embedded; at a few hundred sessions, load + flatten in memory.
