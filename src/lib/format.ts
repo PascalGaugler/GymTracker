@@ -6,6 +6,12 @@ export function formatDayLong(date: Date): string {
   return format(date, "EEEE · d. MMMM", { locale: de })
 }
 
+// Compact date label for tight spaces (backfill overlines, Dashboard card
+// titles): "Do., 8. Okt.", `de` locale.
+export function formatDayShort(date: Date): string {
+  return format(date, "EEE, d. MMM", { locale: de })
+}
+
 // Rounds to `decimals` places and drops trailing zeros: 88.10000000000001 → "88.1",
 // 62.55 → "62.55", 80 → "80". Stored values can carry float drift from older
 // records, so anything read back from the DB is formatted before it reaches the UI.

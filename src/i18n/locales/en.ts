@@ -47,6 +47,9 @@ const en: typeof de = {
     today: {
       title: "Up today",
       cta: "Start workout",
+      loggedTitle: "Today's session",
+      loggedTitleOn: "Session on {{date}}",
+      backfillCta: "Backfill",
     },
     empty: {
       title: "Welcome",

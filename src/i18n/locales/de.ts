@@ -45,6 +45,9 @@ const de = {
     today: {
       title: "Heute dran",
       cta: "Workout starten",
+      loggedTitle: "Heutiges Training",
+      loggedTitleOn: "Training am {{date}}",
+      backfillCta: "Nachtragen",
     },
     empty: {
       title: "Willkommen",

@@ -24,13 +24,30 @@ bar** with four destinations; settings is reached from a header icon, not a tab.
     intercepted. The stat cards (bodyweight, waist, strength index) read **as of the selected
     day** — entries logged later are excluded, so backfilling a past day shows that day's
     standing, not today's; a card with nothing up to that day shows its normal empty state. The
-    Recomposition preview stays global regardless of the selected day. (The workout card becoming
-    day-aware is DN4.)
-- `/log` — **Log.** The gym screen. Shows today's suggested workout (via rotation) or a
-  picker; tapping in opens the active session with per-set weight inputs and last-time
-  placeholders.
+    Recomposition preview stays global regardless of the selected day.
+  - **Workout card, day-aware.** The selected day already has a session → the card shows its
+    progress instead of a suggestion: "Heutiges Training" (today) / "Training am {date}" (past),
+    the workout name, a `done/total Sätze` tally badge, and a green check once every planned set
+    is logged. Tapping opens `/log`, which (per below) shows that same session directly. No
+    session on a **past** day → a backfill suggestion instead, labelled "Nachtragen · {date}",
+    using the rotation workout that would follow the session _before_ that day; tapping opens
+    `/log`, which opens the picker. No session **today** → unchanged: the card suggests today's
+    rotation workout and tapping starts logging it directly (bypassing the picker).
+- `/log` — **Log.** The gym screen, day-aware. The selected day already has a session (today or
+  backfilled) → that session opens directly — no picker, since there's only one workout per day;
+  a legacy day with several sessions opens the most recently dated one. No session on the
+  selected day → the workout picker. On a **past** day the picker is labelled as backfilling
+  ("Nachtragen · {date}") and its rotation suggestion is computed from the session _before_ that
+  day (a session logged on or after it doesn't count). A freshly picked workout carries no day
+  information through router state — the session form reads the selected day from context itself.
+  A brand-new session is dated with `stampOnDay(selectedDay)` (today's time-of-day, on that
+  calendar day), captured once when the form mounts; a saved session keeps its own date and is
+  never re-stamped on edit. Last-weight placeholders come from the session before THAT session's
+  date, so correcting an old session shows the session before it, not a later one. When the
+  session's date isn't today, the header overline shows the full date instead of the rotation
+  position.
   - `/log/:sessionId` — the active/editable session (also used to open a past session to
-    correct it).
+    correct it), independent of the selected day.
 - `/progress` — **Progress.** Analysis hub with nested-route sub-views. The tab strip is an
   equal-width, non-scrolling grid with short labels ("Recomp" · "Kraft" · "Körper") so all
   three fit at 320; page titles keep the long names. Each view ends in an insight box (trend

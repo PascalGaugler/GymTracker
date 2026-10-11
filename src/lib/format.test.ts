@@ -1,6 +1,12 @@
 import { describe, expect, it } from "vitest"
 
-import { formatDecimal, formatSigned } from "./format"
+import { formatDayShort, formatDecimal, formatSigned } from "./format"
+
+describe("formatDayShort", () => {
+  it("formats as a short, de-locale weekday + date", () => {
+    expect(formatDayShort(new Date("2026-10-08T12:00:00"))).toBe("Do., 8. Okt.")
+  })
+})
 
 describe("formatDecimal", () => {
   it("strips float drift carried by stored values", () => {
