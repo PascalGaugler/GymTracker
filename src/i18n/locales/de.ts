@@ -1,5 +1,12 @@
 // German (default locale). User data (exercise names, notes) is never translated.
 const de = {
+  day: {
+    openCalendar: "Kalender öffnen",
+    today: "Heute",
+    calendarTitle: "Tag wählen",
+    trainingDay: "Trainingstag",
+    backfill: "Nachtragen · {{date}}",
+  },
   nav: {
     primary: "Hauptnavigation",
     dashboard: "Übersicht",

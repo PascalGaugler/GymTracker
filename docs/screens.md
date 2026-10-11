@@ -12,6 +12,16 @@ bar** with four destinations; settings is reached from a header icon, not a tab.
   `/progress/recomposition`. The bodyweight, waist and strength-index cards are tappable
   (bodyweight opens quick-add, the others link to their trend); the bodyweight card shows a
   goal bar when a goal is set in Settings. The strength card reads "Baseline 100 · +x.x %".
+  - **Day navigation.** The overline shows the _selected_ day (`EEEE · d. MMMM`, `de`
+    locale), not necessarily today. The header's action slot (top right) holds a "Heute"
+    pill — shown only when the selected day isn't today, returns to today — and a ghost
+    `CalendarDays` icon button that opens a bottom-sheet calendar (`DayCalendarSheet`).
+    The calendar highlights the selected day, disables future days, and marks every
+    past/today day with a small neutral dot or, when a session was logged that day, a
+    green check; tapping a day selects it and closes the sheet. The content below the
+    header also responds to a horizontal swipe (right = previous day, left = next day,
+    no-op on today) with a short directional slide/fade; vertical scroll is never
+    intercepted. (Stat cards, quick-add and the workout card becoming day-aware are DN3/DN4.)
 - `/log` — **Log.** The gym screen. Shows today's suggested workout (via rotation) or a
   picker; tapping in opens the active session with per-set weight inputs and last-time
   placeholders.
