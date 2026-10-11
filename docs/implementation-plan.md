@@ -1,506 +1,194 @@
-# Implementation Plan
+# Implementation Plan — Day navigation
 
-Phased build plan for the Gym Progress Tracker. **Single source of truth** for build
-progress — greedily maintained. Each phase is built independently in its own session with a
-clean context (`clear context + proceed`). Build **one phase at a time**; never build ahead.
-
-Decisions: fine-grained phases · **Log-first** order (logging runs on seed data before Manage
-CRUD) · **PWA early** (manifest/SW/fonts/persist in Phase 0) · German (`de`) default.
+Build plan for **day navigation** (view and backfill past days). **Single source of truth** for
+build progress, maintained greedily. It builds on Phases 0–11 and Design alignment (DA), which
+are all `done`; their plan and notes live in git history (`git log -- docs/implementation-plan.md`).
+Build **one phase at a time**, in order; never build ahead.
 
 ## Status
 
-| #   | Phase                             | Status | Done-when (short)                        | Learnings              |
-| --- | --------------------------------- | ------ | ---------------------------------------- | ---------------------- |
-| 0   | Foundation (data + PWA + tooling) | done   | data layer + PWA + tooling green         | see Phase 0 notes ↓    |
-| 1   | App shell + nav + i18n            | done   | tab bar + routes render, seed runs once  | see Phase 1 notes ↓    |
-| 2   | Log session (hero input)          | done   | log + save a session, placeholders work  | see Phase 2 notes ↓    |
-| 3   | Measurements quick-add            | done   | sheet writes a Measurement               | see Phase 3 notes ↓    |
-| 4   | Dashboard cards                   | done   | live bodyweight + rate + quick actions   | see Phase 4 notes ↓    |
-| 5   | Progress: Recomposition chart     | done   | one-axis indexed strength vs bodyweight  | see Phase 5 notes ↓    |
-| 6   | Progress: Strength progression    | done   | per-workout top-set lines, swap-aware    | see Phase 6 notes ↓    |
-| 7   | Progress: Exercise drilldown      | done   | top-set line + min–max band              | see Phase 7 notes ↓    |
-| 8   | Progress: Body chart              | done   | bodyweight trend+rate + measurements     | see Phase 8 notes ↓    |
-| 9   | Manage: exercise catalog          | done   | catalog CRUD + search                    | see Phase 9 notes ↓    |
-| 10  | Manage: plans + workouts          | done   | plan/workout/slot editor, set active     | see Phase 10 notes ↓   |
-| 11  | Settings + backup                 | done   | export/import round-trips, prefs persist | see Phase 11 notes ↓   |
-| DA  | Design alignment                  | done   | prototype parity, 320px-clean, ci green  | see Design alignment ↓ |
+| #   | Phase                                             | Status | Done-when (short)                                   | Learnings |
+| --- | ------------------------------------------------- | ------ | --------------------------------------------------- | --------- |
+| DN1 | Data layer + selected-day state (no UI)           | todo   | new repo methods + day context tested, ci green     | —         |
+| DN2 | Dashboard navigation (calendar sheet + swipe)     | todo   | calendar + swipe + header change the selected day   | —         |
+| DN3 | Dashboard content as of day + day-aware quick-add | todo   | cards as of day; quick-add prefill + replace/delete | —         |
+| DN4 | Day-aware Log tab + Dashboard workout card        | todo   | Log opens the day's session or a backfill picker    | —         |
 
-`Status` ∈ `todo · in_progress · done`. Flip to `done` ONLY after
-`npm run typecheck && npm run lint && npm run test` pass.
+`Status` ∈ `todo · in_progress · done`. Flip to `done` ONLY after `npm run ci` passes.
 
 ## Maintenance protocol (every phase, no exceptions)
 
-- **On start:** set the phase row to `in_progress`; create native Tasks for its steps.
-- **On finish:** after the gate passes, set the row to `done`.
-- **Learnings column:** add a one-line note ONLY if something arose that affects later phases
-  (a schema tweak, an index change, a shared util, a gotcha). If the phase went smoothly with
-  nothing forward-affecting, leave it `—`. Do not narrate.
+- **On start:** set the phase row to `in_progress`.
+- **On finish:** after `npm run ci` passes, set the row to `done`.
+- **Learnings column:** a one-line note ONLY if something arose that affects later phases (a
+  shared util, a repository signature, a gotcha). Otherwise leave it `—`. Do not narrate.
 - Never edit a future phase's scope speculatively; only record facts that change it.
-- **Native Tasks** are the in-session checklist; this table is the cross-session record. Keep both in sync.
+- Update the docs the phase names (`docs/data-model.md`, `docs/screens.md`).
 
-## Cross-cutting rules (from CLAUDE.md / docs — apply to every phase)
+## Cross-cutting rules (from CLAUDE.md — apply to every phase)
 
-- **Read/build only what the phase needs.** Do not open or build other phases' screens/charts/components.
 - TS strict, no `any`. YAGNI/KISS. No new state/forms libraries — `useLiveQuery` + `useState`.
 - Dexie touched **only** in `src/data/`. UUIDs via `crypto.randomUUID()`. Zod validate on
-  write/import only. Dates as `Date` via `z.coerce.date()`. Never index a boolean.
-- All UI strings through `t()`; `de` default. User data (exercise names) never translated.
-- shadcn for chrome; **custom** for weight-logging inputs and charts (Recharts). Use tokens —
-  never hard-code color/size/font.
-- **Responsive (verify at 320px):** keep the app-shell layout (header + tab bar `flex-none`,
-  only `<main>` scrolls; `h-dvh`, no `sticky`/`fixed` chrome over document scroll). No
-  horizontal overflow — every flex/grid item with text or an input carries `min-w-0`
-  (+ `truncate`/wrapping). See CLAUDE.md › UI.
-- `/design-reference/` is **visual reference only** — never import; reproduce with our tokens + shadcn.
-- **Done gate every phase:** `npm run typecheck && npm run lint && npm run test` all pass.
+  write/import only. Dates as `Date`. Never index a boolean.
+- All UI strings through `t()`, in both `de.ts` and `en.ts`; `de` default. User data verbatim.
+- shadcn for chrome; custom for weight-logging inputs and charts. Tokens only.
+- **Responsive (verify at 320px):** app-shell layout unchanged (only `<main>` scrolls); every
+  flex/grid item with text or an input carries `min-w-0`; tap targets ≥ `--tap` (48px).
+- Carried-over DA learnings: custom `text-*`/`shadow-*` tokens must be registered in
+  `src/lib/utils.ts` for `cn()`; Radix dialogs keep content mounted — re-seed draft state on
+  open; decimals via `formatDecimal`/`formatSigned`; date labels use the date-fns `de` locale.
+
+## Context
+
+The app only knows "now": measurements are stamped `new Date()`, the Log tab always opens the
+picker, and a saved session can't be reached again. A forgotten bodyweight or missed training
+log can't be backfilled.
+
+**Goal:** pick a **selected day** on the Dashboard (calendar icon top right, plus swipe). The
+Dashboard and the Log tab then show that day: stat cards as of that day, quick-add writes to that
+day (prefilled), and the Log tab opens that day's session directly (or the picker to backfill).
+Progress and Manage stay global and ignore the selected day.
+
+**Decisions (confirmed with the user):**
+
+1. Stat cards show values **as of the selected day**. The Recomp preview stays global.
+2. If a day already has a session (today included), the Log tab **opens it directly**, no
+   picker — one workout per day. Legacy days with several sessions open the most recent one.
+3. Quick-add uses **prefill + replace**: saving overwrites the day's values, clearing a prefilled
+   field deletes that entry — one value per type per day.
+
+The Log tab decides from the data: selected day has a session → show it; none → picker. On a past
+day the picker is labelled as backfilling ("Nachtragen · Mi, 8. Okt") and its rotation
+suggestion is computed from sessions _before_ that day.
+
+## Shared design (applies across phases)
+
+- **Selected-day state:** React Context (genuinely global, shared by Dashboard and Log) in
+  `src/features/day/`:
+  - `SelectedDayProvider` + `useSelectedDay()` →
+    `{ day: Date (startOfDay), isToday, setDay, shiftDay(±1), goToToday }`.
+  - Internal state `Date | null`, `null` = today; today is recomputed each render, so leaving the
+    app open past midnight stays correct.
+  - `setDay`/`shiftDay` clamp to today (no future days). A reload resets to today.
+  - Mounted in `src/app/providers.tsx`.
+  - Pure helpers in `src/features/day/day.ts`: `dayKey(date)` → `"yyyy-MM-dd"`, `clampToToday`,
+    `stampOnDay(day)` (returns `now` for today, otherwise the day at the current time of day).
+    Unit-tested.
+- **Dates written for past days** use `stampOnDay(day)` (measurements and new sessions).
+- **Date label** `EEEE · d. MMMM`, `de` locale — the existing Dashboard overline format,
+  extracted to `src/lib/format.ts` as `formatDayLong`.
+- All new strings through `t()`, in `de.ts` and `en.ts`.
 
 ---
 
-## Phase 0 — Foundation (data layer + PWA shell + tooling) · no feature UI
+## DN1 — Data layer + selected-day state (no UI)
 
-**Build:** npm scripts (`typecheck`, `format`, `test`); Vitest + Prettier config; `src/data/schema.ts`
-(all Zod schemas + inferred types); `src/data/db.ts` (Dexie stores/indexes); `src/data/repositories/`
-(interfaces + Dexie impls: Exercise, Plan, Workout, Session, Measurement); `src/data/seed.ts`
-(PPL plan + exercises, first-run only); `src/data/backup.ts` (Zod-validated export/import);
-`src/lib/persist.ts` (`navigator.storage.persist()` helper); PWA config in `vite.config.ts`
-(manifest, service worker), self-hosted fonts via `@fontsource` (replace the Google Fonts `@import`
-in `src/index.css`), app icons.
-**Data/logic:** This phase _is_ the data layer — every entity, store, repository per
-`docs/data-model.md` (schemas; stores `trainingPlans/workouts/exercises/sessions/measurements` with
-documented indexes; Session `getByDate/getRecent/getLastForWorkout/getExerciseHistory/save`,
-Measurement `getByType/getLatest/add`, etc.).
-**Visual reference:** none (no UI this phase).
-**Charts:** none.
-**Out of scope:** any screen, route, tab bar, i18n strings, component, or chart. No Dashboard, Log,
-Manage, Settings. No Yazio. No `reps` field.
-**Done when:** Vitest covers repositories (round-trip save/read) and `seed.ts` (seeds only when
-empty; valid PPL plan with workouts + slots + catalog exercises) and backup round-trip; fonts
-self-hosted; PWA manifest/SW generated by `npm run build`; gate passes.
+- `src/data/repositories/types.ts` + `dexie/sessionRepository.ts`:
+  - `getLastForWorkout(workoutId, before?: Date)` — latest session of that workout strictly
+    before `before`; without `before`, unchanged behaviour. `[workoutId+date]` range with upper
+    bound `[workoutId, before]`, exclusive.
+  - `getLastBefore(date: Date)` — latest session strictly before `date`
+    (`where("date").below(date).last()`); drives rotation for a past day.
+  - Existing `getByDate(date)` is reused for "sessions on day".
+- `measurementRepository`:
+  - `getByDate(date)` — all types for that calendar day; one `[type+measuredAt]` range query per
+    `MeasurementType` between `startOfDay` and `endOfDay`.
+  - `save(m)` — Zod-validate + `put` (replace).
+  - `remove(id)`.
+- Tests in `src/data/repositories.test.ts` for each new/changed method: boundaries, exclusivity,
+  empty case.
+- `src/features/day/`: `day.ts` (+ `day.test.ts`), `SelectedDayContext.tsx`; mount the provider
+  in `providers.tsx`.
+- Docs: `docs/data-model.md` repository section.
 
-**Learnings (affect later phases):**
+## DN2 — Dashboard navigation (calendar sheet + swipe + header)
 
-- **Dexie `transaction`** with more than 3 stores needs the **array form**
-  `db.transaction("rw", [t1, …, t5], fn)` — the positional overload only goes to 3 tables
-  (relevant when P10/P11 write across many stores).
-- **ESLint:** `react-refresh/only-export-components` is **off for `src/components/ui/**`** —
-shadcn chrome exports variant helpers (e.g. `buttonVariants`) next to the component. New
-  shadcn components added in later phases are already covered.
-- **PWA icons:** `public/app-icon.svg` (token-based dumbbell) plus PNGs rendered from it —
-  `apple-touch-icon-180.png`, `pwa-192.png`, `pwa-512.png`. The PNGs are **full bleed, no
-  alpha, no baked-in corner rounding**: iOS and Android launchers apply their own mask, so
-  rounded corners in the file would show as dark notches inside the platform squircle. The
-  dumbbell sits well inside the maskable safe zone (max radius ~121px of the 205px circle),
-  so the 512 doubles as the `maskable` entry. Designing a real branded logo is still open;
-  these are the existing mark, rasterised.
-- **Self-hosted font families** are `'Space Grotesk Variable'` / `'JetBrains Mono Variable'`
-  (already wired in `index.css` tokens + imported in `main.tsx`).
-- **`navigator.storage.persist()`** lives in `src/lib/persist.ts` as `ensurePersistentStorage()`
-  — Phase 1 must call it on the first write path; it is not invoked yet.
+- `src/pages/PageHeader.tsx`: optional `action?: ReactNode` slot, right-aligned; title column
+  gets `min-w-0 flex-1`.
+- `DashboardView`: overline shows `formatDayLong(day)`; the `action` slot holds a **"Heute"** pill
+  button (only when `!isToday`) and a ghost icon button with lucide `CalendarDays`
+  (label `t("day.openCalendar")`) that opens the calendar sheet.
+- **Calendar:** `npx shadcn@latest add calendar` (adds `react-day-picker` +
+  `src/components/ui/calendar.tsx`), restyled to our tokens.
+  `src/features/day/components/DayCalendarSheet.tsx` — bottom `Sheet` matching quick-add style;
+  `de` locale, weeks start Monday, future days disabled, `endMonth` = current month, selected day
+  highlighted, today emphasised. Custom `DayButton`: day number with a marker below — every
+  past/today day a small neutral dot (`bg-border-strong`); training days a green circle
+  (`bg-success`, `text-success-foreground`) with lucide `Check`. Tapping a day calls `setDay` and
+  closes the sheet. Footer: "Heute" button.
+- `src/features/day/hooks/useTrainingDays.ts`: `useLiveQuery` over `sessionRepository.getAll()` →
+  `Set<dayKey>` of sessions with ≥ 1 set.
+- **Swipe:** `src/features/day/hooks/useDaySwipe.ts`, touch events on the Dashboard content
+  wrapper; triggers when `|dx| ≥ 60px` and `|dx| > 2·|dy|`; right → previous day, left → next day
+  (no-op on today); ignores gestures starting inside inputs or `[data-no-swipe]`. Content keyed
+  by `dayKey` with a subtle `tw-animate-css` slide/fade in the swipe direction.
+- i18n: `day.*` namespace (`openCalendar`, `today`, `calendarTitle`, `backfill`, …).
+- Docs: `docs/screens.md` (Dashboard: selected day, calendar, swipe).
 
-## Phase 1 — App shell + navigation + i18n
+## DN3 — Dashboard content as of the selected day + day-aware quick-add
 
-**Build:** `src/app/` (App, providers, router); bottom tab bar (Dashboard, Log, Progress, Manage) +
-Settings header icon; route scaffolding with **empty/first-run states** and guiding prompts
-("Create your first plan" → "Add exercises" → "Log your first session"); `src/i18n/` setup
-(react-i18next, `de` default + `en`), provider wired; trigger seed-on-first-run; call `persist()`
-on first write path.
-**Data/logic:** i18n init; seed invocation; no new repositories. Routes per `docs/screens.md`
-(`/`, `/log`, `/log/:sessionId`, `/progress/*`, `/manage/*`, `/settings`) as placeholders.
-**Visual reference:** `design-reference/Gym Tracker Prototype.html` (overall chrome + bottom tab bar)
-and `components.jsx` `Icon` set — chrome only, with our tokens + shadcn `tabs`/`button`.
-**Charts:** none.
-**Out of scope:** real screen content (cards, logging inputs, charts, Manage editors). Routes render
-placeholders/empty states only.
-**Carry-over from Phase 0 (wire these — they exist but are not yet invoked):**
+- `useMeasurementStats(until: Date)` filters each series to `measuredAt ≤ endOfDay(day)` before
+  `summarizeSeries`/`goalProgress`.
+- `useStrengthIndex(until: Date)` filters sessions the same way before `strengthIndexSeries`.
+- `DashboardView` passes `day`; a card with no data up to that day shows the existing "noData"
+  state.
+- `MeasurementQuickAdd` gets optional `day?: Date` (default today). Dashboard passes the selected
+  day; `BodyView` passes nothing (Progress stays global). `MeasurementForm`:
+  - Loads `measurementRepository.getByDate(day)` and prefills those as real values (field
+    decimals). Placeholders still come from the latest value up to that day.
+  - On save, per type: existing + new value → `save({...existing, value})`; new value, no entry →
+    `add({ measuredAt: stampOnDay(day), … })`; prefilled entry cleared → `remove(id)`;
+    unchanged → skip.
+  - Save enabled when anything changed. Sheet title shows the date when the day is not today.
+- Docs: `docs/screens.md` (quick-add semantics).
 
-- Call `seedIfEmpty()` from `src/data/seed.ts` once on app startup (first run) before the first
-  data read, so the PPL plan is present.
-- Call `ensurePersistentStorage()` from `src/lib/persist.ts` on the first write path (it is
-  idempotent and degrades silently where the API is unavailable).
-- Reach Dexie only through `src/data/repositories` (barrel exports the instances + interfaces);
-  never import Dexie outside `src/data/`.
-  **Done when:** all routes navigable via tab bar; Settings icon opens `/settings` placeholder; `de`
-  strings render via `t()`; empty states show; seed runs once on a fresh DB; gate passes.
+## DN4 — Day-aware Log tab + Dashboard workout card
 
-**Learnings (affect later phases):**
-
-- **i18n strings:** add every new key to BOTH `src/i18n/locales/de.ts` and `en.ts`. `de.ts` must
-  NOT be `as const` (its literals would otherwise make `en` impossible to satisfy). `t()` keys are
-  type-checked via `src/i18n/i18next.d.ts` (CustomTypeOptions ← `resources.de`); use `ParseKeys`
-  when a key is passed as a variable (see `BottomTabBar`).
-- **App entry moved** to `src/app/App.tsx` (was `src/App.tsx`); `main.tsx` imports it. App gates
-  rendering on `runStartup()` (`src/app/startup.ts` = persist + `seedIfEmpty`), so by the time any
-  route mounts the **seed is guaranteed present** — later phases can read repos without re-seeding.
-- **Routing:** data router in `src/app/router.tsx`. `/progress` and `/manage` redirect to their
-  default sub-route; tab `NavLink`s use `end` only on `/`. Add real nested views by replacing the
-  placeholder elements at the already-registered paths.
-- **Icons:** `lucide-react` (line style, matches reference) is the icon source for chrome.
-
-## Phase 2 — Log session (the gym hero surface)
-
-**Build:** `src/features/training/` — workout picker (today's suggested workout via rotation, or
-pick); active session view at `/log/:sessionId` with **custom** per-set weight inputs (big tap
-targets, last-weight placeholder, fast numeric entry, +/- steppers); save session.
-**Data/logic:** `SessionRepository` (`getLastForWorkout`, `save`); Workout/Exercise reads to render
-slots; feature hooks wrap repos in `useLiveQuery`. Writes validated via `WorkoutSessionSchema`. Uses
-seed data (no Manage yet). Per `docs/data-model.md`.
-**Visual reference:** `design-reference/screens.jsx` `LogSession` (WorkoutPicker + LogForm) and
-`components.jsx` `SetRow` — reproduce the per-set input row + stepper with our tokens; **custom, not shadcn**.
-**Charts:** none.
-**Out of scope:** editing plan/catalog (Manage, P9–P10), measurements, dashboard, charts. Reps input.
-**Done when:** open today's workout, log sets with last-time placeholders, save a `WorkoutSession`;
-reopening `/log/:sessionId` shows saved sets; gate passes.
-
-**Learnings (affect later phases):**
-
-- **`SessionRepository.getById(id)`** was added (interface + dexie impl) so
-  `/log/:sessionId` can reload a saved session; later phases that open a specific
-  session (drilldowns, corrections) reuse it.
-- **New-session flow without DB pollution:** picking a workout mints a UUID and
-  navigates to `/log/:sessionId` carrying `{ workoutId }` in **router state**; the
-  session is persisted only on save. `useSession` returns `undefined` (loading) /
-  `null` (unsaved draft) / object (saved) — the `null` sentinel via
-  `(await getById()) ?? null` is what makes loading-vs-not-found distinguishable in
-  `useLiveQuery`. A draft refreshed without router state redirects to `/log`.
-- **shadcn `Toaster` (sonner) is now mounted** in `src/app/providers.tsx` with
-  `theme="dark"` (overrides next-themes' `system` default; no ThemeProvider needed).
-  Use `import { toast } from "sonner"` for transient feedback anywhere.
-- **Custom `SetRow`** (`features/training/components`) is the reusable gym weight
-  input (big tap targets, last-weight placeholder, ±2.5 stepper, decimal sanitise).
-  Phase 3's measurement quick-add should reuse this pattern (per its spec).
-- **Form-state-from-async pattern:** the lint rule `react-hooks/set-state-in-effect`
-  forbids seeding state in an effect. Use a loader component that waits for data,
-  then mounts an inner form **keyed by id** that seeds via a `useState` initializer.
-- **App-shell layout (shared chrome) was refactored** to a fixed-height flex column —
-  `AppLayout` is `h-dvh flex flex-col overflow-hidden`, header + `BottomTabBar` are
-  `flex-none`, only `<main>` scrolls. The tab bar is no longer `fixed` (so pages need no
-  bottom-padding hack). Build later screens inside this scrolling `<main>`; follow the new
-  responsive rules in CLAUDE.md › UI (320px floor, `min-w-0` on flexible items).
-
-## Phase 3 — Measurements quick-add
-
-**Build:** `src/features/measurements/` — lightweight shadcn **sheet/dialog** launched from
-Dashboard/Progress-Body to add bodyweight + circumference (biceps/chest/waist); numeric entry follows
-the custom gym-input pattern; one-tap, not a navigation.
-**Data/logic:** `MeasurementRepository` (`add`, `getLatest`, `getByType`); `MeasurementSchema`
-validation on write; feature hook via `useLiveQuery`. Per `docs/data-model.md`.
-**Visual reference:** `design-reference/components.jsx` `Sheet` (bottom sheet) + the numeric input
-pattern from `SetRow`.
-**Charts:** none.
-**Out of scope:** the Body chart and trend math (P8), dashboard cards (P4), Yazio/calories.
-**Done when:** quick-add sheet writes a `Measurement`; latest value retrievable; gate passes.
-
-**Learnings (affect later phases):**
-
-- **`MeasurementQuickAdd`** (`features/measurements/components`) is the reusable launch
-  surface: pass the trigger as `children` (wrapped in `SheetTrigger asChild`), controlled
-  open state inside. It's wired to a temporary button on the **Dashboard placeholder** now —
-  **P4 should adopt it as the "log weight" quick-action** and **P8 should add the
-  Progress-Body launch point** (both spec'd to launch this same sheet).
-- **`useLatestMeasurements()`** (`features/measurements/hooks`) returns
-  `Map<MeasurementType, Measurement | undefined>` (latest per type) via `useLiveQuery` —
-  reuse it for P4 cards / P8 body chart placeholders instead of re-querying per type.
-- **`MeasurementInput`** is the custom numeric input mirroring `SetRow` but with a label +
-  configurable `unit`/`stepBy` (kg→0.1, cm→0.5); reuse it for any future single-value entry.
-- Repo/schema needed **no change** — `measurementRepository.add/getLatest/getByType` and
-  `MeasurementSchema` from Phase 0 covered the writes; only UI was added this phase.
-
-## Phase 4 — Dashboard summary cards
-
-**Build:** `src/features/analysis/` dashboard view — stat cards (bodyweight + weekly rate, waist
-trend, strength index placeholder ok if no baseline yet) with trend badges; quick actions
-(log weight → P3 sheet, start today's workout → P2).
-**Data/logic:** read sessions + measurements via existing repos/hooks; compute simple readouts
-(latest bodyweight, 7-day rate) per `docs/charts.md`. No new repository.
-**Visual reference:** `design-reference/screens.jsx` `Dashboard` + `components.jsx` `StatCard` and
-`Trend` badge — reproduce with tokens + shadcn `card`.
-**Charts:** none (cards only; sparklines deferred unless trivially a StatCard element).
-**Out of scope:** the four Progress charts (P5–P8), Manage, Settings.
-**Done when:** Dashboard shows live bodyweight + rate and a workout quick-action; empty states when
-no data; gate passes.
-
-**Learnings (affect later phases):**
-
-- **Reusable analysis primitives** now exist in `src/features/analysis/`: `StatCard` +
-  `TrendBadge` (`components/`, tokens-only, colour keyed on _desirable_ direction not the
-  arrow) and `stats.ts` (pure presentation math: `summarizeSeries`/`weeklyRate` via OLS,
-  `trendDir`). **P8 reuses `StatCard`/`TrendBadge` for the body-chart rate readout**; **P5's
-  strength-index/indexing math belongs in `stats.ts`** alongside these (not in repos).
-- **Strength-index + calories dashboard cards are static placeholders** (`SoonPill`,
-  `muted`) — no baseline math was built (correctly deferred). **P5 must wire the real
-  strength-index value into the strength card** (replace the placeholder); calories stays a
-  placeholder until product-Phase 2.
-- **`useMeasurementStats()`** (`analysis/hooks`) returns `{ bodyweight, waist }` summaries via
-  `useLiveQuery`; reuse it rather than re-summarising in P8.
-- No repo/schema/index changes this phase — existing `measurementRepository.getByType` +
-  `useWorkoutRotation`/`useExerciseCatalog` (training) covered all reads.
-
-## Phase 5 — Progress: Recomposition (hero chart)
-
-**Build:** `/progress` hub shell (segmented control / nested routes) + `/progress/recomposition`
-view; the indexed strength-vs-bodyweight chart in **Recharts**.
-**Data/logic:** strength-index + indexing math lives in the analysis feature (presentation logic, not
-repos). **Fixed baseline** = avg/median of each exercise's first 2–3 sessions; index both bodyweight
-and strength to 100 at baseline on **one shared axis** (never dual y-axes). Top-set per session. Per
-`docs/charts.md`.
-**Visual reference:** `design-reference/charts.jsx` `LineChart` (grid, baseline reference line,
-markers) + `--recomp-strength` / `--recomp-bodyweight` tokens — match styling, build in Recharts.
-**Charts:** Recomposition (one shared 100-baseline axis, two series).
-**Out of scope:** other Progress views (P6–P8), Manage, Settings. No rolling baseline.
-**Done when:** recomposition chart renders from logged sessions + bodyweight, both indexed to 100 on
-one axis; baseline from first 2–3 sessions; gate passes.
-
-**Learnings (affect later phases):**
-
-- **`SessionRepository.getAll()`** added (all sessions, ascending by date) — the read for any
-  cross-exercise / whole-history analysis. P6/P7/P8 reuse it instead of `getRecent(BIG)`.
-- **Recomposition math** is pure in `src/features/analysis/recomposition.ts`
-  (`strengthIndexSeries`, `bodyweightIndexSeries`, `buildRecomposition`, `BASELINE_SESSION_COUNT`,
-  `BASELINE_INDEX`). Top-set-per-session logic lives here; **P6's top-set series should reuse this
-  module** (don't recompute in a repo). The latest index feeds the dashboard via
-  `useStrengthIndex()`; the full chart via `useRecompositionData()`.
-- **Progress hub is a nested-route layout.** `ProgressPage` renders the header + segmented-control
-  `ProgressNav` + `<Outlet/>`; sub-routes are nested under `path: "progress"`. **P6/P7/P8 just
-  replace the `ProgressComingSoon` element** at `/progress/strength`, `/progress/exercise/:id`,
-  `/progress/body` (routes already registered) — no router restructuring needed.
-- **Recharts is wired (first chart).** Follow `RecompositionChart` as the template: tokens passed
-  as CSS vars to `stroke`/`fill`, `ReferenceLine` for the baseline, `connectNulls` to bridge series
-  on a shared time axis. Recharts 3's typed-tooltip generics don't compose — use a **minimal
-  optional-props interface + the element form** `content={<X/>}` (typing the component with
-  `TooltipContentProps` fails to assign to `content`).
-- **Bundle crossed 500 kB** (Recharts). Not blocking; a pre-ship polish option is lazy-loading the
-  Progress route. Left as-is for now (YAGNI).
-
-## Phase 6 — Progress: Per-workout strength progression
-
-**Build:** `/progress/strength` — workout selector; one toggleable line per exercise (session **top
-set**); swap-aware rendering (swapped exercise = separate series, no bridging segment).
-**Data/logic:** `SessionRepository.getExerciseHistory`; top-set computation; series-per-exercise. Per
-`docs/charts.md`.
-**Visual reference:** `design-reference/charts.jsx` multi-series `LineChart` + chart palette markers (chart-1…6).
-**Charts:** Per-workout progression (multi-line, toggleable, swap-aware).
-**Out of scope:** drilldown band (P7), body chart (P8), Manage, Settings.
-**Done when:** selecting a workout shows top-set lines per exercise; toggling works; a swap shows two
-separate series with no bridge; gate passes.
-
-**Learnings (affect later phases):**
-
-- **`topSetsPerSession` is now exported** from `src/features/analysis/recomposition.ts` (was private).
-  **P7's drilldown top-set line should reuse it** rather than recompute the heaviest-set-per-session.
-- **Progression math** is pure in `src/features/analysis/strengthProgression.ts`
-  (`buildStrengthProgression`, `PROGRESSION_PALETTE`, `ProgressionData`). **Swap-awareness is data-driven,
-  not special-cased:** rows are one-per-session with `null` where an exercise wasn't logged, and the chart
-  renders **`connectNulls` OFF** (the default) so a swapped exercise (a different `exerciseId` = its own
-  series) never bridges. This is the opposite of the recomposition chart, which uses `connectNulls` to
-  bridge two series on different dates — pick per chart.
-- **Series ordering + colour:** current plan slots first (in slot order), then swapped-away exercises by
-  first appearance; `PROGRESSION_PALETTE` (`--chart-1..6`) cycles `% 6` past six exercises.
-- **`StrengthProgressionChart`** is the multi-line Recharts template (one `<Line>` per visible series,
-  per-series colour, tooltip reads `entry.name`/`entry.color` + a `units` map). **P7/P8 reuse this shape.**
-- **Workout selector reuses `useWorkoutRotation`** — so the strength view lists the **active plan's**
-  workouts only; sessions logged under a workout no longer in the active plan are not selectable here
-  (acceptable for now; revisit if historical-plan browsing is ever needed).
-- **Toggle state reset without an effect:** the inner `WorkoutProgression` is **keyed by workout id** so
-  its `hidden` set resets on workout change (the keyed-remount pattern; avoids `set-state-in-effect`).
-
-## Phase 7 — Progress: Single-exercise drilldown
-
-**Build:** `/progress/exercise/:exerciseId` — top-set line with a faint min–max band per session.
-**Data/logic:** `SessionRepository.getExerciseHistory` for one exercise; per-session min/max + top
-set. Per `docs/charts.md`.
-**Visual reference:** `design-reference/charts.jsx` `LineChart` with band treatment.
-**Charts:** Single-exercise drilldown (top-set line + min–max band).
-**Out of scope:** other views, Manage, Settings.
-**Done when:** drilldown shows top-set line with min–max band for a chosen exercise; gate passes.
-
-**Learnings (affect later phases):**
-
-- **`niceWeightAxis` extracted** to `src/features/analysis/axis.ts` (shared by the progression +
-  drilldown charts; the recomposition axis stays local — it's anchored at 100). **P8's bodyweight
-  axis should reuse `niceWeightAxis`.**
-- **Min–max band = a Recharts range area.** `buildExerciseDrilldown` emits `band: [min, max]` tuples and
-  `ExerciseDrilldownChart` renders a `ComposedChart` with a faint `<Area dataKey="band">` (range area, the
-  tuple) BEHIND a `<Line dataKey="top">`. **P8 reuses this ComposedChart+range-area shape** for any band
-  (e.g. a 7-day-MA envelope). Tooltip reads the full row off `payload[0].payload` (typed) rather than
-  per-series entries — cleaner when a row carries several derived values.
-- **Drilldown entry points (two):** its own exercise **picker** (chips → `/progress/exercise/:id`) AND a
-  **chevron on each Phase 6 strength toggle chip** (`progress.strength.openExercise`). The route has both
-  `/progress/exercise` (redirects to the first exercise with history) and `/progress/exercise/:exerciseId`;
-  an unknown/missing id `<Navigate replace>`s to the default. It is deliberately **not** a `ProgressNav`
-  segment (param-based), so no segment is highlighted while viewing it — acceptable.
-- **`useExercisesWithHistory()`** (ids+name+unit of exercises with ≥1 logged set) and
-  **`useExerciseDrilldown(id)`** (data+name+unit; `null` = unknown id) are the reads. P9's catalog could
-  link an exercise's "history" into this same drilldown URL.
-
-## Phase 8 — Progress: Body chart
-
-**Build:** `/progress/body` — smoothed bodyweight trend (raw points + 7-day moving average) with
-kg/week rate; measurements chart (waist vs. biceps/chest), optionally normalized on one axis.
-**Data/logic:** `MeasurementRepository.getByType`; 7-day MA + rate; measurement series. Per `docs/charts.md`.
-**Visual reference:** `design-reference/charts.jsx` `LineChart` (smoothed) + `StatCard` rate readout.
-**Charts:** Bodyweight trend (raw + 7-day MA + rate) and measurements (waist-down vs. muscle-holding).
-**Out of scope:** Manage, Settings, calories/Yazio.
-**Done when:** body chart shows raw weigh-ins + trend line + rate, and measurements comparison; gate passes.
-
-**Learnings (affect later phases):**
-
-- **Body math** is pure in `src/features/analysis/body.ts` (`buildBodyweightTrend` = raw + trailing
-  7-day MA + `weeklyRate`/`customWeightAxis` reuse; `buildMeasurementComparison` = waist/chest/biceps
-  each indexed to 100 at its OWN first value on one shared axis). `useBodyData()` is the live read of
-  all four measurement types. The bodyweight chart is a **ComposedChart** with raw weigh-ins as a
-  dots-only `<Line stroke="none">` under a solid MA line; the comparison chart is a multi-line
-  `LineChart` with `connectNulls` ON (circumferences are sparse) + a 100 `ReferenceLine`.
-- **Phase 7 route was unwired:** `ExerciseDrilldownView` existed but `/progress/exercise/:exerciseId`
-  still pointed at `ProgressComingSoon` (so the Phase-6 chevrons dead-ended). Wired it here alongside
-  `/progress/body`. `ProgressComingSoon`/`Placeholder` are now unused by the router but still exported.
-- **All four Phase-1 Progress charts are done** — the Progress hub is feature-complete. Remaining
-  phases (9–11) are Manage/Settings; no chart work left.
-
-## Phase 9 — Manage: exercise catalog
-
-**Build:** `/manage/exercises` list/search + `/manage/exercises/:exerciseId` create/edit (name, type,
-unit) using shadcn forms.
-**Data/logic:** `ExerciseRepository` (CRUD); `ExerciseSchema` validation on write. Per `docs/data-model.md`.
-**Visual reference:** no dedicated screen mockup — reproduce list/form chrome with our tokens +
-shadcn (`card`, `input`, `dialog`/`sheet`, `dropdown-menu`). Consult `Gym Tracker Prototype.html` if present.
-**Charts:** none.
-**Out of scope:** plans/workouts editor (P10), Settings.
-**Done when:** create/edit/search catalog exercises; new exercises appear in Log (P2) slots; gate passes.
-
-**Learnings (affect later phases):**
-
-- **Manage hub is now a nested-route layout** (mirrors Progress): `ManagePage` renders the header +
-  segmented `ManageNav` + `<Outlet/>`; sub-routes nest under `path: "manage"`. **P10 just replaces the
-  `ManageComingSoon` element at `/manage/plans` (+ the plan/workout deep routes, already registered)** —
-  no router restructuring. `/manage` redirects to `/manage/exercises` (the live screen).
-- **The exercise editor is a `Dialog`, not a route.** screens.md listed `/manage/exercises/:exerciseId`,
-  but a one-tap dialog launched from the list is the mobile-first choice; that route was dropped. Form
-  state resets via keyed remount + Radix unmount (the no-set-state-in-effect pattern). **P10's slot editor
-  can follow this same dialog-from-list shape.**
-- **`useExerciseList(query)`** (`features/manage/hooks`) wraps `exerciseRepository.search` in
-  `useLiveQuery` — reuse it for P10's slot exercise-picker. The repo/schema needed **no change** (Phase 0's
-  `ExerciseRepository` CRUD covered everything; only UI was added).
-- **`SegmentedField`** (local to `ExerciseEditorDialog`) is a compact wrap-at-320px selector for small
-  fixed option sets (equipment type, unit). Lift it to a shared spot if P10 needs the same control.
-- **Delete warns when history exists:** `SessionRepository.countSessionsForExercise(id)` (new) backs
-  `useExerciseUsage`; the editor disables delete until usage is known and, when an exercise has logged
-  sessions, the confirm step shows a destructive warning ("Trotzdem löschen") with the session count so
-  historical data is never removed by accident. Deleting is still permitted (deliberate) — old-exercise
-  history stays viewable via the Phase 7 drilldown as long as the catalog entry exists. **P10's plan/slot
-  delete should reuse `countSessionsForExercise` for the same guard.**
-
-## Phase 10 — Manage: plans + workouts editor
-
-**Build:** `/manage/plans` (list, set active, archive) → `/manage/plans/:planId` (workouts) →
-`/manage/plans/:planId/workouts/:workoutId` (slot editor: target sets, rep range, order, alternatives).
-**Data/logic:** `PlanRepository` + `WorkoutRepository` (CRUD; `[planId+order]`); embedded
-`WorkoutExercise[]`; `isActive` filtered in memory (never indexed). Per `docs/data-model.md`.
-**Visual reference:** shadcn chrome (lists, editor forms, reorder) with our tokens; `Gym Tracker
-Prototype.html` for any plan visuals.
-**Charts:** none.
-**Out of scope:** Settings, Yazio.
-**Done when:** create a plan, add/edit workouts and slots, set active plan; Log rotation reflects the
-active plan; editing a plan never alters past sessions; gate passes.
-
-**Learnings (affect later phases):**
-
-- **"Archive" is just "not active".** The schema has no `archived` flag and none was added — exactly
-  one plan is active (it drives the rotation), every other plan sits in the list as the archive.
-  Real removal is a delete; **`planRepository.remove` now cascades to the plan's workouts** in one
-  transaction (workouts have no life outside a plan). Logged sessions are deliberately untouched —
-  a repo test (`editing a plan vs. logged sessions`) locks that invariant in.
-- **`SessionRepository.countSessionsForWorkout(workoutId)`** (new, via `[workoutId+date]`) backs
-  `useWorkoutUsage` → the workout delete warning, mirroring P9's `countSessionsForExercise`.
-  **P11's import/replace flow can reuse both counts** if it ever warns before overwriting.
-- **Ordering is a pure module:** `src/features/manage/ordering.ts` (`moveItem`, `reindex`,
-  `nextOrder`, tested). Reorder = ± buttons, no drag-and-drop (KISS, and reliable at 320px). Slots
-  are embedded so a slot move writes the whole workout; workout moves save only the rows whose
-  `order` actually changed.
-- **Native `<select>` for exercise pickers** (`SlotEditorDialog`), styled with tokens: on phones it
-  opens the platform picker, which beats a custom listbox for a growing catalog and needs no new
-  shadcn dependency. Reuse it wherever a long single-choice list is needed.
-- **`ReorderRow`** (`features/manage/components`) is the shared ± control: side-by-side, not
-  stacked, so both halves keep a full `--tap` hit area inside a 320px card.
-- **`/manage` now redirects to `/manage/plans`** (was `/manage/exercises`) and
-  `ManageComingSoon`/`manage.placeholder` were deleted — every Manage route is live.
-- **`WorkoutExercise.alternativeIds` is now editable but still unread** by the Log screen; a future
-  in-session "swap exercise" feature is where it pays off (P2's logging flow never consumed it).
-
-## Phase 11 — Settings + backup
-
-**Build:** `/settings` — export/import backup (JSON, Zod-validated), unit preferences, calorie
-incomplete-day threshold (stored for Phase 2), with shadcn forms.
-**Data/logic:** wire `src/data/backup.ts` export/import (validate entire file before writing; replace
-semantics); settings persisted. Per `docs/architecture.md` / `docs/data-model.md`.
-**Visual reference:** shadcn settings forms with our tokens; `Gym Tracker Prototype.html` settings
-section if present.
-**Charts:** none.
-**Out of scope:** Yazio connection UI beyond a disabled placeholder; calories charts (Phase 2).
-**Done when:** export produces a Zod-valid JSON; import round-trips (dates intact) and restores state;
-threshold + units persist; gate passes.
-
-**Learnings (affect later phases):**
-
-- **Preferences are localStorage, not a Dexie store** (`src/data/settings.ts`): one tiny record, no
-  queries, no relations — a sixth store would have cost a schema version bump and a migration for
-  nothing. It still lives in `src/data` (persistence stays behind the seam) and exposes a
-  `getSettings`/`updateSettings`/`subscribeSettings` store; `useSettings()`
-  (`features/settings/hooks`) reads it through `useSyncExternalStore` — the settings analogue of the
-  `useLiveQuery` hooks. **Phase 2 reads `calorieIncompleteThreshold` from here.**
-- **`BackupSchema` gained an OPTIONAL `settings` block** — `BACKUP_VERSION` stays `1`, so files
-  exported before this phase still import (an absent block leaves preferences untouched).
-  Preferences are applied _after_ the Dexie transaction commits, so a rejected import changes
-  nothing. **Any future setting is automatically part of the backup; new DATA stores are not — add
-  them to `exportBackup`/`importBackup` explicitly.**
-- **Unit preference = default for NEW exercises only.** `MeasurementUnit` is `kg|cm` and nothing
-  converts stored weights, so a global display unit would be a real feature (conversion in charts,
-  logs and inputs), not a setting. Deliberately out of scope; the copy says so.
-- **Import is a two-step confirm:** the file is `JSON.parse`d, then `BackupSchema.safeParse`d, and the
-  user confirms against a count summary before anything is replaced. Errors surface as toasts
-  (`notJson` vs. `invalid`) instead of a thrown import.
-- **`gym-tracker-backup-*.json` is gitignored** — real exports are personal data (docs/architecture.md).
-- **No language switch was built** (not in scope): `en` exists but is unreachable in the UI. That is
-  the obvious next small feature if you want it.
-- **Phase 1 of the product is feature-complete** — every screen in `docs/screens.md` is live.
-
-### Ship readiness (Cloudflare Pages)
-
-- **Done:** PNG app icons incl. iOS `apple-touch-icon` (P0), `public/_redirects` SPA fallback,
-  `mobile-web-app-capable` + `apple-mobile-web-app-title`, manifest `id`, and `woff2` added to the
-  Workbox glob so the self-hosted fonts survive an offline first launch.
-- **Build settings:** command `npm run build`, output directory `dist`. No env vars in Phase 1.
-- **Still open:** a real branded logo (the icons are the existing dumbbell mark, rasterised), and
-  lazy-loading the Recharts-heavy Progress route to get the bundle under 500 kB (P5) — currently
-  one 1.1 MB chunk, 325 kB gzipped.
-- **Known cosmetic:** `favicon.svg` is a leftover purple bolt (`#863bff`, not a design token) and
-  does not match the blue dumbbell app icon.
-
-## Design alignment — match the Claude Design prototype (post-Phase-11)
-
-**Status:** `done` — WP-01…WP-19, O-01…O-09 (O-10 declined) and O-11 implemented; final audit and loop-back round 1 closed, nothing in scope open (see `docs/design-audit-final.md`).
-**Build:** the work packages in `docs/design-fix-plan.md` (WP-01…WP-19, plus OPTIONAL O-01…O-10
-only once the user answers its §4 open questions), in order; one package per session/commit.
-**Source:** `docs/design-audit.md` (47 consolidated findings; per-group detail in
-`docs/design-audit/`). Visual reference stays `design-reference/` (never imported).
-**Out of scope:** calories data / Yazio (product Phase 2), heatmap (product Phase 3).
-**Done when:** every non-optional WP is merged, every route is overflow-free at 320px and matches
-the prototype at 390px (iframe harness in the plan's §1), and `npm run ci` passes.
-
-**Learnings (affect later phases):**
-
-- `cn()` (tailwind-merge) only knows our custom `text-*`/`shadow-*` names because they are
-  registered in `src/lib/utils.ts`; a new type-scale or shadow token must be added there, or its
-  classes are misread as colours and silently dropped.
-- Radix dialogs keep their content mounted: draft state held in a dialog body leaks across
-  opens. Re-seed it on open (as the slot editor now does).
-- The first-run seed once ran twice (two mounts racing on an empty DB); keep it guarded and
-  idempotent.
-- 320px/390px checks: same-origin iframe harness on the dev server (the browser window cannot be
-  resized); measure `scrollWidth > clientWidth` inside each iframe.
-- Decimals use a dot in every locale; use `formatSigned`/`formatDecimal` (`src/lib/format.ts`).
-- Date labels use the hard-coded date-fns `de` locale; revisit if `en` becomes a real target.
+- `src/features/training/hooks/useSessionLog.ts`: add `useSessionsOnDay(day)` (wraps
+  `getByDate`); `useLastSession(workoutId, before?)` passes `before` through.
+- `useWorkoutRotation(before?: Date)` uses `getLastBefore(before)` when given, else
+  `getRecent(1)`.
+- `src/pages/LogPage.tsx` at `/log`: loading → `null`; day has a session →
+  `<ActiveSession sessionId={latest.id} returnTo="/" />` inline (no redirect — avoids a
+  back-button loop); otherwise `<WorkoutPicker />`. `/log/:sessionId` unchanged.
+- `WorkoutPicker`: reads `useSelectedDay()`; on a past day the overline reads
+  `t("log.pick.backfill", { date })` and rotation uses `before = day`. The draft carries no extra
+  state (the form reads the day from context).
+- `ActiveSession`/`SessionForm`:
+  - `returnTo` prop overrides router state.
+  - New draft date = `stampOnDay(selectedDay)`, captured once at mount; a saved session keeps
+    `session.date`.
+  - Placeholders use `useLastSession(workoutId, session?.date ?? draftDate)` — editing an old
+    session shows the session _before_ it.
+  - When the session date is not today, the header overline shows `formatDayLong(date)` instead
+    of the rotation label.
+  - Saved weights are seeded via `buildInitialValues` and counted by `t("log.progress")`; verify
+    a fully logged day reads e.g. "18/18 Sätze".
+- `TodayWorkoutCard` (Dashboard), day-aware:
+  - Day has a session → "Training am {date}" / "Heutiges Training", workout name, `done/total
+Sätze` tally badge, green check when complete; tap → `navigate("/log")`.
+  - No session on a past day → backfill card suggesting the rotation workout before that day;
+    tap → `navigate("/log")` (opens the picker).
+  - No session today → current behaviour.
+- Tests: rotation with `before`; a pure helper for the day's tally, if extracted.
+- Docs: `docs/screens.md` (Log: day-aware rules). Finalize the status rows.
 
 ---
+
+## Verification (manual, dev server, at 320px and desktop width)
+
+1. Calendar icon opens the sheet; logged days show a green check, other past days a neutral dot,
+   future days disabled. Picking a day updates the overline and shows "Heute".
+2. Swipe right/left changes the day; swiping left on today does nothing; vertical scroll is
+   unaffected.
+3. Past day: cards reflect values up to that day. Quick-add a bodyweight → stamped on that day;
+   reopening shows it prefilled; editing replaces it (no duplicate); clearing deletes it.
+4. Past day with a session → Training tab opens it directly, weights in the fields, "18/18 Sätze",
+   no picker; saving updates the same session.
+5. Past day without a session → picker shows "Nachtragen"; saving creates a session on that day
+   and the calendar shows a check there.
+6. Today after logging → Training tab shows today's session. Progress and Manage unchanged on any
+   selected day.
 
 ## Explicitly NOT in this plan (later project phases, per CLAUDE.md)
 
