@@ -4,12 +4,18 @@ import { useTranslation } from "react-i18next"
 import { Link } from "react-router-dom"
 
 import { Card } from "@/components/ui/card"
+import {
+  SegmentedScroller,
+  segmentedItemVariants,
+  segmentedListVariants,
+} from "@/components/ui/segmented"
 import { useWorkoutRotation } from "@/features/training/hooks/useWorkoutRotation"
 import type { Workout } from "@/data/schema"
 import { cn } from "@/lib/utils"
 import { EmptyState } from "@/pages/EmptyState"
 
 import { useWorkoutProgression } from "../hooks/useWorkoutProgression"
+import { Insight } from "./Insight"
 import { StrengthProgressionChart } from "./StrengthProgressionChart"
 
 function WorkoutSelector({
@@ -22,26 +28,21 @@ function WorkoutSelector({
   onSelect: (id: string) => void
 }) {
   return (
-    <nav className="-mx-4 overflow-x-auto px-4 scrollbar-none [&::-webkit-scrollbar]:hidden">
-      <div className="inline-flex gap-1 rounded-lg bg-surface-2 p-1">
+    <SegmentedScroller>
+      <div className={segmentedListVariants()}>
         {workouts.map((w) => (
           <button
             key={w.id}
             type="button"
             onClick={() => onSelect(w.id)}
             aria-pressed={w.id === selectedId}
-            className={cn(
-              "flex min-h-(--tap) items-center rounded-md px-4 text-caption font-medium whitespace-nowrap transition-colors",
-              w.id === selectedId
-                ? "bg-surface text-foreground shadow-elev-1"
-                : "text-muted-foreground hover:text-foreground",
-            )}
+            className={segmentedItemVariants({ active: w.id === selectedId })}
           >
             {w.name}
           </button>
         ))}
       </div>
-    </nav>
+    </SegmentedScroller>
   )
 }
 
@@ -75,8 +76,10 @@ function WorkoutProgression({ workout }: { workout: Workout }) {
   }
 
   return (
-    <Card className="gap-4 p-4">
-      <p className="text-caption text-muted-foreground">{t("progress.strength.caption")}</p>
+    <Card className="gap-3.5 px-3.5 pt-4.5 pb-4">
+      <p className="font-mono text-micro tracking-normal text-subtle">
+        {t("progress.strength.caption")}
+      </p>
 
       <StrengthProgressionChart data={data} visible={visible} />
 
@@ -89,17 +92,17 @@ function WorkoutProgression({ workout }: { workout: Workout }) {
             <div
               key={s.exerciseId}
               className={cn(
-                "inline-flex min-h-(--tap) max-w-full items-center rounded-full border transition-colors",
-                on ? "bg-surface-2" : "border-border",
+                "inline-flex min-h-(--tap) max-w-full items-center rounded-xl transition-colors",
+                on && "bg-surface-2",
               )}
-              style={on ? { borderColor: s.color } : undefined}
+              style={{ boxShadow: `inset 0 0 0 1px ${on ? s.color : "var(--border)"}` }}
             >
               <button
                 type="button"
                 onClick={() => toggle(s.exerciseId)}
                 aria-pressed={on}
                 className={cn(
-                  "inline-flex min-w-0 items-center gap-2 self-stretch rounded-l-full pr-2 pl-3 text-caption font-medium",
+                  "inline-flex min-w-0 items-center gap-2 self-stretch rounded-l-xl py-1 pr-2 pl-3 text-caption font-medium",
                   on ? "" : "text-subtle",
                 )}
                 style={on ? { color: s.color } : undefined}
@@ -109,12 +112,12 @@ function WorkoutProgression({ workout }: { workout: Workout }) {
                   style={{ background: on ? s.color : "var(--border-strong)" }}
                   aria-hidden="true"
                 />
-                <span className="truncate">{s.name}</span>
+                <span className="line-clamp-2 text-left wrap-break-word">{s.name}</span>
               </button>
               <Link
                 to={`/progress/exercise/${s.exerciseId}`}
                 aria-label={t("progress.strength.openExercise", { name: s.name })}
-                className="flex min-w-(--tap) shrink-0 items-center justify-center self-stretch rounded-r-full border-l border-border text-subtle hover:text-foreground"
+                className="flex min-w-(--tap) shrink-0 items-center justify-center self-stretch rounded-r-xl border-l border-border text-subtle hover:text-foreground"
               >
                 <ChevronRight className="size-4" aria-hidden="true" />
               </Link>
@@ -123,7 +126,7 @@ function WorkoutProgression({ workout }: { workout: Workout }) {
         })}
       </div>
 
-      <p className="text-caption text-subtle">{t("progress.strength.swapHint")}</p>
+      <Insight>{t("progress.strength.swapHint")}</Insight>
     </Card>
   )
 }

@@ -51,15 +51,15 @@ export function MeasurementInput({
           className={cn(
             "flex h-12 min-w-0 flex-1 cursor-text items-center gap-1 rounded-md border bg-surface-2 px-3 transition-colors",
             focused
-              ? "border-ring ring-3 ring-ring/50"
+              ? "border-primary ring-3 ring-primary-soft"
               : filled
-                ? "border-border-strong"
+                ? "border-primary"
                 : "border-border",
           )}
         >
           <input
             ref={inputRef}
-            className="min-w-0 flex-1 bg-transparent text-right font-mono text-body-lg tabular-nums outline-none placeholder:text-subtle"
+            className="min-w-0 flex-1 bg-transparent text-right font-mono text-body-lg font-semibold tabular-nums outline-none placeholder:text-subtle"
             inputMode="decimal"
             enterKeyHint="next"
             aria-label={label}
@@ -76,7 +76,7 @@ export function MeasurementInput({
           <button
             type="button"
             aria-label={`${label} −${stepBy}`}
-            className="flex size-12 items-center justify-center rounded-md border border-border bg-surface-2 text-muted-foreground transition-colors hover:text-foreground active:translate-y-px"
+            className="flex size-12 items-center justify-center rounded-sm border border-border-strong bg-surface text-foreground transition-colors active:translate-y-px active:bg-surface-2"
             onClick={() => onChange(step(value, last, -stepBy))}
           >
             <Minus className="size-5" />
@@ -84,7 +84,7 @@ export function MeasurementInput({
           <button
             type="button"
             aria-label={`${label} +${stepBy}`}
-            className="flex size-12 items-center justify-center rounded-md border border-border bg-surface-2 text-muted-foreground transition-colors hover:text-foreground active:translate-y-px"
+            className="flex size-12 items-center justify-center rounded-sm border border-border-strong bg-surface text-foreground transition-colors active:translate-y-px active:bg-surface-2"
             onClick={() => onChange(step(value, last, stepBy))}
           >
             <Plus className="size-5" />

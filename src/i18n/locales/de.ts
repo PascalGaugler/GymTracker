@@ -1,6 +1,7 @@
 // German (default locale). User data (exercise names, notes) is never translated.
 const de = {
   nav: {
+    primary: "Hauptnavigation",
     dashboard: "Übersicht",
     log: "Trainieren",
     progress: "Fortschritt",
@@ -14,13 +15,26 @@ const de = {
       waist: "Taille",
       strength: "Kraft-Index",
       calories: "Kalorien",
+      bodyweightAdd: "Eintragen",
+      waistOpen: "Verlauf anzeigen",
+      strengthOpen: "Verlauf anzeigen",
       noData: "Noch keine Daten",
       soon: "Bald",
-      strengthBaseline: "ggü. Start (100)",
+      strengthBaseline: "Baseline 100 · {{value}} %",
       caloriesSoon: "Yazio-Sync folgt in Phase 2",
+      goalStart: "Start {{value}}",
+      goalTarget: "Ziel {{value}}",
+      goalSpoken: "Ziel {{target}} kg, {{percent}} %",
     },
     ratePerWeek: "{{value}} {{unit}}/Wo",
     sinceStart: "{{value}} seit Start",
+    recomposition: {
+      open: "Öffnen",
+      thesis:
+        "Kraft <strength>{{strength}} %</strength> · Gewicht <weight>{{weight}} %</weight> über {{count}} Wochen",
+      thesis_one:
+        "Kraft <strength>{{strength}} %</strength> · Gewicht <weight>{{weight}} %</weight> über {{count}} Woche",
+    },
     today: {
       title: "Heute dran",
       cta: "Workout starten",
@@ -40,13 +54,16 @@ const de = {
     pick: {
       title: "Workout wählen",
       subtitle: "Rotation · {{total}} Workouts",
-      hint: "Als Nächstes dran: {{name}}. Wähle ein anderes, falls du eine Einheit überspringst oder nachholst.",
+      hint: "Als Nächstes ist <strong>{{name}}</strong> dran — oder wähle ein anderes, falls du eine Einheit überspringst oder nachholst.",
       next: "Als Nächstes",
     },
     rotation: "Rotation · {{n}} von {{total}}",
     summary: "{{exercises}} Übungen · {{sets}} Sätze",
     setsRepRange: "{{sets}} Sätze · {{low}}–{{high}} Whlg.",
     setsOnly: "{{sets}} Sätze",
+    setLabel: "Satz {{n}}",
+    stepDown: "{{step}} weniger",
+    stepUp: "{{step}} mehr",
     progress: "{{done}}/{{total}} Sätze",
     save: "Training speichern",
     saved: "Training gespeichert",
@@ -78,20 +95,46 @@ const de = {
       strength: "Kraft je Workout",
       exercise: "Einzelübung",
       body: "Körpermaße",
+      short: {
+        recomposition: "Recomp",
+        strength: "Kraft",
+        body: "Körper",
+      },
     },
     placeholder: "Diagramme erscheinen, sobald du Trainings und Messungen erfasst hast.",
     recomposition: {
-      caption: "Kraft-Index und Körpergewicht, beide auf 100 zum Start indexiert.",
+      caption: "Beide auf 100 indexiert · eine Achse",
       strengthSeries: "Kraft-Index",
+      strengthSmoothed: "Kraft-Index (Ø 3 Einheiten)",
+      strengthRaw: "Einzelwert",
       bodyweightSeries: "Körpergewicht",
       baseline: "Start = 100",
+      insight: {
+        badge: {
+          strengthUp: "Kraft steigt",
+          strengthHolds: "Kraft hält",
+          strengthDown: "Kraft sinkt",
+          weightUp: "Gewicht steigt",
+        },
+        noBaseline: "Der Kraft-Index startet nach 3 Einheiten je Übung.",
+        noBodyweight: "Noch keine Gewichtsdaten — wieg dich, um den Vergleich zu sehen.",
+        thesis: "Gewicht {{weight}} %, Kraft {{strength}} % seit Start — Recomposition läuft.",
+        holding: "Gewicht {{weight}} %, Kraft hält ({{strength}} %) — Recomposition läuft.",
+        strengthLost:
+          "Gewicht {{weight}} %, aber auch die Kraft {{strength}} % — Defizit und Regeneration prüfen.",
+        strengthUp: "Kraft {{strength}} %, Gewicht hält noch ({{weight}} %).",
+        weightUp:
+          "Gewicht {{weight}} %, Kraft {{strength}} % — kein Defizit-Effekt, Kalorien prüfen.",
+        strengthDown: "Kraft {{strength}} % bei stabilem Gewicht — Regeneration prüfen.",
+        noTrend: "Noch kein klarer Trend — mehr Daten sammeln.",
+      },
       empty: {
         title: "Noch nichts zu zeigen",
         body: "Logge ein paar Trainings und wieg dich, dann erscheint hier dein Recomposition-Verlauf.",
       },
     },
     strength: {
-      caption: "Top-Satz je Übung in diesem Workout. Stufen = doppelte Progression.",
+      caption: "Top-Satz je Einheit · Stufen = doppelte Progression",
       swapHint: "Getauschte Übung startet als neue Linie — ohne Brücke zur alten.",
       openExercise: "{{name}} im Detail ansehen",
       empty: {
@@ -104,9 +147,14 @@ const de = {
       },
     },
     exercise: {
-      caption: "Top-Satz (Linie) über dem Min–Max-Bereich der Sätze je Einheit.",
+      caption: "Top-Satz (Linie) · Min–Max der Sätze (Band)",
       topSet: "Top-Satz",
       range: "Bereich",
+      stats: {
+        current: "Aktuell",
+        sinceStart: "seit Start",
+        sessions: "Einheiten",
+      },
       empty: {
         title: "Noch keine Einzeldaten",
         body: "Sobald du diese Übung geloggt hast, erscheint hier ihr Verlauf.",
@@ -114,14 +162,27 @@ const de = {
     },
     body: {
       weight: {
-        caption: "Rohwerte (Punkte) mit 7-Tage-Schnitt (Linie) — der Schnitt zeigt den Trend.",
+        caption: "Rohwerte (Punkte) · 7-Tage-Schnitt (Linie)",
         raw: "Gewicht",
         trend: "7-Tage-Schnitt",
       },
       comparison: {
-        caption:
-          "Umfänge auf 100 zum Start indexiert: Taille (Fett) runter, Brust/Bizeps (Muskel) halten.",
+        caption: "Auf 100 zum Start indexiert · eine Achse",
         baseline: "Start = 100",
+      },
+      insight: {
+        weightNote: "Tageswerte schwanken — der Trend zählt, nicht der einzelne Tag.",
+        waistBadge: "Taille {{value}}",
+        noWaist:
+          "Miss deine Taille (mindestens zweimal), um Fett- und Muskelverlauf zu vergleichen.",
+        waistUp: "Taille wächst — Kalorien und Ernährung prüfen.",
+        waistFlat: "Taille unverändert — noch kein Fettverlust sichtbar, gib dem Defizit Zeit.",
+        waistDown: "Taille runter — Fett verlieren läuft. Brust & Bizeps zusätzlich messen.",
+        waistDownMuscleUp: "Taille runter, Brust & Bizeps rauf — Fett verlieren, Muskel aufbauen.",
+        waistDownMuscleHolds:
+          "Taille runter, Brust & Bizeps halten — Fett verlieren, Muskel halten.",
+        waistDownMuscleDown:
+          "Taille runter, aber Brust oder Bizeps schrumpfen — Protein und Regeneration prüfen.",
       },
       empty: {
         title: "Noch keine Körperdaten",
@@ -300,6 +361,13 @@ const de = {
       title: "Einheiten",
       body: "Voreinstellung für neue Übungen. Bereits erfasste Gewichte werden nicht umgerechnet.",
     },
+    goal: {
+      title: "Ziel",
+      body: "Zielgewicht für den Fortschrittsbalken im Dashboard. Das Startgewicht ist deine erste Messung.",
+      label: "Zielgewicht",
+      unit: "kg",
+      clear: "Entfernen",
+    },
     calories: {
       title: "Kalorien",
       body: "Tage unter diesem Wert gelten als unvollständig und zählen nicht in den Schnitt.",
@@ -317,6 +385,7 @@ const de = {
   common: {
     comingSoon: "Kommt in einer späteren Phase",
     back: "Zurück",
+    close: "Schließen",
     phase2: "Phase 2",
   },
 }

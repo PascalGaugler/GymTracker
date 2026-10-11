@@ -2,6 +2,8 @@ import { ChevronRight, Dumbbell } from "lucide-react"
 import { useTranslation } from "react-i18next"
 import { useNavigate } from "react-router-dom"
 
+import { Badge } from "@/components/ui/badge"
+import { Overline } from "@/components/ui/overline"
 import { useExerciseCatalog } from "@/features/training/hooks/useExerciseCatalog"
 import { useWorkoutRotation } from "@/features/training/hooks/useWorkoutRotation"
 
@@ -30,38 +32,29 @@ export function TodayWorkoutCard() {
       <h2 className="mb-3 text-h3 font-semibold">{t("dashboard.today.title")}</h2>
       <button
         type="button"
-        onClick={() => navigate(`/log/${crypto.randomUUID()}`, { state: { workoutId: next.id } })}
-        className="w-full rounded-lg border border-primary/60 bg-surface p-4 text-left shadow-elev-1 transition-colors hover:border-primary"
+        onClick={() =>
+          navigate(`/log/${crypto.randomUUID()}`, { state: { workoutId: next.id, returnTo: "/" } })
+        }
+        className="w-full rounded-lg border border-border-strong bg-linear-155 from-surface-hero to-surface to-60% p-4.5 text-left shadow-card transition-transform duration-(--dur-fast) active:scale-99"
       >
         <div className="flex items-start justify-between gap-3">
           <div className="min-w-0">
-            <div className="font-mono text-micro tracking-[0.16em] text-primary uppercase">
-              {t("log.rotation", { n: next.order + 1, total: workouts.length })}
-            </div>
-            <div className="mt-0.5 text-h3 font-semibold">{next.name}</div>
+            <Overline>{t("log.rotation", { n: next.order + 1, total: workouts.length })}</Overline>
+            <div className="mt-0.5 text-h2 font-semibold">{next.name}</div>
           </div>
-          <span className="flex size-9 shrink-0 items-center justify-center rounded-full bg-primary-soft text-primary">
-            <Dumbbell className="size-5" aria-hidden="true" />
+          <span className="flex size-12 shrink-0 items-center justify-center rounded-md bg-primary text-primary-foreground">
+            <Dumbbell className="size-6" aria-hidden="true" />
           </span>
         </div>
 
-        <div className="mt-3 flex flex-wrap gap-1.5">
+        <div className="mt-3.5 flex flex-wrap gap-1.5">
           {names.slice(0, CHIP_LIMIT).map((name, i) => (
-            <span
-              key={i}
-              className="rounded-md bg-surface-2 px-2 py-1 text-caption text-muted-foreground"
-            >
-              {name}
-            </span>
+            <Badge key={i}>{name}</Badge>
           ))}
-          {names.length > CHIP_LIMIT && (
-            <span className="rounded-md bg-surface-2 px-2 py-1 text-caption text-subtle">
-              +{names.length - CHIP_LIMIT}
-            </span>
-          )}
+          {names.length > CHIP_LIMIT && <Badge variant="more">+{names.length - CHIP_LIMIT}</Badge>}
         </div>
 
-        <div className="mt-3 flex items-center gap-1 text-label font-medium text-primary">
+        <div className="mt-3.5 flex h-12 items-center justify-center gap-1 rounded-md bg-primary-soft text-body font-semibold text-primary">
           {t("dashboard.today.cta")}
           <ChevronRight className="size-4" aria-hidden="true" />
         </div>

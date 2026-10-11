@@ -45,6 +45,26 @@ describe("settings", () => {
     expect(getSettings()).toEqual(DEFAULT_SETTINGS)
   })
 
+  it("stores, reads back and clears the bodyweight target", () => {
+    expect(getSettings().targetWeight).toBeUndefined()
+
+    updateSettings({ targetWeight: 75.5 })
+    reloadSettings()
+    expect(getSettings().targetWeight).toBe(75.5)
+
+    updateSettings({ targetWeight: undefined })
+    reloadSettings()
+    expect(getSettings().targetWeight).toBeUndefined()
+    expect(getSettings().calorieIncompleteThreshold).toBe(1200)
+  })
+
+  it("rejects an invalid bodyweight target on write", () => {
+    for (const bad of [0, -70, 501, 75.123, Number.NaN]) {
+      expect(() => updateSettings({ targetWeight: bad })).toThrow()
+    }
+    expect(getSettings().targetWeight).toBeUndefined()
+  })
+
   it("notifies subscribers on change", () => {
     let calls = 0
     const unsubscribe = subscribeSettings(() => {

@@ -13,9 +13,21 @@ import {
 } from "recharts"
 
 import type { RecompositionData } from "../recomposition"
+import { TooltipSwatch } from "./ChartSwatches"
+import { SERIES_CUES, lineWidth, markerDot } from "./chartCues"
 
 const STRENGTH = "var(--recomp-strength)" // blue, solid — holds / rises
 const BODYWEIGHT = "var(--recomp-bodyweight)" // violet, dashed — trends down
+
+// Charts at or below this height are the Dashboard preview.
+const COMPACT_MAX_HEIGHT = 200
+
+const STRENGTH_CUE = SERIES_CUES[0]! // solid · circle
+const BODYWEIGHT_CUE = SERIES_CUES[1]! // dashed · square
+
+// ~90 daily weigh-ins would fuse into a band: mark only every Nth point + the last.
+const MARKER_EVERY = 8
+const drawBodyweightMarker = markerDot(BODYWEIGHT_CUE, BODYWEIGHT)
 
 const axisTick = {
   fill: "var(--subtle)",
@@ -32,7 +44,12 @@ function formatDate(t: number): string {
 interface ChartTooltipProps {
   active?: boolean
   label?: number | string
-  payload?: { dataKey?: string | number; value?: number | null; color?: string }[]
+  payload?: {
+    dataKey?: string | number
+    value?: number | null
+    color?: string
+    payload?: { strength?: number | null }
+  }[]
 }
 
 // Tooltip matching the design-reference popover: date header + a coloured row
@@ -50,23 +67,38 @@ function ChartTooltip({ active, payload, label }: ChartTooltipProps) {
       <div className="mb-1 font-mono text-micro tracking-normal text-subtle">
         {formatDate(label as number)}
       </div>
-      {rows.map((entry) => (
-        <div key={String(entry.dataKey)} className="flex items-center gap-2">
-          <span
-            className="size-2 shrink-0 rounded-full"
-            style={{ background: entry.color }}
-            aria-hidden="true"
-          />
-          <span className="flex-1 text-caption text-muted-foreground">
-            {entry.dataKey === "strength"
-              ? t("progress.recomposition.strengthSeries")
-              : t("progress.recomposition.bodyweightSeries")}
-          </span>
-          <span className="font-mono text-caption font-semibold tabular-nums">
-            {(entry.value as number).toFixed(1)}
-          </span>
-        </div>
-      ))}
+      {rows.map((entry) => {
+        const isStrength = entry.dataKey === "strengthDisplay"
+        const raw = entry.payload?.strength
+        return (
+          <div key={String(entry.dataKey)}>
+            <div className="flex items-center gap-2">
+              <TooltipSwatch
+                cue={isStrength ? STRENGTH_CUE : BODYWEIGHT_CUE}
+                color={entry.color ?? STRENGTH}
+              />
+              <span className="flex-1 text-caption text-muted-foreground">
+                {isStrength
+                  ? t("progress.recomposition.strengthSmoothed")
+                  : t("progress.recomposition.bodyweightSeries")}
+              </span>
+              <span className="font-mono text-caption font-semibold tabular-nums">
+                {(entry.value as number).toFixed(1)}
+              </span>
+            </div>
+            {isStrength && raw != null && (
+              <div className="flex items-center gap-2 pl-5">
+                <span className="flex-1 text-caption text-subtle">
+                  {t("progress.recomposition.strengthRaw")}
+                </span>
+                <span className="font-mono text-caption tabular-nums text-muted-foreground">
+                  {raw.toFixed(1)}
+                </span>
+              </div>
+            )}
+          </div>
+        )
+      })}
     </div>
   )
 }
@@ -75,11 +107,26 @@ function ChartTooltip({ active, payload, label }: ChartTooltipProps) {
 // 100 at the fixed baseline, on ONE shared axis (never dual axes). Built in
 // Recharts with our tokens; nulls are bridged so each series reads as a
 // continuous line across the other's dates.
-export function RecompositionChart({ data }: { data: RecompositionData }) {
+export function RecompositionChart({
+  data,
+  height = 280,
+}: {
+  data: RecompositionData
+  height?: number
+}) {
   const { t } = useTranslation()
+  // Compact (decorative) preview: no per-point markers, the lines carry the story.
+  const lastIndex = data.points.length - 1
+  const bodyweightDot = (props: { cx?: number; cy?: number; index?: number }) =>
+    props.index != null && (props.index % MARKER_EVERY === 0 || props.index === lastIndex) ? (
+      drawBodyweightMarker(props)
+    ) : (
+      <g key={props.index} />
+    )
+  const compact = height <= COMPACT_MAX_HEIGHT
 
   return (
-    <ResponsiveContainer width="100%" height={280}>
+    <ResponsiveContainer width="100%" height={height}>
       <LineChart data={data.points} margin={{ top: 16, right: 14, bottom: 4, left: -12 }}>
         <CartesianGrid stroke="var(--grid)" vertical={false} />
         <XAxis
@@ -106,7 +153,8 @@ export function RecompositionChart({ data }: { data: RecompositionData }) {
           strokeDasharray="2 4"
           label={{
             value: t("progress.recomposition.baseline"),
-            position: "insideTopRight",
+            position: "insideBottomRight",
+            dy: -4,
             fill: "var(--subtle)",
             fontSize: 9,
             fontFamily: "var(--font-mono)",
@@ -114,13 +162,13 @@ export function RecompositionChart({ data }: { data: RecompositionData }) {
         />
         <Tooltip content={<ChartTooltip />} cursor={{ stroke: "var(--border-strong)" }} />
         <Line
-          type="monotone"
-          dataKey="strength"
+          type="stepAfter"
+          dataKey="strengthDisplay"
           name={t("progress.recomposition.strengthSeries")}
           stroke={STRENGTH}
-          strokeWidth={2.6}
+          strokeWidth={lineWidth(STRENGTH_CUE)}
           connectNulls
-          dot={{ r: 2.8, fill: STRENGTH, strokeWidth: 0 }}
+          dot={false}
           activeDot={{ r: 5, fill: "var(--background)", stroke: STRENGTH, strokeWidth: 2.5 }}
           isAnimationActive={false}
         />
@@ -129,10 +177,10 @@ export function RecompositionChart({ data }: { data: RecompositionData }) {
           dataKey="bodyweight"
           name={t("progress.recomposition.bodyweightSeries")}
           stroke={BODYWEIGHT}
-          strokeWidth={2.6}
-          strokeDasharray="6 4"
+          strokeWidth={lineWidth(BODYWEIGHT_CUE)}
+          strokeDasharray={BODYWEIGHT_CUE.dash}
           connectNulls
-          dot={{ r: 2.8, fill: BODYWEIGHT, strokeWidth: 0 }}
+          dot={compact ? false : bodyweightDot}
           activeDot={{ r: 5, fill: "var(--background)", stroke: BODYWEIGHT, strokeWidth: 2.5 }}
           isAnimationActive={false}
         />

@@ -23,7 +23,7 @@ export default function App() {
   if (!ready) {
     return (
       <div className="grid min-h-dvh place-items-center bg-background text-subtle">
-        <span className="font-mono text-micro tracking-[0.16em] uppercase">Gym Tracker</span>
+        <span className="font-mono text-micro uppercase">Gym Tracker</span>
       </div>
     )
   }

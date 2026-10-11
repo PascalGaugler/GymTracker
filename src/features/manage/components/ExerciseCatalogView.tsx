@@ -3,6 +3,7 @@ import type { ParseKeys } from "i18next"
 import { Plus } from "lucide-react"
 import { useTranslation } from "react-i18next"
 
+import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import type { Exercise } from "@/data/schema"
@@ -35,13 +36,13 @@ export function ExerciseCatalogView() {
     <>
       <div className="mb-4 flex items-center gap-2">
         <Input
-          className="h-11 flex-1"
+          className="flex-1"
           value={query}
           placeholder={t("manage.exercises.search")}
           onChange={(e) => setQuery(e.target.value)}
         />
         <Button
-          className="size-11 shrink-0"
+          className="shrink-0"
           size="icon"
           aria-label={t("manage.exercises.add")}
           onClick={() => openEditor(null)}
@@ -79,12 +80,12 @@ export function ExerciseCatalogView() {
             <button
               type="button"
               onClick={() => openEditor(exercise)}
-              className="flex w-full items-center gap-3 rounded-lg border border-border bg-surface p-3 text-left shadow-elev-1 transition-colors hover:border-border-strong"
+              className="flex w-full items-center gap-3 rounded-lg border border-border bg-surface p-3 text-left shadow-card transition-colors hover:border-border-strong"
             >
-              <span className="min-w-0 flex-1 truncate text-body font-medium">{exercise.name}</span>
-              <span className="shrink-0 rounded-md bg-surface-2 px-2 py-1 text-caption text-muted-foreground">
-                {t(TYPE_LABEL[exercise.type])}
+              <span className="min-w-0 flex-1 line-clamp-2 wrap-break-word text-body font-medium">
+                {exercise.name}
               </span>
+              <Badge>{t(TYPE_LABEL[exercise.type])}</Badge>
               <span className="shrink-0 font-mono text-caption text-subtle">{exercise.unit}</span>
             </button>
           </li>

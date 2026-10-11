@@ -10,6 +10,8 @@ import type { Measurement, WorkoutSession } from "@/data/schema"
 export const BASELINE_SESSION_COUNT = 3
 /** Both series are anchored to 100 at the baseline. */
 export const BASELINE_INDEX = 100
+/** Display smoothing window: trailing mean over this many strength-index points. */
+export const STRENGTH_SMOOTHING_WINDOW = 3
 
 /** A single indexed point: timestamp (x) + value where 100 = baseline. */
 export interface IndexPoint {
@@ -20,7 +22,10 @@ export interface IndexPoint {
 /** Merged chart row; a series is null on dates where only the other has data. */
 export interface RecompositionPoint {
   t: number
+  /** Raw (unsmoothed) strength index; the source of truth for every number shown. */
   strength: number | null
+  /** DISPLAY ONLY: trailing mean of the last 3 strength points; plotted, never used for metrics. */
+  strengthDisplay: number | null
   bodyweight: number | null
 }
 
@@ -33,6 +38,8 @@ export interface RecompositionData {
   hasBodyweight: boolean
   /** Most recent strength-index value, for the dashboard card. */
   latestStrengthIndex: number | null
+  /** Most recent bodyweight-index value (100 = baseline). */
+  latestBodyweightIndex: number | null
 }
 
 function round1(n: number): number {
@@ -41,6 +48,20 @@ function round1(n: number): number {
 
 function mean(values: number[]): number {
   return values.reduce((a, b) => a + b, 0) / values.length
+}
+
+/**
+ * Trailing mean over the last {@link STRENGTH_SMOOTHING_WINDOW} values (fewer at
+ * the start: the first point is itself, the second the mean of two). It runs over
+ * the strength series only, i.e. one value per SESSION. Dates that carry just a
+ * weigh-in have no strength value and are skipped, so the window always spans the
+ * last 3 sessions regardless of weigh-ins in between.
+ * DISPLAY ONLY: applied after indexing, never feeds the baseline or any metric.
+ */
+export function trailingMean(values: number[]): number[] {
+  return values.map((_, i) =>
+    round1(mean(values.slice(Math.max(0, i - STRENGTH_SMOOTHING_WINDOW + 1), i + 1))),
+  )
 }
 
 // Median (outlier-robust) for the fixed baseline, per docs/charts.md.
@@ -162,14 +183,22 @@ export function buildRecomposition(
 
   // Merge both series onto a shared time axis; each row carries whatever exists
   // for that instant (the chart bridges the nulls with connectNulls).
+  const smoothed = trailingMean(strength.map((p) => p.value))
   const byTimestamp = new Map<number, RecompositionPoint>()
-  for (const p of strength) {
-    byTimestamp.set(p.t, { t: p.t, strength: p.value, bodyweight: null })
-  }
+  strength.forEach((p, i) => {
+    byTimestamp.set(p.t, {
+      t: p.t,
+      strength: p.value,
+      strengthDisplay: smoothed[i],
+      bodyweight: null,
+    })
+  })
   for (const p of bw) {
     const existing = byTimestamp.get(p.t)
     if (existing) existing.bodyweight = p.value
-    else byTimestamp.set(p.t, { t: p.t, strength: null, bodyweight: p.value })
+    else {
+      byTimestamp.set(p.t, { t: p.t, strength: null, strengthDisplay: null, bodyweight: p.value })
+    }
   }
   const points = [...byTimestamp.values()].sort((a, b) => a.t - b.t)
 
@@ -182,5 +211,6 @@ export function buildRecomposition(
     hasStrength: strength.length > 0,
     hasBodyweight: bw.length > 0,
     latestStrengthIndex: strength.length > 0 ? strength[strength.length - 1].value : null,
+    latestBodyweightIndex: bw.length > 0 ? bw[bw.length - 1].value : null,
   }
 }

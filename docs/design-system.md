@@ -21,7 +21,7 @@ shadcn `dark:` variants resolve.
 - Type scale → `text-display-xl`, `text-h1`, `text-body`, `text-micro`, … (line-height,
   tracking, and weight bake in where the spec defines them).
 - Radii → `rounded-sm|md|lg|xl|full`.
-- Elevation → `shadow-elev-1|2|3`, `shadow-inset-hi`.
+- Elevation → `shadow-elev-1|2|3`, `shadow-inset-hi`, `shadow-card`.
 
 Raw CSS variables (`var(--…)`) remain available for the cases utilities don't cover
 (`--primary-soft` focus rings, `--grid`, `--dur`, `--tap`).
@@ -32,15 +32,18 @@ Layered cool-slate darkness; color is reserved for meaning and data.
 
 ### Surfaces (base → raised)
 
-| Token                     | Hex         | Use                                    |
-| ------------------------- | ----------- | -------------------------------------- |
-| `--background`            | `#0a0c12`   | App base — cool near-black slate       |
-| `--surface` / `--card`    | `#11141d`   | Card / raised surface                  |
-| `--surface-2` / `--muted` | `#181c28`   | Higher raise: inputs, hover rows       |
-| `--surface-3`             | `#20253480` | Translucent overlays / progress tracks |
-| `--popover`               | `#141823`   | Menus, dropdowns                       |
-| `--sheet`                 | `#12161f`   | Bottom sheets / dialogs                |
-| `--input`                 | `#1b2030`   | Input fill                             |
+| Token                     | Hex                              | Use                                     |
+| ------------------------- | -------------------------------- | --------------------------------------- |
+| `--background`            | `#0a0c12`                        | App base — cool near-black slate        |
+| `--surface` / `--card`    | `#11141d`                        | Card / raised surface                   |
+| `--surface-2` / `--muted` | `#181c28`                        | Higher raise: inputs, hover rows        |
+| `--surface-3`             | `#20253480`                      | Translucent overlays / progress tracks  |
+| `--popover`               | `#141823`                        | Menus, dropdowns                        |
+| `--sheet`                 | `#12161f`                        | Bottom sheets / dialogs                 |
+| `--scrim`                 | `#02030799`                      | Sheet / dialog overlay (`bg-scrim`)     |
+| `--surface-hero`          | `#16203a`                        | Start stop of the "today" card gradient |
+| `--surface-primary`       | `color-mix(primary 8%, surface)` | Highlighted "next" workout card         |
+| `--input`                 | `#1b2030`                        | Input fill                              |
 
 ### Foreground (text levels)
 
@@ -88,6 +91,9 @@ Each ships with a `-soft` tinted-fill companion (≈13% alpha) for badges/backgr
 | `--warning`                  | `#fbbf24` | `--warning-soft` `#fbbf2422` |
 | `--danger` / `--destructive` | `#f5544b` | `--danger-soft` `#f5544b22`  |
 
+`--success-foreground` (`#06140d`) is the dark text colour on a solid `--success` fill
+(`text-success-foreground`).
+
 Trend direction is **context-aware**: bodyweight ▼ is success, not danger.
 
 ## Chart palette
@@ -96,21 +102,24 @@ Six categorical series, each pairing a hue with a non-color cue (dash + marker) 
 stay legible on slate and under common color-vision deficiencies. Implementation lives in
 `docs/charts.md`; these are the colors.
 
-| Token       | Hex              | Cue                |
-| ----------- | ---------------- | ------------------ |
-| `--chart-1` | `#3b82f6` blue   | solid · circle     |
-| `--chart-2` | `#8b5cf6` violet | dashed · square    |
-| `--chart-3` | `#2dd4bf` teal   | dotted · triangle  |
-| `--chart-4` | `#fbbf24` amber  | dash-dot · diamond |
-| `--chart-5` | `#f472b6` pink   | long-dash · cross  |
-| `--chart-6` | `#a3e635` lime   | thin · star        |
+| Token       | Hex              | Cue                           |
+| ----------- | ---------------- | ----------------------------- |
+| `--chart-1` | `#3b82f6` blue   | solid · circle                |
+| `--chart-2` | `#8b5cf6` violet | dashed `7 5` · square         |
+| `--chart-3` | `#2dd4bf` teal   | dotted `2 5` · triangle       |
+| `--chart-4` | `#fbbf24` amber  | dash-dot `10 4 2 4` · diamond |
+| `--chart-5` | `#f472b6` pink   | long-dash `14 6` · cross      |
+| `--chart-6` | `#a3e635` lime   | thin (2px, not 2.6px) · star  |
+
+The cues live in `src/features/analysis/components/chartCues.tsx` (`SERIES_CUES`; glyph/swatch components in `ChartSwatches.tsx`). Lines,
+legends (`LegendSwatch`) and tooltips (`TooltipSwatch`) all show the same dash + glyph.
 
 **Recomposition pair** (defined explicitly, not borrowed from the categorical scale):
 
-| Token                 | Hex                      | Story         |
-| --------------------- | ------------------------ | ------------- |
-| `--recomp-strength`   | `#3b82f6` blue, solid    | holds / rises |
-| `--recomp-bodyweight` | `#8b5cf6` violet, dashed | trends down   |
+| Token                 | Hex                                     | Story         |
+| --------------------- | --------------------------------------- | ------------- |
+| `--recomp-strength`   | `#3b82f6` blue, solid · circle          | holds / rises |
+| `--recomp-bodyweight` | `#8b5cf6` violet, dashed `7 5` · square | trends down   |
 
 Both indexed to **100** at baseline on one shared axis — never dual y-axes.
 
@@ -151,12 +160,57 @@ No custom spacing tokens are needed.
 
 **Elevation** — depth comes from hairline borders + soft shadows, **never glow**.
 
-| Utility           | Value                                 | Use                           |
-| ----------------- | ------------------------------------- | ----------------------------- |
-| `shadow-elev-1`   | `0 1px 2px /.45`                      | Resting cards                 |
-| `shadow-elev-2`   | `0 6px 18px -4px /.55`                | Popovers, menus               |
-| `shadow-elev-3`   | `0 18px 44px -8px /.65`               | Sheets, dialogs               |
-| `shadow-inset-hi` | `inset 0 1px 0 rgba(255,255,255,.04)` | Top highlight on raised cards |
+| Utility           | Value                                 | Use                                                   |
+| ----------------- | ------------------------------------- | ----------------------------------------------------- |
+| `shadow-elev-1`   | `0 1px 2px /.45`                      | Resting cards                                         |
+| `shadow-elev-2`   | `0 6px 18px -4px /.55`                | Popovers, menus                                       |
+| `shadow-elev-3`   | `0 18px 44px -8px /.65`               | Sheets, dialogs                                       |
+| `shadow-inset-hi` | `inset 0 1px 0 rgba(255,255,255,.04)` | Top highlight on raised cards                         |
+| `shadow-card`     | `shadow-inset-hi` + `shadow-elev-1`   | Resting raised cards: `Card`, list rows, empty states |
+
+## Components
+
+Reusable primitives live in `src/components/ui/` (presentational, tokens only). Feature
+widgets built on the same tokens live next to their feature.
+
+- **Button** (`button.tsx`): sizes `default` 48px, `lg` 56px, `icon` 48px square. There are
+  no smaller sizes, so every button meets the `--tap` target.
+- **Segmented** (`segmented.tsx`): shared "pick one" styling, presentational only (the
+  consumer owns the element and its aria). `segmentedListVariants` layouts: `inline`,
+  `wrap`, `fill` (equal-width grid, non-scrolling: Progress tabs "Recomp · Kraft · Körper").
+  `segmentedItemVariants({ active })` for items, `pickChipVariants` for standalone chips,
+  `SegmentedScroller` for a strip that may exceed the viewport (it owns the overflow).
+- **Badge** (`badge.tsx`): non-interactive pills. Variants: `tag`, `more`, `status`
+  (solid primary, mono uppercase), `neutral`, `tally`, `tallyDone` (success).
+- **Overline** (`overline.tsx`): mono uppercase eyebrow, `text-subtle` by default,
+  `tone="primary"` for the one deliberate blue overline (Dashboard preview). The 0.16em
+  tracking comes from the `text-micro` token; never add an arbitrary `tracking-[…]`.
+- **Card** and list rows: `shadow-card` (inset highlight + `elev-1`). Sheet and Dialog:
+  `bg-sheet` + `shadow-elev-3` over a `bg-scrim` overlay.
+- **StatCard** (`features/analysis`): Dashboard stat. Label + optional trend badge, big mono
+  value + unit, muted sub-line, or a goal bar (`goal` prop: accent-to-primary gradient fill on
+  a `surface-2` track, start/target mono labels). Static, a link (`to`) or a button trigger
+  (`actionHint`, appended as visually hidden text).
+- **StatTile** (`features/analysis`): compact readout (mono value + unit over a micro
+  label) on `surface-2`; tones `default`, `muted`, `good`. Used for the Body and exercise
+  drilldown tiles; place it in an `@container` parent, the value steps up at `@xs`.
+- **Insight** (`features/analysis`): plain-language takeaway under a chart, a `surface-2`
+  box with an optional `TrendBadge` and one caption line.
+- **Chart cues** (`chartCues.tsx`, `ChartSwatches.tsx`): per-series dash + marker pairing,
+  shared by lines, legends (`LegendSwatch`) and tooltips (`TooltipSwatch`); see the chart
+  palette above.
+
+**Class merging:** `cn()` uses `tailwind-merge` extended with our custom `text-*` scale and
+`shadow-*` names (`src/lib/utils.ts`). Add any new type-scale or shadow token there too, or
+`cn()` will treat it as a colour and silently drop classes.
+
+### Nearest-token mapping
+
+When porting from the prototype, map its raw values to the nearest token instead of
+introducing new ones: a one-off px font size becomes the closest `text-*` step, a bespoke
+radius the closest `rounded-*`, a bespoke shadow `shadow-card` or `shadow-elev-*`, an rgba
+overlay `bg-scrim`, a hard-coded hex the matching colour token. Add a token only when no
+existing one fits, in `src/index.css` and in this document.
 
 ## Motion & touch
 
@@ -166,9 +220,7 @@ No custom spacing tokens are needed.
 
 ## Notes & follow-ups
 
-- **Fonts are loaded via Google Fonts `@import`**, mirroring the reference. This does not
-  work offline — before the PWA ships, self-host Space Grotesk + JetBrains Mono via
-  `@fontsource` packages and drop the remote import.
+- Fonts are self-hosted via `@fontsource-variable` (imported in `src/main.tsx`).
 - Custom hero surfaces (per-set weight input, stat card) and charts are built by hand from
   these tokens — see `docs/charts.md` and the component notes in the HTML reference. This
   doc covers tokens only; no prototype screens are ported.

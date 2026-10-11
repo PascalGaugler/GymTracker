@@ -20,21 +20,27 @@ export function AppLayout() {
   return (
     <div className="flex h-dvh flex-col overflow-hidden bg-background">
       <header
-        className="flex h-14 flex-none items-center justify-between border-b border-border bg-background px-4"
+        className="h-14 flex-none border-b border-border bg-background"
         style={{ paddingTop: "env(safe-area-inset-top)" }}
       >
-        <NavLink to="/" className="flex min-w-0 items-center gap-2" aria-label={t("nav.dashboard")}>
-          <Dumbbell size={22} className="shrink-0 text-primary" aria-hidden="true" />
-          <span className="truncate font-display text-h3 font-semibold">Gym Tracker</span>
-        </NavLink>
-        <Button asChild variant="ghost" size="icon-lg" aria-label={t("nav.settings")}>
+        <div className="mx-auto flex h-full w-full max-w-screen-sm items-center justify-between px-4">
           <NavLink
-            to="/settings"
-            className={({ isActive }) => cn("shrink-0", isActive && "text-primary")}
+            to="/"
+            className="flex min-h-(--tap) min-w-0 items-center gap-2"
+            aria-label={t("nav.dashboard")}
           >
-            <Settings aria-hidden="true" />
+            <Dumbbell size={22} className="shrink-0 text-primary" aria-hidden="true" />
+            <span className="truncate font-display text-h3 font-semibold">Gym Tracker</span>
           </NavLink>
-        </Button>
+          <Button asChild variant="ghost" size="icon" aria-label={t("nav.settings")}>
+            <NavLink
+              to="/settings"
+              className={({ isActive }) => cn("shrink-0", isActive && "text-primary")}
+            >
+              <Settings aria-hidden="true" />
+            </NavLink>
+          </Button>
+        </div>
       </header>
 
       <main className="flex-1 overflow-y-auto overscroll-contain">

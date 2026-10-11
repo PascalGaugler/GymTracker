@@ -13,10 +13,10 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"
+import { segmentedItemVariants, segmentedListVariants } from "@/components/ui/segmented"
 import { exerciseRepository } from "@/data/repositories"
 import { ExerciseType, type Exercise, WeightUnit } from "@/data/schema"
 import { useSettings } from "@/features/settings/hooks/useSettings"
-import { cn } from "@/lib/utils"
 
 import { useExerciseUsage } from "../hooks/useExerciseUsage"
 
@@ -126,7 +126,6 @@ function ExerciseForm({ exercise, onDone }: { exercise: Exercise | null; onDone:
         </span>
         <Input
           autoFocus={!exercise}
-          className="h-11"
           value={name}
           placeholder={t("manage.exercises.fields.namePlaceholder")}
           onChange={(e) => setName(e.target.value)}
@@ -165,7 +164,7 @@ function ExerciseForm({ exercise, onDone }: { exercise: Exercise | null; onDone:
               type="button"
               variant="destructive"
               disabled={busy}
-              className="h-11 sm:mr-auto"
+              className="sm:mr-auto"
               onClick={() => void handleDelete()}
             >
               {t(hasHistory ? "manage.exercises.deleteAnyway" : "manage.exercises.deleteConfirm")}
@@ -175,13 +174,13 @@ function ExerciseForm({ exercise, onDone }: { exercise: Exercise | null; onDone:
               type="button"
               variant="ghost"
               disabled={busy || !usageKnown}
-              className="h-11 text-destructive hover:text-destructive sm:mr-auto"
+              className="text-destructive hover:text-destructive sm:mr-auto"
               onClick={() => setConfirmingDelete(true)}
             >
               {t("manage.exercises.delete")}
             </Button>
           ))}
-        <Button type="submit" disabled={busy || !trimmed} className="h-11">
+        <Button type="submit" disabled={busy || !trimmed}>
           {t("manage.exercises.save")}
         </Button>
       </DialogFooter>
@@ -207,7 +206,7 @@ function SegmentedField<T extends string>({
   return (
     <div className="flex flex-col gap-1.5">
       <span className="text-caption font-medium text-muted-foreground">{label}</span>
-      <div className="flex flex-wrap gap-1.5">
+      <div className={segmentedListVariants({ layout: "wrap" })}>
         {options.map((opt) => {
           const active = opt === value
           return (
@@ -216,12 +215,7 @@ function SegmentedField<T extends string>({
               type="button"
               aria-pressed={active}
               onClick={() => onChange(opt)}
-              className={cn(
-                "min-h-(--tap) min-w-0 rounded-md border px-3 text-caption font-medium transition-colors",
-                active
-                  ? "border-primary bg-primary-soft text-primary"
-                  : "border-border bg-surface-2 text-muted-foreground hover:text-foreground",
-              )}
+              className={segmentedItemVariants({ active })}
             >
               {renderLabel(opt)}
             </button>

@@ -5,6 +5,7 @@ import { Link } from "react-router-dom"
 import { toast } from "sonner"
 
 import { Button } from "@/components/ui/button"
+import { Overline } from "@/components/ui/overline"
 import { planRepository } from "@/data/repositories"
 import { cn } from "@/lib/utils"
 import { EmptyState } from "@/pages/EmptyState"
@@ -36,7 +37,7 @@ export function PlanListView() {
           {plans ? t("manage.plans.count", { count: plans.length }) : ""}
         </p>
         <Button
-          className="size-11 shrink-0"
+          className="shrink-0"
           size="icon"
           aria-label={t("manage.plans.add")}
           onClick={() => setCreating(true)}
@@ -59,7 +60,7 @@ export function PlanListView() {
           <li
             key={plan.id}
             className={cn(
-              "rounded-lg border bg-surface shadow-elev-1",
+              "rounded-lg border bg-surface shadow-card",
               plan.isActive ? "border-primary" : "border-border",
             )}
           >
@@ -68,11 +69,7 @@ export function PlanListView() {
               className="flex min-h-(--tap) items-center gap-3 p-4 transition-colors hover:bg-surface-2"
             >
               <div className="min-w-0 flex-1">
-                {plan.isActive && (
-                  <div className="font-mono text-micro tracking-[0.16em] text-primary uppercase">
-                    {t("manage.plans.active")}
-                  </div>
-                )}
+                {plan.isActive && <Overline>{t("manage.plans.active")}</Overline>}
                 <div className="truncate text-h3 font-semibold">{plan.name}</div>
                 <div className="mt-0.5 font-mono text-caption text-muted-foreground">
                   {t("manage.plans.summary", {

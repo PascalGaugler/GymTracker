@@ -13,8 +13,11 @@ import {
 } from "recharts"
 
 import type { DrilldownData, DrilldownPoint } from "../exerciseDrilldown"
+import { TooltipSwatch } from "./ChartSwatches"
+import { SERIES_CUES, lineWidth, markerDot } from "./chartCues"
 
 const LINE = "var(--chart-1)" // top set — solid
+const CUE = SERIES_CUES[0]! // solid · circle
 const BAND = "var(--chart-1)" // min–max spread — faint fill
 
 const axisTick = {
@@ -47,7 +50,8 @@ function ChartTooltip({ active, payload, unit }: ChartTooltipProps) {
       <div className="mb-1 font-mono text-micro tracking-normal text-subtle">
         {formatDate(row.t)}
       </div>
-      <div className="flex items-center gap-3">
+      <div className="flex items-center gap-2">
+        <TooltipSwatch cue={CUE} color={LINE} />
         <span className="flex-1 text-caption text-muted-foreground">
           {t("progress.exercise.topSet")}
         </span>
@@ -100,7 +104,7 @@ export function ExerciseDrilldownChart({ data, unit }: { data: DrilldownData; un
           cursor={{ stroke: "var(--border-strong)" }}
         />
         <Area
-          type="monotone"
+          type="stepAfter"
           dataKey="band"
           stroke="none"
           fill={BAND}
@@ -109,11 +113,11 @@ export function ExerciseDrilldownChart({ data, unit }: { data: DrilldownData; un
           activeDot={false}
         />
         <Line
-          type="monotone"
+          type="stepAfter"
           dataKey="top"
           stroke={LINE}
-          strokeWidth={2.6}
-          dot={{ r: 2.8, fill: LINE, strokeWidth: 0 }}
+          strokeWidth={lineWidth(CUE)}
+          dot={markerDot(CUE, LINE)}
           activeDot={{ r: 5, fill: "var(--background)", stroke: LINE, strokeWidth: 2.5 }}
           isAnimationActive={false}
         />

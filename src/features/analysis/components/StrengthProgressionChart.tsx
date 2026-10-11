@@ -11,6 +11,8 @@ import {
 } from "recharts"
 
 import type { ProgressionData, ProgressionSeries } from "../strengthProgression"
+import { TooltipSwatch } from "./ChartSwatches"
+import { cueAt, lineWidth, markerDot } from "./chartCues"
 
 const axisTick = {
   fill: "var(--subtle)",
@@ -35,11 +37,13 @@ interface ChartTooltipProps {
   }[]
   /** exercise id → unit, so each row can show its own kg/lb. */
   units?: Record<string, string>
+  /** exercise id → series index, so each row shows its own cue glyph. */
+  slots?: Record<string, number>
 }
 
 // Date header + a coloured row per exercise logged on that session. Each row
 // reads its own series value, so a swap day shows only the exercise actually done.
-function ChartTooltip({ active, payload, label, units }: ChartTooltipProps) {
+function ChartTooltip({ active, payload, label, units, slots }: ChartTooltipProps) {
   if (!active || !payload || payload.length === 0) return null
   const rows = payload.filter((entry) => entry.value != null)
   if (rows.length === 0) return null
@@ -51,10 +55,9 @@ function ChartTooltip({ active, payload, label, units }: ChartTooltipProps) {
       </div>
       {rows.map((entry) => (
         <div key={String(entry.dataKey)} className="flex items-center gap-2">
-          <span
-            className="size-2 shrink-0 rounded-full"
-            style={{ background: entry.color }}
-            aria-hidden="true"
+          <TooltipSwatch
+            cue={cueAt(slots?.[String(entry.dataKey)] ?? 0)}
+            color={entry.color ?? ""}
           />
           <span className="flex-1 truncate text-caption text-muted-foreground">{entry.name}</span>
           <span className="font-mono text-caption font-semibold tabular-nums">
@@ -78,6 +81,7 @@ export function StrengthProgressionChart({
   visible: ProgressionSeries[]
 }) {
   const units = Object.fromEntries(data.series.map((s) => [s.exerciseId, s.unit]))
+  const slots = Object.fromEntries(data.series.map((s, i) => [s.exerciseId, i]))
 
   return (
     <ResponsiveContainer width="100%" height={280}>
@@ -102,22 +106,26 @@ export function StrengthProgressionChart({
           stroke="var(--border)"
         />
         <Tooltip
-          content={<ChartTooltip units={units} />}
+          content={<ChartTooltip units={units} slots={slots} />}
           cursor={{ stroke: "var(--border-strong)" }}
         />
-        {visible.map((s) => (
-          <Line
-            key={s.exerciseId}
-            type="monotone"
-            dataKey={s.exerciseId}
-            name={s.name}
-            stroke={s.color}
-            strokeWidth={2.6}
-            dot={{ r: 2.8, fill: s.color, strokeWidth: 0 }}
-            activeDot={{ r: 5, fill: "var(--background)", stroke: s.color, strokeWidth: 2.5 }}
-            isAnimationActive={false}
-          />
-        ))}
+        {visible.map((s) => {
+          const cue = cueAt(slots[s.exerciseId] ?? 0)
+          return (
+            <Line
+              key={s.exerciseId}
+              type="stepAfter"
+              dataKey={s.exerciseId}
+              name={s.name}
+              stroke={s.color}
+              strokeWidth={lineWidth(cue)}
+              strokeDasharray={cue.dash}
+              dot={markerDot(cue, s.color)}
+              activeDot={{ r: 5, fill: "var(--background)", stroke: s.color, strokeWidth: 2.5 }}
+              isAnimationActive={false}
+            />
+          )
+        })}
       </LineChart>
     </ResponsiveContainer>
   )

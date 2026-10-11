@@ -23,7 +23,7 @@ export function TrendBadge({
   return (
     <span
       className={cn(
-        "inline-flex shrink-0 items-center gap-1 rounded-full px-2.5 py-1 font-mono text-micro font-semibold tracking-normal",
+        "inline-flex shrink-0 items-center gap-1 rounded-full px-1.5 py-0.5 font-mono text-micro font-semibold tracking-normal",
         tone === "good" && "bg-success-soft text-success",
         tone === "bad" && "bg-danger-soft text-danger",
         tone === "flat" && "border border-border bg-surface-2 text-muted-foreground",

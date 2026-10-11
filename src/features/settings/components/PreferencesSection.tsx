@@ -2,8 +2,11 @@ import { useState } from "react"
 import { Minus, Plus } from "lucide-react"
 import { useTranslation } from "react-i18next"
 
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
 import { updateSettings } from "@/data/settings"
 import { WeightUnit } from "@/data/schema"
+import { segmentedItemVariants, segmentedListVariants } from "@/components/ui/segmented"
 import { cn } from "@/lib/utils"
 
 import { useSettings } from "../hooks/useSettings"
@@ -21,7 +24,7 @@ export function UnitsSection() {
 
   return (
     <SettingsSection title={t("settings.units.title")} body={t("settings.units.body")}>
-      <div className="flex gap-1.5">
+      <div className={segmentedListVariants({ layout: "fill" })}>
         {WeightUnit.options.map((unit) => {
           const active = unit === defaultWeightUnit
           return (
@@ -30,12 +33,7 @@ export function UnitsSection() {
               type="button"
               aria-pressed={active}
               onClick={() => updateSettings({ defaultWeightUnit: unit })}
-              className={cn(
-                "min-h-(--tap) min-w-0 flex-1 rounded-md border px-3 font-mono text-body transition-colors",
-                active
-                  ? "border-primary bg-primary-soft text-primary"
-                  : "border-border bg-surface-2 text-muted-foreground hover:text-foreground",
-              )}
+              className={cn(segmentedItemVariants({ active }), "font-mono text-body")}
             >
               {unit}
             </button>
@@ -88,7 +86,7 @@ export function CaloriesSection() {
         </button>
         <label className="flex h-12 min-w-0 flex-1 items-center gap-1 rounded-md border border-border bg-surface-2 px-3 focus-within:border-ring focus-within:ring-3 focus-within:ring-ring/50">
           <input
-            className="min-w-0 flex-1 bg-transparent text-right font-mono text-body-lg tabular-nums outline-none"
+            className="-my-px h-12 min-w-0 flex-1 bg-transparent text-right font-mono text-body-lg tabular-nums outline-none"
             inputMode="numeric"
             aria-label={t("settings.calories.label")}
             value={draft}
@@ -110,6 +108,63 @@ export function CaloriesSection() {
         </button>
       </div>
       <p className="mt-2 text-caption text-subtle">{t("settings.calories.hint")}</p>
+    </SettingsSection>
+  )
+}
+
+const TARGET_MAX = 500
+
+// The bodyweight goal the Dashboard card measures progress against. Only the
+// target is stored; the start is the first bodyweight measurement. Empty = no goal.
+// Dot decimals; a comma is accepted and normalised.
+export function GoalSection() {
+  const { t } = useTranslation()
+  const { targetWeight } = useSettings()
+  const [draft, setDraft] = useState(targetWeight != null ? String(targetWeight) : "")
+
+  function commit(raw: string) {
+    if (raw.trim() === "") {
+      updateSettings({ targetWeight: undefined })
+      setDraft("")
+      return
+    }
+    const parsed = Math.round(Number(raw) * 100) / 100
+    if (Number.isFinite(parsed) && parsed > 0 && parsed <= TARGET_MAX) {
+      updateSettings({ targetWeight: parsed })
+      setDraft(String(parsed))
+    } else {
+      // Invalid input never reaches storage: fall back to what is saved.
+      setDraft(targetWeight != null ? String(targetWeight) : "")
+    }
+  }
+
+  return (
+    <SettingsSection title={t("settings.goal.title")} body={t("settings.goal.body")}>
+      <div className="flex items-center gap-2">
+        <label className="flex min-w-0 flex-1 items-center gap-2">
+          <Input
+            className="min-w-0 flex-1 text-right font-mono tabular-nums"
+            inputMode="decimal"
+            aria-label={t("settings.goal.label")}
+            placeholder="—"
+            value={draft}
+            onChange={(e) => setDraft(e.target.value.replace(/[^0-9.,]/g, "").replace(",", "."))}
+            onBlur={(e) => commit(e.target.value)}
+          />
+          <span className="font-mono text-caption text-muted-foreground">
+            {t("settings.goal.unit")}
+          </span>
+        </label>
+        <Button
+          type="button"
+          variant="outline"
+          disabled={targetWeight == null && draft === ""}
+          onClick={() => commit("")}
+          className="shrink-0"
+        >
+          {t("settings.goal.clear")}
+        </Button>
+      </div>
     </SettingsSection>
   )
 }

@@ -3,6 +3,7 @@ import type de from "./de"
 // English (optional). Mirrors the German key structure exactly.
 const en: typeof de = {
   nav: {
+    primary: "Main navigation",
     dashboard: "Dashboard",
     log: "Log",
     progress: "Progress",
@@ -16,13 +17,26 @@ const en: typeof de = {
       waist: "Waist",
       strength: "Strength index",
       calories: "Calories",
+      bodyweightAdd: "Log value",
+      waistOpen: "Show trend",
+      strengthOpen: "Show trend",
       noData: "No data yet",
       soon: "Soon",
-      strengthBaseline: "vs. baseline (100)",
+      strengthBaseline: "Baseline 100 · {{value}} %",
       caloriesSoon: "Yazio sync arrives in Phase 2",
+      goalStart: "Start {{value}}",
+      goalTarget: "Goal {{value}}",
+      goalSpoken: "Goal {{target}} kg, {{percent}} %",
     },
     ratePerWeek: "{{value}} {{unit}}/wk",
     sinceStart: "{{value}} since start",
+    recomposition: {
+      open: "Open",
+      thesis:
+        "Strength <strength>{{strength}} %</strength> · Weight <weight>{{weight}} %</weight> over {{count}} weeks",
+      thesis_one:
+        "Strength <strength>{{strength}} %</strength> · Weight <weight>{{weight}} %</weight> over {{count}} week",
+    },
     today: {
       title: "Up today",
       cta: "Start workout",
@@ -42,13 +56,16 @@ const en: typeof de = {
     pick: {
       title: "Choose a workout",
       subtitle: "Rotation · {{total}} workouts",
-      hint: "Up next: {{name}}. Pick another if you're skipping or catching up.",
+      hint: "Up next: <strong>{{name}}</strong> — or pick another if you're skipping or catching up on a session.",
       next: "Up next",
     },
     rotation: "Rotation · {{n}} of {{total}}",
     summary: "{{exercises}} exercises · {{sets}} sets",
     setsRepRange: "{{sets}} sets · {{low}}–{{high}} reps",
     setsOnly: "{{sets}} sets",
+    setLabel: "Set {{n}}",
+    stepDown: "{{step}} less",
+    stepUp: "{{step}} more",
     progress: "{{done}}/{{total}} sets",
     save: "Save session",
     saved: "Session saved",
@@ -80,20 +97,47 @@ const en: typeof de = {
       strength: "Strength per workout",
       exercise: "Single exercise",
       body: "Body",
+      short: {
+        recomposition: "Recomp",
+        strength: "Strength",
+        body: "Body",
+      },
     },
     placeholder: "Charts appear once you've logged sessions and measurements.",
     recomposition: {
-      caption: "Strength index and bodyweight, both indexed to 100 at the start.",
+      caption: "Both indexed to 100 · one axis",
       strengthSeries: "Strength index",
+      strengthSmoothed: "Strength index (avg of 3)",
+      strengthRaw: "This session",
       bodyweightSeries: "Bodyweight",
       baseline: "Baseline = 100",
+      insight: {
+        badge: {
+          strengthUp: "Strength up",
+          strengthHolds: "Strength holds",
+          strengthDown: "Strength down",
+          weightUp: "Weight up",
+        },
+        noBaseline: "The strength index starts after 3 sessions per exercise.",
+        noBodyweight: "No bodyweight data yet — weigh in to see the comparison.",
+        thesis:
+          "Weight {{weight}}%, strength {{strength}}% since start — recomposition is on track.",
+        holding:
+          "Weight {{weight}}%, strength holding ({{strength}}%) — recomposition is on track.",
+        strengthLost:
+          "Weight {{weight}}%, but strength {{strength}}% too — check deficit and recovery.",
+        strengthUp: "Strength {{strength}}%, weight holding ({{weight}}%).",
+        weightUp: "Weight {{weight}}%, strength {{strength}}% — no deficit effect, check calories.",
+        strengthDown: "Strength {{strength}}% at stable weight — check recovery.",
+        noTrend: "No clear trend yet — keep collecting data.",
+      },
       empty: {
         title: "Nothing to show yet",
         body: "Log a few sessions and weigh in, and your recomposition trend will appear here.",
       },
     },
     strength: {
-      caption: "Top set per exercise in this workout. Steps = double progression.",
+      caption: "Top set per session · steps = double progression",
       swapHint: "A swapped exercise starts as a new line — no bridge to the old one.",
       openExercise: "View {{name}} in detail",
       empty: {
@@ -106,9 +150,14 @@ const en: typeof de = {
       },
     },
     exercise: {
-      caption: "Top set (line) over the min–max range of the session's sets.",
+      caption: "Top set (line) · set min–max (band)",
       topSet: "Top set",
       range: "Range",
+      stats: {
+        current: "Current",
+        sinceStart: "since start",
+        sessions: "Sessions",
+      },
       empty: {
         title: "No drilldown data yet",
         body: "Once you've logged this exercise, its history will appear here.",
@@ -116,15 +165,25 @@ const en: typeof de = {
     },
     body: {
       weight: {
-        caption:
-          "Raw weigh-ins (points) with a 7-day average (line) — the average shows the trend.",
+        caption: "Raw weigh-ins (dots) · 7-day average (line)",
         raw: "Weight",
         trend: "7-day average",
       },
       comparison: {
-        caption:
-          "Circumferences indexed to 100 at the start: waist (fat) down, chest/biceps (muscle) holding.",
+        caption: "Indexed to 100 at start · one axis",
         baseline: "Baseline = 100",
+      },
+      insight: {
+        weightNote: "Daily values fluctuate — the trend matters, not a single day.",
+        waistBadge: "Waist {{value}}",
+        noWaist: "Measure your waist (at least twice) to compare fat and muscle trends.",
+        waistUp: "Waist is growing — check calories and diet.",
+        waistFlat: "Waist unchanged — no fat loss visible yet, give the deficit time.",
+        waistDown: "Waist down — fat loss is working. Also measure chest & biceps.",
+        waistDownMuscleUp: "Waist down, chest & biceps up — losing fat, building muscle.",
+        waistDownMuscleHolds: "Waist down, chest & biceps holding — losing fat, keeping muscle.",
+        waistDownMuscleDown:
+          "Waist down, but chest or biceps are shrinking — check protein and recovery.",
       },
       empty: {
         title: "No body data yet",
@@ -302,6 +361,13 @@ const en: typeof de = {
       title: "Units",
       body: "Default for new exercises. Weights you already logged are never converted.",
     },
+    goal: {
+      title: "Goal",
+      body: "Target weight for the progress bar on the Dashboard. The start weight is your first measurement.",
+      label: "Target weight",
+      unit: "kg",
+      clear: "Clear",
+    },
     calories: {
       title: "Calories",
       body: "Days below this value count as incomplete and drop out of the average.",
@@ -319,6 +385,7 @@ const en: typeof de = {
   common: {
     comingSoon: "Coming in a later phase",
     back: "Back",
+    close: "Close",
     phase2: "Phase 2",
   },
 }

@@ -133,7 +133,6 @@ function WorkoutForm({
         </span>
         <Input
           autoFocus={!workout}
-          className="h-11"
           value={name}
           placeholder={t("manage.workouts.fields.namePlaceholder")}
           onChange={(e) => setName(e.target.value)}
@@ -158,7 +157,7 @@ function WorkoutForm({
               type="button"
               variant="destructive"
               disabled={busy}
-              className="h-11 sm:mr-auto"
+              className="sm:mr-auto"
               onClick={() => void handleDelete()}
             >
               {t("manage.workouts.deleteAnyway")}
@@ -168,13 +167,13 @@ function WorkoutForm({
               type="button"
               variant="ghost"
               disabled={busy || !usageKnown}
-              className="h-11 text-destructive hover:text-destructive sm:mr-auto"
+              className="text-destructive hover:text-destructive sm:mr-auto"
               onClick={() => setConfirmingDelete(true)}
             >
               {t("manage.workouts.delete")}
             </Button>
           ))}
-        <Button type="submit" disabled={busy || !trimmed} className="h-11">
+        <Button type="submit" disabled={busy || !trimmed}>
           {t("manage.workouts.save")}
         </Button>
       </DialogFooter>

@@ -72,6 +72,25 @@ describe("backup", () => {
     })
   })
 
+  it("round-trips the bodyweight target and clears it when the backup has none", async () => {
+    updateSettings({ targetWeight: 75 })
+    const withTarget = await exportBackupJson()
+    updateSettings({ targetWeight: undefined })
+    const withoutTarget = await exportBackupJson()
+
+    await importBackupJson(withTarget)
+    expect(getSettings().targetWeight).toBe(75)
+
+    await importBackupJson(withoutTarget)
+    expect(getSettings().targetWeight).toBeUndefined()
+  })
+
+  it("rejects an import whose target is invalid", async () => {
+    const payload = JSON.parse(await exportBackupJson()) as { settings: Record<string, unknown> }
+    payload.settings.targetWeight = -3
+    await expect(importBackup(payload)).rejects.toThrow()
+  })
+
   it("imports a file without a settings block, leaving preferences alone", async () => {
     await seedIfEmpty()
     const payload: Record<string, unknown> = { ...(await exportBackup()) }

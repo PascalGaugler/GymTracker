@@ -5,6 +5,7 @@ import { Link, Navigate, useNavigate, useParams } from "react-router-dom"
 import { toast } from "sonner"
 
 import { Button } from "@/components/ui/button"
+import { Overline } from "@/components/ui/overline"
 import { workoutRepository } from "@/data/repositories"
 import type { WorkoutExercise } from "@/data/schema"
 import { EmptyState } from "@/pages/EmptyState"
@@ -28,6 +29,9 @@ export function WorkoutSlotsView() {
   const [editingWorkout, setEditingWorkout] = useState(false)
   const [editingSlot, setEditingSlot] = useState<WorkoutExercise | null>(null)
   const [slotOpen, setSlotOpen] = useState(false)
+  // Bumped on every open so the editor remounts: Radix keeps closed content mounted
+  // until its exit animation ends, which would leak a cancelled draft into the next open.
+  const [slotSession, setSlotSession] = useState(0)
 
   if (detail === undefined || catalog === undefined) return null
   if (detail === null) return <Navigate to="/manage/plans" replace />
@@ -38,6 +42,7 @@ export function WorkoutSlotsView() {
 
   function openSlot(slot: WorkoutExercise | null) {
     setEditingSlot(slot)
+    setSlotSession((n) => n + 1)
     setSlotOpen(true)
   }
 
@@ -64,15 +69,13 @@ export function WorkoutSlotsView() {
 
       <div className="mb-5 flex items-start gap-3">
         <div className="min-w-0 flex-1">
-          <div className="font-mono text-micro tracking-[0.16em] text-primary uppercase">
-            {t("manage.workouts.overline", { n: workout.order + 1 })}
-          </div>
+          <Overline>{t("manage.workouts.overline", { n: workout.order + 1 })}</Overline>
           <h2 className="text-h2 font-semibold wrap-break-word">{workout.name}</h2>
         </div>
         <Button
           variant="outline"
           size="icon"
-          className="size-11 shrink-0"
+          className="shrink-0"
           aria-label={t("manage.workouts.editTitle")}
           onClick={() => setEditingWorkout(true)}
         >
@@ -83,7 +86,7 @@ export function WorkoutSlotsView() {
       <div className="mb-3 flex items-center justify-between gap-2">
         <h3 className="min-w-0 truncate text-h3 font-semibold">{t("manage.slots.title")}</h3>
         <Button
-          className="size-11 shrink-0"
+          className="shrink-0"
           size="icon"
           aria-label={t("manage.slots.add")}
           onClick={() => openSlot(null)}
@@ -127,6 +130,7 @@ export function WorkoutSlotsView() {
         onDeleted={() => navigate(`/manage/plans/${plan.id}`, { replace: true })}
       />
       <SlotEditorDialog
+        key={slotSession}
         workout={workout}
         slot={editingSlot}
         catalog={catalog}
@@ -157,17 +161,17 @@ function SlotRow({
   const { t } = useTranslation()
 
   return (
-    <li className="rounded-lg border border-border bg-surface shadow-elev-1">
+    <li className="rounded-lg border border-border bg-surface shadow-card">
       <button
         type="button"
         onClick={onEdit}
         className="flex min-h-(--tap) w-full items-center gap-3 rounded-t-lg p-4 text-left transition-colors hover:bg-surface-2"
       >
-        <span className="flex size-9 shrink-0 items-center justify-center rounded-md bg-surface-2 font-mono text-caption text-muted-foreground tabular-nums">
+        <span className="flex size-9 shrink-0 items-center justify-center rounded-full border border-border-strong font-mono text-caption text-muted-foreground tabular-nums">
           {index + 1}
         </span>
         <div className="min-w-0 flex-1">
-          <div className="truncate text-body-lg font-medium">
+          <div className="line-clamp-2 wrap-break-word text-body-lg font-medium">
             {name ?? t("manage.slots.unknownExercise")}
           </div>
           <div className="mt-0.5 font-mono text-caption text-muted-foreground">

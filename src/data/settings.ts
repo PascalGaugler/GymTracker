@@ -15,6 +15,16 @@ export const SettingsSchema = z.object({
    * out of averages by default. Stored now, consumed by the Phase 2 calorie work.
    */
   calorieIncompleteThreshold: z.number().int().min(0).max(10000).default(1200),
+  /**
+   * Bodyweight goal in kg (the Dashboard goal bar). Absent = no goal. Same 2-decimal
+   * precision as bodyweight measurements. The start weight is derived, never stored.
+   */
+  targetWeight: z
+    .number()
+    .positive()
+    .max(500)
+    .refine((v) => Number(v.toFixed(2)) === v, "at most 2 decimals")
+    .optional(),
 })
 export type Settings = z.infer<typeof SettingsSchema>
 

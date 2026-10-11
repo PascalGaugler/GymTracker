@@ -5,15 +5,19 @@ import { useLocation, useNavigate } from "react-router-dom"
 import { toast } from "sonner"
 
 import { Button } from "@/components/ui/button"
+import { Overline } from "@/components/ui/overline"
 import { sessionRepository } from "@/data/repositories"
 import type { Exercise, LoggedSet, Workout, WorkoutSession } from "@/data/schema"
 
 import { useExerciseCatalog } from "../hooks/useExerciseCatalog"
 import { useLastSession, useSession, useWorkout } from "../hooks/useSessionLog"
+import { useWorkoutRotation } from "../hooks/useWorkoutRotation"
 import { ExerciseLogCard } from "./ExerciseLogCard"
 
 interface LocationState {
   workoutId?: string
+  // Where the back arrow leads (e.g. "/" when started from the Dashboard).
+  returnTo?: string
 }
 
 // Loader for /log/:sessionId. A freshly picked workout arrives as an in-memory
@@ -23,7 +27,8 @@ interface LocationState {
 export function ActiveSession({ sessionId }: { sessionId: string }) {
   const navigate = useNavigate()
   const location = useLocation()
-  const stateWorkoutId = (location.state as LocationState | null)?.workoutId
+  const locationState = location.state as LocationState | null
+  const stateWorkoutId = locationState?.workoutId
 
   const session = useSession(sessionId) // undefined = loading · null = draft · object = saved
   const workoutId = session?.workoutId ?? stateWorkoutId
@@ -50,6 +55,7 @@ export function ActiveSession({ sessionId }: { sessionId: string }) {
       session={session}
       catalog={catalog}
       lastSession={lastSession}
+      returnTo={locationState?.returnTo}
     />
   )
 }
@@ -61,6 +67,7 @@ interface SessionFormProps {
   session: WorkoutSession | null
   catalog: Map<string, Exercise>
   lastSession: WorkoutSession | undefined
+  returnTo: string | undefined
 }
 
 // Pre-fill any already-saved sets so editing shows current values; a draft
@@ -95,9 +102,15 @@ function SessionForm({
   session,
   catalog,
   lastSession,
+  returnTo,
 }: SessionFormProps) {
   const { t } = useTranslation()
   const navigate = useNavigate()
+
+  // Rotation position within the active plan; a workout outside it (archived plan,
+  // removed workout) falls back to the generic "Log" overline.
+  const rotation = useWorkoutRotation()
+  const inRotation = rotation?.workouts.find((w) => w.id === workoutId)
 
   // Entered weights, keyed by slot id → one string per set.
   const [values, setValues] = useState(() => buildInitialValues(workout, session))
@@ -162,27 +175,33 @@ function SessionForm({
 
   return (
     <>
-      <header className="mb-4 flex items-center gap-3">
+      {/* -mx-4 -mt-5 cancel AppLayout's <main> px-4 pt-5 so the divider spans edge to edge;
+          the header scrolls with <main> (app shell: never sticky). */}
+      <header className="-mx-4 -mt-5 mb-3 flex items-center gap-3 border-b border-border px-4 py-3">
         <Button
-          variant="ghost"
-          size="icon-lg"
+          variant="outline"
+          size="icon"
           aria-label={t("common.back")}
-          onClick={() => navigate("/log")}
+          onClick={() => navigate(returnTo ?? "/log")}
         >
           <ArrowLeft aria-hidden="true" />
         </Button>
-        <div className="min-w-0">
-          <div className="font-mono text-micro tracking-[0.16em] text-primary uppercase">
-            {t("nav.log")}
-          </div>
-          <h1 className="text-h2 font-bold">{workout.name}</h1>
+        <div className="min-w-0 flex-1 text-center">
+          <Overline>
+            {inRotation && rotation
+              ? t("log.rotation", { n: inRotation.order + 1, total: rotation.workouts.length })
+              : t("nav.log")}
+          </Overline>
+          <h1 className="truncate text-h3">{workout.name}</h1>
         </div>
+        {/* Balances the back button so the title is centred (rest-timer slot). */}
+        <span aria-hidden="true" className="size-12 shrink-0" />
       </header>
 
-      <div className="mb-5 flex items-center gap-3">
+      <div className="mb-4 flex items-center gap-3">
         <div className="h-2 flex-1 overflow-hidden rounded-full bg-surface-2">
           <div
-            className="h-full rounded-full bg-primary transition-[width] duration-300"
+            className="h-full rounded-full bg-linear-to-r from-primary to-accent transition-[width] duration-300"
             style={{ width: `${pct}%` }}
           />
         </div>
@@ -212,7 +231,7 @@ function SessionForm({
         })}
       </div>
 
-      <Button className="mt-5 h-12 w-full text-body-lg" disabled={saving} onClick={handleSave}>
+      <Button size="lg" className="mt-5 w-full" disabled={saving} onClick={handleSave}>
         {t("log.save")}
       </Button>
     </>

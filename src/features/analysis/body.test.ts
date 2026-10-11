@@ -84,4 +84,13 @@ describe("buildMeasurementComparison", () => {
     expect(cmp.points[0]).toMatchObject({ waist: 100, biceps: null })
     expect(cmp.points[1]).toMatchObject({ waist: null, biceps: 100 })
   })
+
+  it("reports raw change since start in cm, null with fewer than 2 points", () => {
+    const cmp = buildMeasurementComparison({
+      waist: [m("waist", "cm", 28, 81.34), m("waist", "cm", 0, 91.9)],
+      chest: [m("chest", "cm", 0, 100)],
+      biceps: [],
+    })
+    expect(cmp.changeSinceStart).toEqual({ waist: -10.6, chest: null, biceps: null })
+  })
 })

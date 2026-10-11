@@ -2,7 +2,12 @@ import { describe, expect, it } from "vitest"
 
 import type { Measurement, WorkoutSession } from "@/data/schema"
 
-import { bodyweightIndexSeries, buildRecomposition, strengthIndexSeries } from "./recomposition"
+import {
+  bodyweightIndexSeries,
+  buildRecomposition,
+  strengthIndexSeries,
+  trailingMean,
+} from "./recomposition"
 
 const DAY = 86_400_000
 const T0 = new Date("2026-01-01T10:00:00").getTime()
@@ -120,6 +125,7 @@ describe("buildRecomposition", () => {
     expect(data.hasStrength).toBe(false)
     expect(data.hasBodyweight).toBe(false)
     expect(data.latestStrengthIndex).toBeNull()
+    expect(data.latestBodyweightIndex).toBeNull()
   })
 
   it("merges both series onto one shared axis and exposes the latest index", () => {
@@ -143,8 +149,44 @@ describe("buildRecomposition", () => {
     expect(data.points[1].strength).toBeNull()
     expect(data.points[1].bodyweight).not.toBeNull()
     expect(data.latestStrengthIndex).toBe(data.points[2].strength)
+    expect(data.latestBodyweightIndex).toBe(data.points[3].bodyweight)
     // Shared axis brackets the 100 baseline.
     expect(data.yDomain[0]).toBeLessThanOrEqual(100)
     expect(data.yDomain[1]).toBeGreaterThanOrEqual(100)
+  })
+})
+
+describe("strength display smoothing", () => {
+  const ex = "A"
+  // Tops 100,100,100 (fixed baseline 100) then 110, 120, 90.
+  const sessions = [100, 100, 100, 110, 120, 90].map((top, i) => session(ex, i * 2, top))
+
+  it("trailing mean uses fewer points at the start", () => {
+    expect(trailingMean([100, 110, 120, 130])).toEqual([100, 105, 110, 120])
+    expect(trailingMean([])).toEqual([])
+  })
+
+  it("leaves the raw strength, baseline and latest index untouched", () => {
+    const data = buildRecomposition(sessions, [])
+    const raw = strengthIndexSeries(sessions).map((p) => p.value)
+    expect(data.points.map((p) => p.strength)).toEqual(raw)
+    expect(raw.slice(0, 3)).toEqual([100, 100, 100])
+    expect(data.latestStrengthIndex).toBe(90)
+    // Smoothed differs from raw, proving the two are independent.
+    expect(data.points[5].strengthDisplay).toBe(106.7)
+  })
+
+  it("smooths the first points over what is available", () => {
+    const data = buildRecomposition(sessions, [])
+    expect(data.points[0].strengthDisplay).toBe(100)
+    expect(data.points[3].strengthDisplay).toBe(103.3)
+  })
+
+  it("skips weigh-in-only rows: the window spans the last 3 sessions", () => {
+    const data = buildRecomposition(sessions, [bw(90, 1), bw(89, 7)])
+    const weighInOnly = data.points.filter((p) => p.strength == null)
+    expect(weighInOnly).toHaveLength(2)
+    for (const p of weighInOnly) expect(p.strengthDisplay).toBeNull()
+    expect(data.points.filter((p) => p.strength != null).at(-1)?.strengthDisplay).toBe(106.7)
   })
 })

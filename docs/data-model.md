@@ -250,6 +250,20 @@ export const useExerciseHistory = (exerciseId: string) =>
   useLiveQuery(() => sessionRepository.getExerciseHistory(exerciseId), [exerciseId])
 ```
 
+## Preferences (`src/data/settings.ts`)
+
+Not a Dexie store: one tiny record in localStorage, validated with `SettingsSchema` on write
+(`updateSettings`) and on import. No Dexie version bump, no migration. It travels in the
+backup's optional `settings` block, so it round-trips through export/import (an import whose
+block lacks an optional field clears it locally).
+
+- `defaultWeightUnit` (`kg` | `lb`), `calorieIncompleteThreshold` (int kcal).
+- `targetWeight` (optional, kg): the bodyweight goal. Positive, at most 500, at most 2
+  decimals (bodyweight measurement precision). Absent = no goal. **Only the target is stored.**
+  Start = the first bodyweight measurement, current = the latest, progress =
+  `(start − current) / (start − target)` clamped to 0–1 (`features/analysis/goal.ts`). The
+  Dashboard goal bar is hidden with no target, no measurement, or `target >= start`.
+
 ## Principles
 
 - **UUIDs, not auto-increment.** Client-generated before persistence (so the in-memory

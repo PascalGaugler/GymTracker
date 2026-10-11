@@ -79,7 +79,7 @@ export function BackupSection() {
       <div className="flex flex-col gap-2">
         <Button
           variant="outline"
-          className="h-12 w-full"
+          className="w-full"
           disabled={busy}
           onClick={() => void handleExport()}
         >
@@ -89,7 +89,7 @@ export function BackupSection() {
 
         <Button
           variant="outline"
-          className="h-12 w-full"
+          className="w-full"
           disabled={busy}
           onClick={() => fileRef.current?.click()}
         >
@@ -124,7 +124,7 @@ export function BackupSection() {
           <div className="mt-3 flex flex-col gap-2 sm:flex-row">
             <Button
               variant="destructive"
-              className="h-11 sm:flex-1"
+              className="sm:flex-1"
               disabled={busy}
               onClick={() => void handleImport()}
             >
@@ -132,7 +132,7 @@ export function BackupSection() {
             </Button>
             <Button
               variant="ghost"
-              className="h-11 sm:flex-1"
+              className="sm:flex-1"
               disabled={busy}
               onClick={() => setPending(null)}
             >

@@ -2,11 +2,12 @@ import { useTranslation } from "react-i18next"
 import { Link, Navigate, useParams } from "react-router-dom"
 
 import { Card } from "@/components/ui/card"
-import { cn } from "@/lib/utils"
+import { SegmentedScroller, pickChipVariants } from "@/components/ui/segmented"
 import { EmptyState } from "@/pages/EmptyState"
 
 import { useExerciseDrilldown } from "../hooks/useExerciseDrilldown"
 import { useExercisesWithHistory, type ExerciseOption } from "../hooks/useExercisesWithHistory"
+import { StatTile } from "./StatTile"
 import { ExerciseDrilldownChart } from "./ExerciseDrilldownChart"
 
 function ExercisePicker({
@@ -17,7 +18,7 @@ function ExercisePicker({
   selectedId: string
 }) {
   return (
-    <nav className="-mx-4 overflow-x-auto px-4 scrollbar-none [&::-webkit-scrollbar]:hidden">
+    <SegmentedScroller>
       <div className="flex gap-2">
         {options.map((o) => (
           <Link
@@ -25,18 +26,13 @@ function ExercisePicker({
             to={`/progress/exercise/${o.id}`}
             replace
             aria-current={o.id === selectedId ? "page" : undefined}
-            className={cn(
-              "flex min-h-(--tap) shrink-0 items-center rounded-full border px-4 text-caption font-medium whitespace-nowrap transition-colors",
-              o.id === selectedId
-                ? "border-primary bg-primary-soft text-primary"
-                : "border-border text-muted-foreground hover:text-foreground",
-            )}
+            className={pickChipVariants({ active: o.id === selectedId })}
           >
             {o.name}
           </Link>
         ))}
       </div>
-    </nav>
+    </SegmentedScroller>
   )
 }
 
@@ -56,9 +52,31 @@ function Drilldown({ exerciseId }: { exerciseId: string }) {
     )
   }
 
+  const change = drilldown.data.changeSinceStart
+
   return (
-    <Card className="gap-4 p-4">
-      <p className="text-caption text-muted-foreground">{t("progress.exercise.caption")}</p>
+    <Card className="gap-3.5 px-3.5 pt-4.5 pb-4">
+      <p className="font-mono text-micro tracking-normal text-subtle">
+        {t("progress.exercise.caption")}
+      </p>
+      <div className="@container grid grid-cols-3 gap-2">
+        <StatTile
+          value={String(drilldown.data.latestTop)}
+          unit={drilldown.unit}
+          label={t("progress.exercise.stats.current")}
+        />
+        <StatTile
+          value={
+            change == null ? "–" : `${change > 0 ? "+" : change < 0 ? "−" : ""}${Math.abs(change)}`
+          }
+          label={t("progress.exercise.stats.sinceStart")}
+          tone={change != null && change > 0 ? "good" : "default"}
+        />
+        <StatTile
+          value={String(drilldown.data.sessionCount)}
+          label={t("progress.exercise.stats.sessions")}
+        />
+      </div>
       <ExerciseDrilldownChart data={drilldown.data} unit={drilldown.unit} />
     </Card>
   )

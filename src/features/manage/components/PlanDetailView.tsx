@@ -5,6 +5,7 @@ import { Link, Navigate, useParams } from "react-router-dom"
 import { toast } from "sonner"
 
 import { Button } from "@/components/ui/button"
+import { Overline } from "@/components/ui/overline"
 import { planRepository, workoutRepository } from "@/data/repositories"
 import type { Workout } from "@/data/schema"
 import { EmptyState } from "@/pages/EmptyState"
@@ -62,17 +63,13 @@ export function PlanDetailView() {
 
       <div className="mb-5 flex items-start gap-3">
         <div className="min-w-0 flex-1">
-          {plan.isActive && (
-            <div className="font-mono text-micro tracking-[0.16em] text-primary uppercase">
-              {t("manage.plans.active")}
-            </div>
-          )}
+          {plan.isActive && <Overline>{t("manage.plans.active")}</Overline>}
           <h2 className="text-h2 font-semibold wrap-break-word">{plan.name}</h2>
         </div>
         <Button
           variant="outline"
           size="icon"
-          className="size-11 shrink-0"
+          className="shrink-0"
           aria-label={t("manage.plans.editTitle")}
           onClick={() => setEditingPlan(true)}
         >
@@ -81,7 +78,7 @@ export function PlanDetailView() {
       </div>
 
       {!plan.isActive && (
-        <Button variant="outline" className="mb-5 h-11 w-full" onClick={() => void activate()}>
+        <Button variant="outline" className="mb-5 w-full" onClick={() => void activate()}>
           {t("manage.plans.activate")}
         </Button>
       )}
@@ -89,7 +86,7 @@ export function PlanDetailView() {
       <div className="mb-3 flex items-center justify-between gap-2">
         <h3 className="min-w-0 truncate text-h3 font-semibold">{t("manage.workouts.title")}</h3>
         <Button
-          className="size-11 shrink-0"
+          className="shrink-0"
           size="icon"
           aria-label={t("manage.workouts.add")}
           onClick={() => setAddingWorkout(true)}
@@ -151,16 +148,18 @@ function WorkoutRow({
   const sets = workout.exercises.reduce((sum, e) => sum + e.targetSets, 0)
 
   return (
-    <li className="rounded-lg border border-border bg-surface shadow-elev-1">
+    <li className="rounded-lg border border-border bg-surface shadow-card">
       <Link
         to={`/manage/plans/${workout.planId}/workouts/${workout.id}`}
         className="flex min-h-(--tap) items-center gap-3 rounded-t-lg p-4 transition-colors hover:bg-surface-2"
       >
-        <span className="flex size-9 shrink-0 items-center justify-center rounded-md bg-surface-2 font-mono text-caption text-muted-foreground tabular-nums">
+        <span className="flex size-9 shrink-0 items-center justify-center rounded-full border border-border-strong font-mono text-caption text-muted-foreground tabular-nums">
           {index + 1}
         </span>
         <div className="min-w-0 flex-1">
-          <div className="truncate text-body-lg font-medium">{workout.name}</div>
+          <div className="line-clamp-2 text-body-lg font-medium wrap-break-word">
+            {workout.name}
+          </div>
           <div className="mt-0.5 font-mono text-caption text-muted-foreground">
             {t("manage.workouts.summary", {
               exercises: workout.exercises.length,

@@ -1,35 +1,26 @@
-import type { ParseKeys } from "i18next"
 import { Ruler } from "lucide-react"
 import { useTranslation } from "react-i18next"
 
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 import { MeasurementQuickAdd } from "@/features/measurements/components/MeasurementQuickAdd"
+import { formatSigned } from "@/lib/format"
 import { EmptyState } from "@/pages/EmptyState"
 
-import type { ComparisonType } from "../body"
 import { useBodyData } from "../hooks/useBodyData"
+import { bodyComparisonInsight, bodyweightInsight } from "../insights"
 import { trendDir } from "../stats"
 import { BodyweightChart } from "./BodyweightChart"
+import { LegendSwatch, TooltipSwatch } from "./ChartSwatches"
+import { COMPARISON_SERIES } from "./chartCues"
+import { Insight } from "./Insight"
 import { MeasurementComparisonChart } from "./MeasurementComparisonChart"
 import { StatCard } from "./StatCard"
+import { StatTile } from "./StatTile"
 import { TrendBadge } from "./TrendBadge"
 
 // Rates within ±this (kg/week) read as "flat" rather than up/down noise.
 const RATE_EPSILON = 0.05
-
-// Legend swatch colours mirror MeasurementComparisonChart's series.
-const LEGEND: { key: ComparisonType; color: string; labelKey: ParseKeys }[] = [
-  { key: "waist", color: "var(--chart-5)", labelKey: "measurements.types.waist" },
-  { key: "chest", color: "var(--chart-1)", labelKey: "measurements.types.chest" },
-  { key: "biceps", color: "var(--chart-3)", labelKey: "measurements.types.biceps" },
-]
-
-// Explicit-sign value with a proper minus glyph, e.g. "−1.4 kg".
-function signed(value: number, unit: string, digits = 1): string {
-  const sign = value > 0 ? "+" : value < 0 ? "−" : ""
-  return `${sign}${Math.abs(value).toFixed(digits)} ${unit}`
-}
 
 // The bodyweight rate readout, reusing the dashboard StatCard/TrendBadge: latest
 // weight, weekly rate badge (down is the desirable direction in a cut), and the
@@ -56,7 +47,7 @@ function RateCard({
 
   const sub =
     changeSinceStart != null && changeSinceStart !== 0
-      ? t("dashboard.sinceStart", { value: signed(changeSinceStart, unit) })
+      ? t("dashboard.sinceStart", { value: `${formatSigned(changeSinceStart, 1)} ${unit}` })
       : undefined
 
   return (
@@ -67,19 +58,6 @@ function RateCard({
       badge={badge}
       sub={sub}
     />
-  )
-}
-
-function Swatch({ color, label }: { color: string; label: string }) {
-  return (
-    <span className="inline-flex min-w-0 items-center gap-2">
-      <span
-        className="size-2.5 shrink-0 rounded-full"
-        style={{ background: color }}
-        aria-hidden="true"
-      />
-      <span className="truncate text-caption text-muted-foreground">{label}</span>
-    </span>
   )
 }
 
@@ -109,6 +87,9 @@ export function BodyView() {
     )
   }
 
+  const weightBadge = bodyweightInsight(trend.changeSinceStart)
+  const comparisonInsight = bodyComparisonInsight(comparison.changeSinceStart)
+
   return (
     <div className="flex flex-col gap-4">
       {trend.latest != null && (
@@ -119,26 +100,71 @@ export function BodyView() {
             ratePerWeek={trend.ratePerWeek}
             changeSinceStart={trend.changeSinceStart}
           />
-          <Card className="gap-4 p-4">
-            <p className="text-caption text-muted-foreground">
+          <Card className="gap-3.5 px-3.5 pt-4.5 pb-4">
+            <p className="font-mono text-micro tracking-normal text-subtle">
               {t("progress.body.weight.caption")}
             </p>
             <BodyweightChart trend={trend} />
+            {weightBadge && (
+              <Insight
+                badge={
+                  <TrendBadge dir={weightBadge.dir} good={weightBadge.good}>
+                    {formatSigned(weightBadge.value, 1)} {trend.unit}
+                  </TrendBadge>
+                }
+              >
+                {t("progress.body.insight.weightNote")}
+              </Insight>
+            )}
           </Card>
         </>
       )}
 
       {hasComparison && (
-        <Card className="gap-4 p-4">
-          <p className="text-caption text-muted-foreground">
+        <Card className="gap-3.5 px-3.5 pt-4.5 pb-4">
+          <p className="font-mono text-micro tracking-normal text-subtle">
             {t("progress.body.comparison.caption")}
           </p>
+          <div className="@container grid grid-cols-3 gap-2">
+            {COMPARISON_SERIES.filter((s) => comparison.present[s.key]).map((s) => {
+              const change = comparison.changeSinceStart[s.key]
+              if (change == null) return null
+              const good = s.key === "waist" ? change < 0 : change > 0
+              return (
+                <StatTile
+                  key={s.key}
+                  value={formatSigned(change, 1)}
+                  unit="cm"
+                  label={
+                    <span className="flex min-w-0 items-center gap-1.5">
+                      <TooltipSwatch cue={s.cue} color={s.color} />
+                      <span className="truncate">{t(s.labelKey)}</span>
+                    </span>
+                  }
+                  tone={good ? "good" : "muted"}
+                />
+              )
+            })}
+          </div>
           <MeasurementComparisonChart data={comparison} />
           <div className="flex flex-wrap items-center gap-x-5 gap-y-2">
-            {LEGEND.filter((s) => comparison.present[s.key]).map((s) => (
-              <Swatch key={s.key} color={s.color} label={t(s.labelKey)} />
+            {COMPARISON_SERIES.filter((s) => comparison.present[s.key]).map((s) => (
+              <LegendSwatch key={s.key} cue={s.cue} color={s.color} label={t(s.labelKey)} />
             ))}
           </div>
+          <Insight
+            badge={
+              comparisonInsight.badge && (
+                <TrendBadge dir={comparisonInsight.badge.dir} good={comparisonInsight.badge.good}>
+                  {t("progress.body.insight.waistBadge", {
+                    value: formatSigned(comparisonInsight.badge.value, 1),
+                  })}
+                </TrendBadge>
+              )
+            }
+          >
+            {t(comparisonInsight.textKey)}
+          </Insight>
         </Card>
       )}
 
