@@ -21,7 +21,11 @@ bar** with four destinations; settings is reached from a header icon, not a tab.
     green check; tapping a day selects it and closes the sheet. The content below the
     header also responds to a horizontal swipe (right = previous day, left = next day,
     no-op on today) with a short directional slide/fade; vertical scroll is never
-    intercepted. (Stat cards, quick-add and the workout card becoming day-aware are DN3/DN4.)
+    intercepted. The stat cards (bodyweight, waist, strength index) read **as of the selected
+    day** — entries logged later are excluded, so backfilling a past day shows that day's
+    standing, not today's; a card with nothing up to that day shows its normal empty state. The
+    Recomposition preview stays global regardless of the selected day. (The workout card becoming
+    day-aware is DN4.)
 - `/log` — **Log.** The gym screen. Shows today's suggested workout (via rotation) or a
   picker; tapping in opens the active session with per-set weight inputs and last-time
   placeholders.
@@ -53,6 +57,20 @@ bar** with four destinations; settings is reached from a header icon, not a tab.
 Logging a bodyweight/measurement is a lightweight **modal/sheet** (shadcn) launched from
 the Dashboard and `/progress/body` — one tap, not a navigation. Use a shadcn sheet/dialog;
 the numeric input itself follows the custom gym-input pattern.
+
+The sheet writes to a **day**: the Dashboard trigger passes the currently selected day; the
+`/progress/body` trigger always writes to **today** (Progress stays global). The sheet shows
+the day in its header (an overline above the title) only when that day isn't today.
+
+**Prefill + replace semantics** — one value per type per day:
+
+- Opening the sheet loads that day's existing entries (per measurement type) and prefills them
+  as real input values, formatted to the field's usual decimals. The last-value placeholder
+  shown for an empty field is the latest value **up to and including that day**, not a later one.
+- Saving a changed value **replaces** the day's existing entry for that type (no duplicate).
+- Clearing a prefilled field **deletes** that day's entry for that type.
+- A field left unchanged is skipped — saving never rewrites an identical value.
+- The save button is enabled only once something changed versus what was loaded.
 
 ## Navigation notes
 

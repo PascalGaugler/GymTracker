@@ -40,6 +40,7 @@ function MeasurementStat({
   loading,
   action,
   goal,
+  day,
 }: {
   label: string
   summary: MeasurementSummary | null
@@ -48,11 +49,13 @@ function MeasurementStat({
   action: { actionHint: string; to?: string }
   /** Bodyweight only: progress toward the target weight. */
   goal?: GoalProgress | null
+  /** Quick-add trigger only: the day it writes to. */
+  day: Date
 }) {
   const { t } = useTranslation()
   const card = (props: Omit<ComponentProps<typeof StatCard>, "label" | "to" | "actionHint">) => {
     const el = <StatCard label={label} to={action.to} actionHint={action.actionHint} {...props} />
-    return action.to ? el : <MeasurementQuickAdd>{el}</MeasurementQuickAdd>
+    return action.to ? el : <MeasurementQuickAdd day={day}>{el}</MeasurementQuickAdd>
   }
 
   if (loading) return card({ value: null })
@@ -92,9 +95,9 @@ const INDEX_EPSILON = 0.5
 
 // Live strength-index card: latest index (100 = baseline) with the change since
 // baseline. Up is the desirable direction (strength holding/rising during a cut).
-function StrengthStat() {
+function StrengthStat({ day }: { day: Date }) {
   const { t } = useTranslation()
-  const strength = useStrengthIndex()
+  const strength = useStrengthIndex(day)
 
   const link = {
     label: t("dashboard.cards.strength"),
@@ -128,8 +131,8 @@ function StrengthStat() {
 export function DashboardView() {
   const { t } = useTranslation()
   const plans = useLiveQuery(() => planRepository.getAll(), [])
-  const stats = useMeasurementStats()
   const { day, isToday, shiftDay, goToToday } = useSelectedDay()
+  const stats = useMeasurementStats(day)
   const [calendarOpen, setCalendarOpen] = useState(false)
   // Set only when a swipe itself causes the day change, keyed to the day it
   // lands on. A later change via the calendar sheet or the "Heute" pill moves
@@ -225,14 +228,16 @@ export function DashboardView() {
             loading={loading}
             goal={stats?.bodyweightGoal}
             action={{ actionHint: t("dashboard.cards.bodyweightAdd") }}
+            day={day}
           />
           <MeasurementStat
             label={t("dashboard.cards.waist")}
             summary={stats?.waist ?? null}
             loading={loading}
             action={{ to: "/progress/body", actionHint: t("dashboard.cards.waistOpen") }}
+            day={day}
           />
-          <StrengthStat />
+          <StrengthStat day={day} />
           <StatCard
             label={t("dashboard.cards.calories")}
             value={null}
@@ -246,7 +251,7 @@ export function DashboardView() {
 
         <TodayWorkoutCard />
 
-        <MeasurementQuickAdd>
+        <MeasurementQuickAdd day={day}>
           <Button variant="outline" size="lg" className="mt-3 w-full">
             <Ruler aria-hidden="true" />
             {t("measurements.quickAdd")}
