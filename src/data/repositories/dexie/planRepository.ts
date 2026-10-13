@@ -15,10 +15,9 @@ export const planRepository: PlanRepository = {
   },
 
   async save(plan) {
-    await db.trainingPlans.put(TrainingPlanSchema.parse(plan)) // validate on write
+    await db.trainingPlans.put(TrainingPlanSchema.parse(plan))
   },
 
-  // Exactly one plan is active: flip the target on, the rest off, atomically.
   async setActive(id) {
     await db.transaction("rw", db.trainingPlans, async () => {
       const plans = await db.trainingPlans.toArray()

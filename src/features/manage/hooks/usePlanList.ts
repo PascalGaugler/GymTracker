@@ -6,12 +6,9 @@ import type { TrainingPlan } from "@/data/schema"
 export interface PlanSummary {
   plan: TrainingPlan
   workoutCount: number
-  /** Total target sets across every workout — a rough "size" of the plan. */
   setCount: number
 }
 
-// Every plan with a small summary, active first, then newest first.
-// `undefined` while the first read is in flight.
 export function usePlanList(): PlanSummary[] | undefined {
   return useLiveQuery(async () => {
     const plans = await planRepository.getAll()

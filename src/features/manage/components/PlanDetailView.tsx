@@ -16,8 +16,7 @@ import { PlanEditorDialog } from "./PlanEditorDialog"
 import { ReorderRow } from "./ReorderRow"
 import { WorkoutEditorDialog } from "./WorkoutEditorDialog"
 
-// A plan's workouts in rotation order. Reordering rewrites `order` on the moved
-// workouts only; the Log rotation follows this list for the active plan.
+// The Log rotation follows this order for the active plan.
 export function PlanDetailView() {
   const { t } = useTranslation()
   const { planId } = useParams()

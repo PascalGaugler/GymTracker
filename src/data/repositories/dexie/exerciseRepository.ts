@@ -17,7 +17,7 @@ export const exerciseRepository: ExerciseRepository = {
   },
 
   async save(exercise) {
-    await db.exercises.put(ExerciseSchema.parse(exercise)) // validate on write
+    await db.exercises.put(ExerciseSchema.parse(exercise))
   },
 
   async remove(id) {

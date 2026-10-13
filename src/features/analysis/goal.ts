@@ -1,8 +1,6 @@
 import type { Measurement } from "@/data/schema"
 
-// Bodyweight goal progress. Only the target is stored (settings); the start is
-// DERIVED as the first bodyweight measurement and the current weight as the latest.
-// Pure and unit-tested in isolation.
+// Only the target is stored; the start is DERIVED as the first bodyweight measurement, current as the latest.
 
 export interface GoalProgress {
   start: number

@@ -2,16 +2,12 @@ import { useLiveQuery } from "dexie-react-hooks"
 
 import { exerciseRepository, sessionRepository } from "@/data/repositories"
 
-/** An exercise that has at least one logged set — an option for the drilldown picker. */
 export interface ExerciseOption {
   id: string
   name: string
   unit: string
 }
 
-// Exercises that appear in any logged session, for the drilldown picker. Sorted
-// by name (user data, shown verbatim). Returns undefined while loading; an empty
-// array means nothing has been logged yet.
 export function useExercisesWithHistory(): ExerciseOption[] | undefined {
   return useLiveQuery(async () => {
     const [sessions, exercises] = await Promise.all([

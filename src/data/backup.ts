@@ -9,10 +9,7 @@ import {
   WorkoutSessionSchema,
 } from "./schema"
 
-// Export/import is the only backup mechanism (local-first, no backend). A whole
-// snapshot is validated with Zod before anything is written; import replaces the
-// current contents (single-device app — merge only matters with multiple sources).
-// z.coerce.date() lets dates round-trip through JSON with no manual rehydration.
+// Import replaces all current data (single-device app, no merge).
 
 export const BACKUP_VERSION = 1
 
@@ -24,8 +21,7 @@ export const BackupSchema = z.object({
   exercises: z.array(ExerciseSchema),
   sessions: z.array(WorkoutSessionSchema),
   measurements: z.array(MeasurementSchema),
-  // Optional so files written before preferences existed still import cleanly;
-  // an absent block simply leaves the current preferences alone.
+  // Optional so files exported before preferences existed still import.
   settings: SettingsSchema.optional(),
 })
 export type Backup = z.infer<typeof BackupSchema>
@@ -77,9 +73,7 @@ export async function importBackup(data: unknown): Promise<void> {
       ])
     },
   )
-  // Preferences live outside IndexedDB, so they are restored after the data
-  // transaction commits — a failed import never touches them.
-  // An absent optional field in the block means "not set", so it clears a local value.
+  // Preferences live outside IndexedDB: restored after the transaction commits; an absent field clears the local value.
   if (backup.settings) updateSettings({ targetWeight: undefined, ...backup.settings })
 }
 

@@ -5,11 +5,8 @@ import { MeasurementType, type Measurement } from "@/data/schema"
 import { dayKey } from "@/features/day/day"
 import { upTo } from "@/lib/upTo"
 
-// The latest value of every measurement type as of `until` (inclusive of that
-// whole calendar day), keyed by type. Backs the quick-add placeholders (the
-// last-value hint per field) — on a past day the hint must reflect what was
-// known up to that day, not values logged later. Keyed by the calendar day so
-// a fresh `Date` each render (today) doesn't retrigger the query.
+// Latest value per type up to the end of `until`'s day: on a past day, hints must not show later values.
+// Keyed by calendar day so a fresh `Date` each render doesn't retrigger the query.
 export function useLatestMeasurements(until: Date) {
   const key = dayKey(until)
   return useLiveQuery(async () => {

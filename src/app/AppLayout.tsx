@@ -7,16 +7,10 @@ import { cn } from "@/lib/utils"
 
 import { BottomTabBar } from "./BottomTabBar"
 
-// App chrome shared by every route: a slim top bar (brand + settings) above the
-// scrollable route outlet, with the bottom tab bar fixed below.
 export function AppLayout() {
   const { t } = useTranslation()
 
-  // App-shell layout: the viewport is a fixed-height flex column where the header
-  // and tab bar stay put (flex-none) and ONLY <main> scrolls. This keeps chrome
-  // visible at every size and avoids the sticky/fixed-over-document-scroll
-  // glitches (header/footer vanishing) on mobile browsers. h-dvh tracks the
-  // dynamic viewport so the address bar showing/hiding never clips content.
+  // Fixed-height flex column: only <main> scrolls; h-dvh so the mobile address bar never clips content.
   return (
     <div className="flex h-dvh flex-col overflow-hidden bg-background">
       <header

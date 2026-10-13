@@ -4,13 +4,8 @@ import { addDays, isSameDay, startOfDay } from "date-fns"
 import { clampToToday } from "./day"
 import { SelectedDayContext, type SelectedDayContextValue } from "./dayContext"
 
-// The day selected on the Dashboard, shared with the Log tab (genuinely
-// global — Context is warranted here per CLAUDE.md). Internal state is
-// `Date | null`; `null` means "today", which is derived fresh from
-// `new Date()` on every render (never cached), so leaving the app open past
-// midnight rolls the selected day over correctly. `setDay`/`shiftDay` clamp
-// to today — no future days — and collapse back to `null` when the result
-// is today, so `isToday` stays correct after navigating back.
+// `null` means today, derived fresh every render so the day rolls over past midnight.
+// setDay/shiftDay clamp to today and collapse back to `null` when the result is today.
 export function SelectedDayProvider({ children }: { children: ReactNode }) {
   const [override, setOverride] = useState<Date | null>(null)
 

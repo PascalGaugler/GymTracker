@@ -13,8 +13,7 @@ import { ChartTooltipFrame, ChartTooltipRow } from "./ChartTooltip"
 import { cueAt, lineWidth, markerDot } from "./chartCues"
 import { axisTick, formatDate } from "./chartFormat"
 
-// Minimal optional shape of Recharts' injected tooltip props (kept loose so the
-// element form type-checks across Recharts' tooltip generics, per Phase 5).
+// Minimal/optional so the element form type-checks across Recharts' tooltip generics.
 interface ChartTooltipProps {
   active?: boolean
   label?: number | string
@@ -24,14 +23,11 @@ interface ChartTooltipProps {
     value?: number | null
     color?: string
   }[]
-  /** exercise id → unit, so each row can show its own kg/lb. */
   units?: Record<string, string>
   /** exercise id → series index, so each row shows its own cue glyph. */
   slots?: Record<string, number>
 }
 
-// Date header + a coloured row per exercise logged on that session. Each row
-// reads its own series value, so a swap day shows only the exercise actually done.
 function ChartTooltip({ active, payload, label, units, slots }: ChartTooltipProps) {
   if (!active || !payload || payload.length === 0) return null
   const rows = payload.filter((entry) => entry.value != null)
@@ -53,9 +49,7 @@ function ChartTooltip({ active, payload, label, units, slots }: ChartTooltipProp
   )
 }
 
-// Multi-line per-workout progression: one top-set line per (visible) exercise on
-// a shared raw-weight axis. connectNulls is left OFF so a swapped exercise — a
-// separate series with null on the other's dates — never bridges the gap.
+// connectNulls OFF so a swapped exercise (separate series, null on the other's dates) never bridges.
 export function StrengthProgressionChart({
   data,
   visible,

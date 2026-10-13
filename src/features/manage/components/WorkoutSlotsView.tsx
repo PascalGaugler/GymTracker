@@ -17,9 +17,7 @@ import { ReorderRow } from "./ReorderRow"
 import { SlotEditorDialog } from "./SlotEditorDialog"
 import { WorkoutEditorDialog } from "./WorkoutEditorDialog"
 
-// The slot editor: which exercises a workout prescribes, in which order, with
-// how many sets. Slots are embedded, so every change writes the whole workout.
-// Past sessions reference catalog exercises directly and are never touched here.
+// Slots are embedded, so every change writes the whole workout.
 export function WorkoutSlotsView() {
   const { t } = useTranslation()
   const navigate = useNavigate()
@@ -29,8 +27,7 @@ export function WorkoutSlotsView() {
   const [editingWorkout, setEditingWorkout] = useState(false)
   const [editingSlot, setEditingSlot] = useState<WorkoutExercise | null>(null)
   const [slotOpen, setSlotOpen] = useState(false)
-  // Bumped on every open so the editor remounts: Radix keeps closed content mounted
-  // until its exit animation ends, which would leak a cancelled draft into the next open.
+  // Bumped on open to remount: Radix keeps closed content mounted until its exit animation ends, leaking a cancelled draft.
   const [slotSession, setSlotSession] = useState(0)
 
   if (detail === undefined || catalog === undefined) return null

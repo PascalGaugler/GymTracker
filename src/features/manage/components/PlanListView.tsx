@@ -13,9 +13,6 @@ import { EmptyState } from "@/pages/EmptyState"
 import { usePlanList } from "../hooks/usePlanList"
 import { PlanEditorDialog } from "./PlanEditorDialog"
 
-// Plan overview: exactly one plan is active (it drives the Log rotation); the
-// rest sit here as an archive until re-activated. Editing and deleting live on
-// the plan detail screen, so this list stays a safe place to browse.
 export function PlanListView() {
   const { t } = useTranslation()
   const plans = usePlanList()

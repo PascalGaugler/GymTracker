@@ -15,30 +15,27 @@ import { ChartTooltipFrame, ChartTooltipRow } from "./ChartTooltip"
 import { SERIES_CUES, lineWidth, markerDot } from "./chartCues"
 import { axisTick, formatDate } from "./chartFormat"
 
-const STRENGTH = "var(--recomp-strength)" // blue, solid — holds / rises
-const BODYWEIGHT = "var(--recomp-bodyweight)" // violet, dashed — trends down
+const STRENGTH = "var(--recomp-strength)"
+const BODYWEIGHT = "var(--recomp-bodyweight)"
 
 // Charts at or below this height are the Dashboard preview.
 const COMPACT_MAX_HEIGHT = 200
 
-const STRENGTH_CUE = SERIES_CUES[0]! // solid · circle
-const BODYWEIGHT_CUE = SERIES_CUES[1]! // dashed · square
+const STRENGTH_CUE = SERIES_CUES[0]!
+const BODYWEIGHT_CUE = SERIES_CUES[1]!
 
 // ~90 daily weigh-ins would fuse into a band: mark only every Nth point + the last.
 const MARKER_EVERY = 8
 const drawBodyweightMarker = markerDot(BODYWEIGHT_CUE, BODYWEIGHT)
 
-// The fields we read off Recharts' injected tooltip props (kept minimal +
-// optional so the element form type-checks across Recharts' tooltip generics).
+// Minimal/optional so the element form type-checks across Recharts' tooltip generics.
 interface ChartTooltipProps {
   active?: boolean
   label?: number | string
   payload?: { payload?: RecompositionPoint }[]
 }
 
-// Tooltip matching the design-reference popover: date header + both series "as
-// of" that date (forward-filled on the merged row, so hovering a weigh-in-only
-// or session-only date still shows both). Fixed order: strength, then bodyweight.
+// Rows are forward-filled, so a weigh-in-only or session-only date still shows both series.
 function ChartTooltip({ active, payload, label }: ChartTooltipProps) {
   const { t } = useTranslation()
   if (!active || !payload || payload.length === 0) return null
@@ -78,10 +75,7 @@ function ChartTooltip({ active, payload, label }: ChartTooltipProps) {
   )
 }
 
-// The hero recomposition chart: strength index and bodyweight, both indexed to
-// 100 at the fixed baseline, on ONE shared axis (never dual axes). Built in
-// Recharts with our tokens; nulls are bridged so each series reads as a
-// continuous line across the other's dates.
+// ONE shared axis (never dual); connectNulls bridges each series across the other's dates.
 export function RecompositionChart({
   data,
   height = 280,
@@ -90,7 +84,6 @@ export function RecompositionChart({
   height?: number
 }) {
   const { t } = useTranslation()
-  // Compact (decorative) preview: no per-point markers, the lines carry the story.
   const lastIndex = data.points.length - 1
   const bodyweightDot = (props: { cx?: number; cy?: number; index?: number }) =>
     props.index != null && (props.index % MARKER_EVERY === 0 || props.index === lastIndex) ? (

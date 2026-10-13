@@ -1,19 +1,12 @@
 import type { Measurement, WorkoutSession } from "@/data/schema"
 
-// Recomposition (hero chart) math: index BOTH the strength index and bodyweight
-// to 100 at a FIXED baseline and plot them on one shared axis. Pure functions
-// over sessions + bodyweight measurements — no Dexie, no React — so the metric
-// rules (docs/charts.md) are unit-tested in isolation. This is presentation
-// logic and deliberately lives in the analysis feature, not in a repository.
+// Index BOTH strength index and bodyweight to 100 at a FIXED baseline on one shared axis (docs/charts.md).
 
-/** An exercise's baseline = the median of its first N session top sets. */
 export const BASELINE_SESSION_COUNT = 3
-/** Both series are anchored to 100 at the baseline. */
 export const BASELINE_INDEX = 100
 /** Display smoothing window: trailing mean over this many strength-index points. */
 export const STRENGTH_SMOOTHING_WINDOW = 3
 
-/** A single indexed point: timestamp (x) + value where 100 = baseline. */
 export interface IndexPoint {
   t: number
   value: number
@@ -27,24 +20,19 @@ export interface RecompositionPoint {
   /** DISPLAY ONLY: trailing mean of the last 3 strength points; plotted, never used for metrics. */
   strengthDisplay: number | null
   bodyweight: number | null
-  /** DISPLAY/TOOLTIP ONLY: last non-null `strengthDisplay` at or before t (null before the first). */
+  // TOOLTIP ONLY: each series' last non-null value at or before t (null before its first point).
   strengthDisplayAsOf: number | null
-  /** DISPLAY/TOOLTIP ONLY: last non-null raw `strength` at or before t (null before the first). */
   strengthAsOf: number | null
-  /** DISPLAY/TOOLTIP ONLY: last non-null `bodyweight` at or before t (null before the first). */
   bodyweightAsOf: number | null
 }
 
 export interface RecompositionData {
   points: RecompositionPoint[]
-  /** Shared y-axis bounds (both series live on this one scale). */
   yDomain: [number, number]
   yTicks: number[]
   hasStrength: boolean
   hasBodyweight: boolean
-  /** Most recent strength-index value, for the dashboard card. */
   latestStrengthIndex: number | null
-  /** Most recent bodyweight-index value (100 = baseline). */
   latestBodyweightIndex: number | null
 }
 
@@ -57,11 +45,7 @@ function mean(values: number[]): number {
 }
 
 /**
- * Trailing mean over the last {@link STRENGTH_SMOOTHING_WINDOW} values (fewer at
- * the start: the first point is itself, the second the mean of two). It runs over
- * the strength series only, i.e. one value per SESSION. Dates that carry just a
- * weigh-in have no strength value and are skipped, so the window always spans the
- * last 3 sessions regardless of weigh-ins in between.
+ * Trailing mean over the last 3 strength points, one per SESSION (weigh-in-only dates are skipped).
  * DISPLAY ONLY: applied after indexing, never feeds the baseline or any metric.
  */
 export function trailingMean(values: number[]): number[] {
@@ -70,16 +54,15 @@ export function trailingMean(values: number[]): number[] {
   )
 }
 
-// Median (outlier-robust) for the fixed baseline, per docs/charts.md.
+// Median (outlier-robust) for the fixed baseline.
 function median(values: number[]): number {
   const sorted = [...values].sort((a, b) => a - b)
   const mid = Math.floor(sorted.length / 2)
   return sorted.length % 2 ? sorted[mid] : (sorted[mid - 1] + sorted[mid]) / 2
 }
 
-// The heaviest set of each exercise in a session — the progression value
-// (top set, not the average, per docs/charts.md). Sessions arrive sorted asc.
-// Exported so the per-workout progression module reuses one top-set definition.
+// Heaviest set per exercise in a session (top set, not average). Sessions arrive sorted asc.
+// Exported so strengthProgression reuses one definition.
 export function topSetsPerSession(
   sessions: WorkoutSession[],
 ): { date: Date; tops: Map<string, number> }[] {
@@ -94,21 +77,16 @@ export function topSetsPerSession(
 }
 
 /**
- * Strength index over time: one point per session = the mean of its exercises'
- * `(topSet / baseline) * 100`. Each exercise's baseline is FIXED (median of its
- * first {@link BASELINE_SESSION_COUNT} top sets) so the trend accumulates rather
- * than hovering near 100. An exercise contributes only once it has a baseline
- * (≥1 logged session with a positive load) and naturally drops out when swapped
- * away (it stops appearing in later sessions), so a changing roster doesn't jolt
- * the line.
+ * One point per session = mean of its exercises' `(topSet / baseline) * 100`. Baselines are FIXED (median of
+ * the first {@link BASELINE_SESSION_COUNT} top sets); an exercise enters only once it has one, so a
+ * changing roster doesn't jolt the line.
  */
 export function strengthIndexSeries(sessions: WorkoutSession[]): IndexPoint[] {
   if (sessions.length === 0) return []
   const sorted = [...sessions].sort((a, b) => a.date.getTime() - b.date.getTime())
   const perSession = topSetsPerSession(sorted)
 
-  // Collect each exercise's top sets in chronological order, then fix a baseline
-  // from its first few. Loads of 0 (e.g. unweighted bodyweight) can't be indexed.
+  // Loads of 0 (e.g. unweighted bodyweight) can't be indexed.
   const history = new Map<string, number[]>()
   for (const { tops } of perSession) {
     for (const [exerciseId, weight] of tops) {
@@ -159,8 +137,7 @@ export function bodyweightIndexSeries(
   }))
 }
 
-// Nice shared-axis bounds + ticks around the indexed values (always including
-// the 100 baseline). Padded a little so markers don't sit on the frame.
+// Always include the 100 baseline; padded so markers don't sit on the frame.
 function niceAxis(values: number[]): { domain: [number, number]; ticks: number[] } {
   const min = Math.min(...values, BASELINE_INDEX)
   const max = Math.max(...values, BASELINE_INDEX)
@@ -173,7 +150,6 @@ function niceAxis(values: number[]): { domain: [number, number]; ticks: number[]
   return { domain: [lo, hi], ticks }
 }
 
-/** Build the merged, indexed dataset for the recomposition chart. */
 export function buildRecomposition(
   sessions: WorkoutSession[],
   bodyweight: Measurement[],
@@ -187,8 +163,7 @@ export function buildRecomposition(
       : null
   const bw = bodyweightIndexSeries(bodyweight, baselineEnd)
 
-  // Merge both series onto a shared time axis; each row carries whatever exists
-  // for that instant (the chart bridges the nulls with connectNulls).
+  // Merge both series onto a shared time axis; null where a series has no value (chart uses connectNulls).
   const smoothed = trailingMean(strength.map((p) => p.value))
   const byTimestamp = new Map<number, RecompositionPoint>()
   strength.forEach((p, i) => {

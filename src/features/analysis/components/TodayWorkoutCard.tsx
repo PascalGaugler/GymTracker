@@ -27,8 +27,6 @@ function ChipRow({ names }: { names: string[] }) {
   )
 }
 
-// Shared card chrome for every state below: an overline + workout name, an
-// icon chip top-right, exercise chips, and a footer strip (CTA or tally).
 function WorkoutCard({
   overline,
   name,
@@ -83,17 +81,7 @@ function WorkoutCard({
   )
 }
 
-// Dashboard quick-action, day-aware:
-// - the selected day already has a session → its progress (workout, a
-//   done/total tally, a green check once complete); tap re-opens it via
-//   `/log` (the selected day still has that session, so `/log` shows it
-//   directly, no picker).
-// - no session on a PAST day → a backfill suggestion (rotation computed from
-//   the session before that day); tap opens the picker via `/log`.
-// - no session TODAY → the original "start now" CTA, unchanged: mints a
-//   fresh session id and opens it directly, bypassing the picker.
-// Renders nothing while loading, or with no active plan / no workouts (the
-// picker on `/log` owns that empty state).
+// Renders nothing while loading or with no active plan (the picker on `/log` owns that empty state).
 export function TodayWorkoutCard() {
   const { t } = useTranslation()
   const navigate = useNavigate()
@@ -110,7 +98,6 @@ export function TodayWorkoutCard() {
 
   if (sessionsOnDay === undefined || catalog === undefined || rotation === undefined) return null
 
-  // The day already has a session — show its progress, not a suggestion.
   if (latest) {
     if (!sessionWorkout) return null
     const { done, total } = sessionTally(latest, sessionWorkout)
@@ -155,8 +142,7 @@ export function TodayWorkoutCard() {
   if (!next) return null
   const names = next.exercises.map((e) => catalog.get(e.exerciseId)?.name ?? "?")
 
-  // No session on a past day: suggest the backfill via the rotation computed
-  // from the session before that day; tapping opens the picker (`/log`).
+  // Past day without a session: suggest a backfill from the rotation before that day; opens the picker.
   if (!isToday) {
     return (
       <section className="mt-6">
@@ -182,7 +168,7 @@ export function TodayWorkoutCard() {
     )
   }
 
-  // No session today: the original behaviour — start logging directly.
+  // No session today: start logging directly, bypassing the picker.
   return (
     <section className="mt-6">
       <h2 className="mb-3 text-h3 font-semibold">{t("dashboard.today.title")}</h2>

@@ -1,12 +1,7 @@
 import { clsx, type ClassValue } from "clsx"
 import { extendTailwindMerge } from "tailwind-merge"
 
-// Registers our custom type-scale and shadow-scale utilities (defined in
-// src/index.css's @theme block) so tailwind-merge treats them as members of
-// those scales instead of misreading e.g. `text-display` as a text *colour*
-// or `shadow-elev-1` as a shadow *colour* utility. Without this, cn() drops
-// legitimate classes whenever a custom size/shadow name collides by prefix
-// with an unrelated Tailwind core group (see src/lib/utils.test.ts).
+// Without this, tailwind-merge misreads custom text-display / shadow-elev-1 as colour utilities and drops classes.
 const twMerge = extendTailwindMerge({
   extend: {
     theme: {

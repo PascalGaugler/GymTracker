@@ -3,15 +3,9 @@ import type { WorkoutSession } from "@/data/schema"
 import { customWeightAxis } from "./axis"
 import { topSetsPerSession } from "./recomposition"
 
-// Per-workout strength progression: one line per exercise, value = the session
-// TOP SET (heaviest set, per docs/charts.md). Swap-aware — a swapped exercise is
-// a DIFFERENT catalog exercise, so it is its own series with NO bridging segment
-// to the one it replaced (the merged rows carry null on dates an exercise was not
-// logged, and the chart renders with connectNulls OFF). Pure functions over
-// sessions; presentation logic, so it lives in the analysis feature, not a repo.
+// Value = session TOP SET. A swapped exercise is its own series with NO bridging segment: merged rows
+// carry null where it wasn't logged, and the chart uses connectNulls OFF.
 
-// Categorical chart palette (docs/design-system.md), cycled when a workout has
-// more exercises than colours.
 export const PROGRESSION_PALETTE = [
   "var(--chart-1)",
   "var(--chart-2)",
@@ -21,19 +15,16 @@ export const PROGRESSION_PALETTE = [
   "var(--chart-6)",
 ] as const
 
-/** Display info for an exercise, resolved from the catalog by the caller. */
 export interface ExerciseInfo {
   name: string
   unit: string
 }
 
-/** A single top-set point on one exercise's line. */
 export interface ProgressionPoint {
   t: number
   top: number
 }
 
-/** One toggleable line: an exercise's top set over the workout's sessions. */
 export interface ProgressionSeries {
   exerciseId: string
   name: string
@@ -49,20 +40,11 @@ export type ProgressionRow = { t: number } & Record<string, number | null>
 export interface ProgressionData {
   series: ProgressionSeries[]
   rows: ProgressionRow[]
-  /** Shared raw-weight y-axis bounds + ticks. */
   yDomain: [number, number]
   yTicks: number[]
 }
 
-/**
- * Build the per-workout progression dataset from that workout's sessions.
- *
- * @param sessions   Sessions logged for the selected workout (any order).
- * @param slotOrder  The workout's current slot exercise ids, in plan order —
- *                   used only to order the series (current exercises first, then
- *                   any swapped-away exercises by first appearance).
- * @param infoOf     Resolves an exercise id to its display name + unit.
- */
+/** `slotOrder` (current slot exercise ids, plan order) is used only to order the series. */
 export function buildStrengthProgression(
   sessions: WorkoutSession[],
   slotOrder: string[],
@@ -109,10 +91,8 @@ export function buildStrengthProgression(
     }
   })
 
-  // One row per session timestamp; null where an exercise was not logged that
-  // day so the chart (connectNulls off) never bridges a swap.
-  // Only timestamps that carry a plotted point: sessions with no positive top set
-  // would be all-null rows and stretch the x-domain.
+  // Null where an exercise wasn't logged, so the chart never bridges a swap.
+  // Only timestamps with a plotted point: all-null rows would stretch the x-domain.
   const timestamps = [
     ...new Set([...pointsById.values()].flatMap((pts) => pts.map((p) => p.t))),
   ].sort((a, b) => a - b)

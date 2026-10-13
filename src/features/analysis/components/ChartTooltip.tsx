@@ -5,10 +5,6 @@ import { cn } from "@/lib/utils"
 import { TooltipSwatch } from "./ChartSwatches"
 import type { SeriesCue } from "./chartCues"
 
-// Shared chart tooltip building blocks. Each chart keeps its own thin tooltip
-// (data mapping is chart-specific) and composes these for the common look.
-
-/** Popover container + mono date/title header. */
 export function ChartTooltipFrame({ title, children }: { title: string; children: ReactNode }) {
   return (
     <div className="rounded-md border border-border-strong bg-popover px-3 py-2 shadow-elev-2">
@@ -18,10 +14,7 @@ export function ChartTooltipFrame({ title, children }: { title: string; children
   )
 }
 
-/**
- * One tooltip row: optional series swatch, truncating label, mono value + unit.
- * `sub` = secondary (muted, non-bold) row; `indent` aligns it under a swatch row.
- */
+/** `sub` = secondary (muted) row; `indent` aligns it under a swatch row. */
 export function ChartTooltipRow({
   cue,
   color,

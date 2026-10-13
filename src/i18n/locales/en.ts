@@ -1,6 +1,5 @@
 import type de from "./de"
 
-// English (optional). Mirrors the German key structure exactly.
 const en: typeof de = {
   day: {
     openCalendar: "Open calendar",

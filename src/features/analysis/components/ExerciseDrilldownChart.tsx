@@ -15,9 +15,9 @@ import { ChartTooltipFrame, ChartTooltipRow } from "./ChartTooltip"
 import { SERIES_CUES, lineWidth, markerDot } from "./chartCues"
 import { axisTick, formatDate } from "./chartFormat"
 
-const LINE = "var(--chart-1)" // top set — solid
-const CUE = SERIES_CUES[0]! // solid · circle
-const BAND = "var(--chart-1)" // min–max spread — faint fill
+const LINE = "var(--chart-1)"
+const CUE = SERIES_CUES[0]!
+const BAND = "var(--chart-1)"
 
 interface ChartTooltipProps {
   active?: boolean
@@ -25,8 +25,6 @@ interface ChartTooltipProps {
   unit?: string
 }
 
-// Date header + the top set and the session's min–max range. Reads the row off
-// the payload so both the line and the band describe the same session.
 function ChartTooltip({ active, payload, unit }: ChartTooltipProps) {
   const { t } = useTranslation()
   if (!active || !payload || payload.length === 0) return null
@@ -53,8 +51,6 @@ function ChartTooltip({ active, payload, unit }: ChartTooltipProps) {
   )
 }
 
-// Single-exercise drilldown: a top-set line over a faint min–max band (the
-// session's set spread). One exercise, one raw-weight axis.
 export function ExerciseDrilldownChart({ data, unit }: { data: DrilldownData; unit: string }) {
   return (
     <ResponsiveContainer width="100%" height={280}>

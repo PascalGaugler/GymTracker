@@ -4,7 +4,6 @@ import { Minus, Plus } from "lucide-react"
 import { formatDecimal } from "@/lib/format"
 import { cn } from "@/lib/utils"
 
-// Sanitise raw keystrokes to a decimal string: digits, one separator, comma→dot.
 function sanitize(raw: string): string {
   return raw.replace(/[^0-9.,]/g, "").replace(",", ".")
 }
@@ -17,19 +16,14 @@ function step(value: string, last: number | undefined, delta: number): string {
 export interface MeasurementInputProps {
   label: string
   unit: string
-  /** Stepper increment (e.g. 0.1 kg for bodyweight, 0.5 cm for circumferences). */
   stepBy: number
-  /** Decimal places shown in the placeholder — scales read 2, tape measures 1. */
   decimals: number
-  /** Latest stored value for this type, shown as the placeholder. */
   last: number | undefined
   value: string
   onChange: (value: string) => void
 }
 
-// Custom gym-optimised numeric input (not shadcn), same pattern as the logging
-// SetRow: big tap targets, last-value placeholder, fast decimal entry, ± stepper.
-// Tokens only. Stacks label over the input row so it fits at 320px.
+// Custom numeric input (not shadcn), like the logging SetRow. Label stacks over the input so it fits at 320px.
 export function MeasurementInput({
   label,
   unit,

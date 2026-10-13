@@ -8,7 +8,6 @@ import { cn } from "@/lib/utils"
 
 type TabItem = { to: string; labelKey: ParseKeys; icon: LucideIcon }
 
-// Primary navigation. Settings is reached from the header, not a tab (screens.md).
 const TABS: TabItem[] = [
   { to: "/", labelKey: "nav.dashboard", icon: House },
   { to: "/log", labelKey: "nav.log", icon: Dumbbell },

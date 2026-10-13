@@ -5,7 +5,6 @@ import { MeasurementSchema, MeasurementType } from "../../schema"
 import type { MeasurementRepository } from "../types"
 
 export const measurementRepository: MeasurementRepository = {
-  // [type+measuredAt] returns one measurement type as an ordered time series.
   getByType: (type) =>
     db.measurements
       .where("[type+measuredAt]")
@@ -18,8 +17,7 @@ export const measurementRepository: MeasurementRepository = {
       .between([type, Dexie.minKey], [type, Dexie.maxKey])
       .last(),
 
-  // One [type+measuredAt] range per type (there's no single index across types),
-  // flattened in memory — at most a handful of types, so this stays cheap.
+  // One range per type (no cross-type index), flattened in memory.
   async getByDate(date) {
     const from = startOfDay(date)
     const to = endOfDay(date)
@@ -41,7 +39,7 @@ export const measurementRepository: MeasurementRepository = {
   },
 
   async save(measurement) {
-    await db.measurements.put(MeasurementSchema.parse(measurement)) // validate on write, replace by id
+    await db.measurements.put(MeasurementSchema.parse(measurement))
   },
 
   async remove(id) {

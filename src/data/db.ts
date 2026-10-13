@@ -9,10 +9,7 @@ const db = new Dexie("GymTracker") as Dexie & {
   measurements: EntityTable<Measurement, "id">
 }
 
-// The schema string declares only the primary key and the indexes we query by;
-// Dexie persists the whole object regardless, so embedded exercises[]/sets[] are
-// stored without being listed. `isActive` is deliberately not indexed (booleans
-// are not valid IndexedDB keys) — filter it in memory.
+// Only keys and queried indexes are listed (Dexie stores whole objects). isActive is not indexed: booleans are invalid IndexedDB keys.
 db.version(1).stores({
   trainingPlans: "id",
   workouts: "id, planId, [planId+order]",

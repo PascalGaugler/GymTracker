@@ -1,6 +1,5 @@
 import { z } from "zod"
 
-// --- Enums ---
 export const ExerciseType = z.enum(["barbell", "dumbbell", "machine", "cable", "bodyweight"])
 export const WeightUnit = z.enum(["kg", "lb"])
 export const MeasurementType = z.enum(["bodyweight", "biceps", "chest", "waist"])
@@ -13,7 +12,6 @@ export type MeasurementType = z.infer<typeof MeasurementType>
 export type MeasurementUnit = z.infer<typeof MeasurementUnit>
 export type MeasurementSource = z.infer<typeof MeasurementSource>
 
-// --- Catalog exercise (the hub both plan and logs point at) ---
 export const ExerciseSchema = z.object({
   id: z.uuid(),
   name: z.string().min(1),
@@ -23,7 +21,6 @@ export const ExerciseSchema = z.object({
 })
 export type Exercise = z.infer<typeof ExerciseSchema>
 
-// --- A slot inside a workout (embedded) ---
 export const WorkoutExerciseSchema = z.object({
   id: z.uuid(),
   exerciseId: z.uuid(),
@@ -34,7 +31,6 @@ export const WorkoutExerciseSchema = z.object({
 })
 export type WorkoutExercise = z.infer<typeof WorkoutExerciseSchema>
 
-// --- Workout (belongs to a plan, embeds its slots) ---
 export const WorkoutSchema = z.object({
   id: z.uuid(),
   planId: z.uuid(),
@@ -44,7 +40,6 @@ export const WorkoutSchema = z.object({
 })
 export type Workout = z.infer<typeof WorkoutSchema>
 
-// --- Training plan ---
 export const TrainingPlanSchema = z.object({
   id: z.uuid(),
   name: z.string().min(1),
@@ -53,7 +48,6 @@ export const TrainingPlanSchema = z.object({
 })
 export type TrainingPlan = z.infer<typeof TrainingPlanSchema>
 
-// --- A logged set (embedded in a session) ---
 export const LoggedSetSchema = z.object({
   id: z.uuid(),
   exerciseId: z.uuid(), // points at the CATALOG exercise — survives plan edits
@@ -63,7 +57,6 @@ export const LoggedSetSchema = z.object({
 })
 export type LoggedSet = z.infer<typeof LoggedSetSchema>
 
-// --- A logged session (embeds its sets; self-contained) ---
 export const WorkoutSessionSchema = z.object({
   id: z.uuid(),
   workoutId: z.uuid(), // soft link: drives placeholders + rotation only
@@ -73,13 +66,12 @@ export const WorkoutSessionSchema = z.object({
 })
 export type WorkoutSession = z.infer<typeof WorkoutSessionSchema>
 
-// --- Measurement: bodyweight + circumferences in one shape ---
 export const MeasurementSchema = z.object({
   id: z.uuid(),
   type: MeasurementType,
   value: z.number().positive(),
   unit: MeasurementUnit,
   measuredAt: z.coerce.date(),
-  source: MeasurementSource.default("manual"), // future-proofs the Yazio dedup
+  source: MeasurementSource.default("manual"),
 })
 export type Measurement = z.infer<typeof MeasurementSchema>

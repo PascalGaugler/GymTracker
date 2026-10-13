@@ -16,11 +16,7 @@ import { useSelectedDay } from "../useSelectedDay"
 
 const EMPTY_TRAINING_DAYS = new Set<string>()
 
-// Dashboard day picker: a bottom sheet (same shell as the measurement
-// quick-add) wrapping a shadcn Calendar. The inner content is keyed by the
-// selected day so it remounts — and the month view resets to that day's month
-// — every time the sheet reopens; Radix keeps sheet content mounted across
-// opens, so without the key a stale month/selection would stick around.
+// Content is keyed by the selected day so it remounts on reopen; Radix keeps sheet content mounted, so a stale month would stick.
 export function DayCalendarSheet({
   open,
   onOpenChange,
@@ -45,8 +41,7 @@ function DayCalendarSheetContent({ onOpenChange }: { onOpenChange: (open: boolea
   const trainingDays = useTrainingDays()
   const today = useMemo(() => startOfDay(new Date()), [])
 
-  // Stable component identity across re-renders of the training-days query —
-  // DayPicker remounts every day button when `components.DayButton` changes.
+  // Stable identity: DayPicker remounts every day button when `components.DayButton` changes.
   const components = useMemo(
     () => ({
       DayButton: (props: DayButtonProps) => (
@@ -101,9 +96,6 @@ function DayCalendarSheetContent({ onOpenChange }: { onOpenChange: (open: boolea
   )
 }
 
-// Day-cell content: the day number plus a marker below it — a small neutral
-// dot for any selectable past/today day, a green check for one with a logged
-// session. Outside/disabled/hidden days get no marker.
 function TrainingDayButton({
   day,
   modifiers,

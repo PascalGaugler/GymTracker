@@ -60,7 +60,7 @@ describe("strengthIndexSeries", () => {
 
   it("uses only the heaviest set of the session as the progression value", () => {
     const ex = "A"
-    const s = session(ex, 0, 80) // sets 75 + 80 → top 80
+    const s = session(ex, 0, 80)
     expect(strengthIndexSeries([s])).toEqual([{ t: day(0).getTime(), value: 100 }])
   })
 
@@ -136,7 +136,6 @@ describe("buildRecomposition", () => {
     )
     expect(data.hasStrength).toBe(true)
     expect(data.hasBodyweight).toBe(true)
-    // Four distinct timestamps (two sessions + two weigh-ins), sorted.
     expect(data.points.map((p) => p.t)).toEqual([
       day(0).getTime(),
       day(1).getTime(),
@@ -150,7 +149,6 @@ describe("buildRecomposition", () => {
     expect(data.points[1].bodyweight).not.toBeNull()
     expect(data.latestStrengthIndex).toBe(data.points[2].strength)
     expect(data.latestBodyweightIndex).toBe(data.points[3].bodyweight)
-    // Shared axis brackets the 100 baseline.
     expect(data.yDomain[0]).toBeLessThanOrEqual(100)
     expect(data.yDomain[1]).toBeGreaterThanOrEqual(100)
   })

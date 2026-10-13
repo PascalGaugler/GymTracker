@@ -5,25 +5,13 @@ import type { Measurement, MeasurementType, MeasurementUnit } from "@/data/schem
 import { customWeightAxis } from "./axis"
 import { weeklyRate } from "./stats"
 
-// Body chart math (docs/charts.md › Bodyweight / Measurements): the smoothed
-// bodyweight trend (raw weigh-ins + a 7-day moving average + a kg/week rate) and
-// the circumference comparison (waist vs. biceps/chest, each indexed to 100 at
-// its own first value so "losing fat, keeping muscle" reads on one shared axis).
-// Pure over the measurement series — no Dexie, no React — so the rules are
-// unit-tested in isolation; this is presentation logic, not a repository.
-
-/** Trailing window for the bodyweight moving average, per docs/charts.md. */
 export const MA_WINDOW_DAYS = 7
-/** Circumference series are indexed to this at their first recorded value. */
 export const COMPARISON_BASELINE = 100
 
 function round1(n: number): number {
   return Math.round(n * 10) / 10
 }
 
-// --- Bodyweight trend ---
-
-/** One weigh-in: the raw value (point) and the trailing 7-day average (line). */
 export interface BodyweightPoint {
   t: number
   raw: number
@@ -44,18 +32,11 @@ export interface BodyweightTrend {
   count: number
 }
 
-/**
- * Bodyweight trend: raw weigh-ins plus a trailing 7-day moving average (daily
- * weights are noisy — water, food, timing — so the average, not the raw line,
- * tells the user if the deficit is working). The rate reuses the dashboard's
- * least-squares {@link weeklyRate}.
- */
 export function buildBodyweightTrend(measurements: Measurement[]): BodyweightTrend {
   const sorted = [...measurements].sort((a, b) => a.measuredAt.getTime() - b.measuredAt.getTime())
 
   const points: BodyweightPoint[] = sorted.map((m, i) => {
-    // Walk back over the window; entries are time-sorted so the day-gap grows
-    // monotonically and we can stop at the first one outside the window.
+    // Entries are time-sorted, so the day gap only grows: stop at the first one outside the window.
     let sum = 0
     let n = 0
     for (let j = i; j >= 0; j--) {
@@ -81,9 +62,6 @@ export function buildBodyweightTrend(measurements: Measurement[]): BodyweightTre
   }
 }
 
-// --- Circumference comparison ---
-
-/** The circumference types compared on the shared index axis. */
 export type ComparisonType = Exclude<MeasurementType, "bodyweight">
 
 /** Merged chart row; a series is null on dates where only another has a value. */
@@ -98,7 +76,6 @@ export interface MeasurementComparison {
   points: ComparisonPoint[]
   yDomain: [number, number]
   yTicks: number[]
-  /** Which series have data (drives which lines + legend entries render). */
   present: Record<ComparisonType, boolean>
   /** Raw latest − first in cm, 1 decimal; null with fewer than 2 points. */
   changeSinceStart: Record<ComparisonType, number | null>
@@ -110,7 +87,6 @@ function rawChange(measurements: Measurement[]): number | null {
   return round1(sorted[sorted.length - 1].value - sorted[0].value)
 }
 
-/** Index one circumference series to 100 at its own first recorded value. */
 function indexToBaseline(measurements: Measurement[]): { t: number; value: number }[] {
   if (measurements.length === 0) return []
   const sorted = [...measurements].sort((a, b) => a.measuredAt.getTime() - b.measuredAt.getTime())
@@ -122,8 +98,7 @@ function indexToBaseline(measurements: Measurement[]): { t: number; value: numbe
   }))
 }
 
-// Shared index axis: padded a little around the values, always including the 100
-// baseline so the reference line and every series sit on one honest scale.
+// Always include the 100 baseline so its reference line sits on the scale.
 function indexAxis(values: number[]): { domain: [number, number]; ticks: number[] } {
   const min = Math.min(...values, COMPARISON_BASELINE)
   const max = Math.max(...values, COMPARISON_BASELINE)
@@ -136,13 +111,6 @@ function indexAxis(values: number[]): { domain: [number, number]; ticks: number[
   return { domain: [lo, hi], ticks }
 }
 
-/**
- * Circumference comparison: waist (fat proxy, should fall) vs. biceps/chest
- * (muscle proxy, should hold), each indexed to 100 at its own start on ONE shared
- * axis (the most direct visual of "losing fat, keeping muscle"). Independently
- * timestamped points are merged onto a shared time axis; the chart bridges the
- * gaps within each series.
- */
 export function buildMeasurementComparison(
   series: Record<ComparisonType, Measurement[]>,
 ): MeasurementComparison {

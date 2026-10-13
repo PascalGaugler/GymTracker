@@ -2,11 +2,7 @@ import type { ReactNode } from "react"
 
 import { Overline } from "@/components/ui/overline"
 
-// Per-screen heading: a mono overline above a display title (matches the
-// design reference's scr-head treatment). Built with design tokens only.
-// `action` is an optional right-aligned slot (e.g. the Dashboard's day-nav
-// controls) — the title column shrinks (`min-w-0 flex-1`) so it truncates
-// instead of pushing the action off-screen at 320px.
+// The title column is min-w-0 flex-1 so it truncates instead of pushing `action` off-screen at 320px.
 export function PageHeader({
   overline,
   title,

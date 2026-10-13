@@ -2,8 +2,7 @@ import type { ReactNode } from "react"
 
 import { cn } from "@/lib/utils"
 
-// A compact readout tile (value + unit over a label). Place inside an `@container`
-// parent: the value steps up in size once the container is wide enough.
+// Place inside an `@container` parent: the value steps up in size when it is wide enough.
 export function StatTile({
   value,
   unit,
@@ -13,7 +12,6 @@ export function StatTile({
   value: string
   unit?: string
   label: ReactNode
-  // default = full foreground; muted = prototype's neutral delta; good = success
   tone?: "default" | "muted" | "good"
 }) {
   return (

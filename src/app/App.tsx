@@ -5,8 +5,7 @@ import { Providers } from "./providers"
 import { router } from "./router"
 import { runStartup } from "./startup"
 
-// Gate the router on the one-time bootstrap so the seed (and durable-storage
-// request) completes before any route reads from the database.
+// Gate the router on bootstrap so the seed completes before any route reads the DB.
 export default function App() {
   const [ready, setReady] = useState(false)
 

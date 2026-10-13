@@ -1,7 +1,5 @@
 import { useTranslation } from "react-i18next"
 
-// Neutral "this screen arrives in a later phase" body used by route scaffolding
-// until the real feature lands. Pages own their headers; this is the body only.
 export function Placeholder({ children }: { children: string }) {
   const { t } = useTranslation()
 

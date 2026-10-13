@@ -3,8 +3,6 @@ import { cva, type VariantProps } from "class-variance-authority"
 
 import { cn } from "@/lib/utils"
 
-// Non-interactive label pills (exercise chips, set tally, status, "soon").
-// Interactive pick chips live in segmented.tsx.
 const badgeVariants = cva(
   "inline-flex max-w-full shrink-0 items-center gap-1 rounded-full border px-2.5 py-1 whitespace-nowrap",
   {

@@ -29,11 +29,8 @@ import { StatCard } from "./StatCard"
 import { TodayWorkoutCard } from "./TodayWorkoutCard"
 import { TrendBadge } from "./TrendBadge"
 
-// Rates within ±this read as "flat" (kg/cm per week) rather than up/down noise.
 const RATE_EPSILON = 0.05
 
-// A live measurement card: latest value, weekly-rate trend badge, and the
-// total change since tracking began. Down is the desirable direction (a cut).
 function MeasurementStat({
   label,
   summary,
@@ -47,7 +44,6 @@ function MeasurementStat({
   loading: boolean
   /** Makes the card interactive: a route link, or (no `to`) a quick-add trigger. */
   action: { actionHint: string; to?: string }
-  /** Bodyweight only: progress toward the target weight. */
   goal?: GoalProgress | null
   /** Quick-add trigger only: the day it writes to. */
   day: Date
@@ -90,11 +86,8 @@ function MeasurementStat({
   return card({ value: latest.toFixed(1), unit, badge, sub, goal: goalProp })
 }
 
-// Index moves within ±this read as "flat" rather than up/down noise.
 const INDEX_EPSILON = 0.5
 
-// Live strength-index card: latest index (100 = baseline) with the change since
-// baseline. Up is the desirable direction (strength holding/rising during a cut).
 function StrengthStat({ day }: { day: Date }) {
   const { t } = useTranslation()
   const strength = useStrengthIndex(day)
@@ -126,17 +119,13 @@ function StrengthStat({ day }: { day: Date }) {
   )
 }
 
-// The dashboard: headline stat cards + quick actions. Strength index and
-// calories are placeholders (their math/integration arrive in P5 and Phase 2).
 export function DashboardView() {
   const { t } = useTranslation()
   const plans = useLiveQuery(() => planRepository.getAll(), [])
   const { day, isToday, shiftDay, goToToday } = useSelectedDay()
   const stats = useMeasurementStats(day)
   const [calendarOpen, setCalendarOpen] = useState(false)
-  // Set only when a swipe itself causes the day change, keyed to the day it
-  // lands on. A later change via the calendar sheet or the "Heute" pill moves
-  // `day` to a key that doesn't match, so it just fades — never a stale slide.
+  // Set only when a swipe caused the day change, keyed to its target day; any other change just fades.
   const [slide, setSlide] = useState<{ key: string; from: "left" | "right" } | null>(null)
 
   const swipe = useDaySwipe({
@@ -145,7 +134,7 @@ export function DashboardView() {
       setSlide({ key: dayKey(target), from: "left" })
       shiftDay(-1)
     },
-    // A no-op on today: skip the call so nothing remounts/animates.
+    // No-op on today so nothing remounts/animates.
     onSwipeLeft: () => {
       if (isToday) return
       const target = addDays(day, 1)
@@ -177,9 +166,7 @@ export function DashboardView() {
 
   const loading = stats === undefined
 
-  // Only plays for the transition the swipe itself caused (see `slide`
-  // above). Keying the wrapper by the day forces a remount, which is what
-  // replays the animation.
+  // Keyed by day to remount and replay the slide, only for swipe-caused transitions.
   const slideClass =
     slide?.key === dayKey(day)
       ? slide.from === "left"

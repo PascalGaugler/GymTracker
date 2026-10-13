@@ -3,8 +3,6 @@ import { Link } from "react-router-dom"
 
 import { cn } from "@/lib/utils"
 
-// Shared surface. Interactive variants (button / link) add hover, pressed and
-// focus-visible states; the whole card is the tap target.
 const SURFACE =
   "flex min-w-0 flex-col rounded-lg border border-border bg-card p-3.5 text-left text-body text-card-foreground shadow-card"
 const INTERACTIVE =
@@ -13,9 +11,7 @@ const INTERACTIVE =
 interface StatCardGoal {
   /** 0–1, already clamped. */
   progress: number
-  /** Visible mono caption, left ("Start 90"). */
   startLabel: string
-  /** Visible mono caption, right ("Ziel 80 kg"). */
   targetLabel: string
   /** Spoken form appended to the accessible name ("Ziel 80.0 kg, 62 %"). */
   spoken: string
@@ -28,25 +24,17 @@ interface StatCardProps {
   unit?: string
   badge?: ReactNode
   sub?: string
-  /** Progress bar toward a target; replaces `sub` (prototype: goal ? bar : sub). */
+  /** Progress bar toward a target; replaces `sub`. */
   goal?: StatCardGoal
   muted?: boolean
-  /** Renders the card as a link to this route. */
   to?: string
   /** Makes the card a button; the text is appended (visually hidden) to its accessible name. */
   actionHint?: string
 }
 
-// At-a-glance dashboard stat: an uppercase label + optional trend/soon badge,
-// a big mono value with a small unit, and an optional muted sub-line. Custom
-// surface (not shadcn chrome) with our tokens. `muted` renders the ghost/"coming
-// soon" look (disabled value colour).
-//
-// Static by default. With `to` it is a link; when used as a trigger child (for
-// example of MeasurementQuickAdd, which injects click/aria props) pass `actionHint`
-// and it renders a button. The hint is a visually hidden suffix, so the accessible
-// name stays "label value unit trend sub – action" instead of being replaced. The content is phrasing-only (spans) so it is valid
-// inside both.
+// As a trigger child (MeasurementQuickAdd injects click/aria props) `actionHint` renders a button;
+// the hint is visually hidden so the accessible name is extended, not replaced. Content is
+// phrasing-only spans, valid inside both.
 export function StatCard({
   label,
   value,

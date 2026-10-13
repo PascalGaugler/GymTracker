@@ -10,7 +10,6 @@ function starPoints(cx: number, cy: number, r: number): string {
   return pts.join(" ")
 }
 
-// One marker glyph, centred on (cx, cy).
 export function MarkerShape({
   marker,
   cx,
@@ -61,7 +60,6 @@ export function MarkerShape({
   }
 }
 
-// Legend swatch: a 34x12 line stub with the series' dash and marker, plus its label.
 export function LegendSwatch({
   cue,
   color,
@@ -90,7 +88,6 @@ export function LegendSwatch({
   )
 }
 
-// Tooltip swatch: just the 10x10 marker glyph.
 export function TooltipSwatch({ cue, color }: { cue: SeriesCue; color: string }) {
   return (
     <svg width="10" height="10" viewBox="0 0 10 10" className="shrink-0" aria-hidden="true">

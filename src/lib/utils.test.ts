@@ -2,14 +2,6 @@ import { describe, expect, it } from "vitest"
 
 import { cn } from "./utils"
 
-// cn() = tailwind-merge + clsx. Our custom type scale (text-display, …,
-// text-micro) and shadow scale (shadow-elev-1, …, shadow-inset-hi) are
-// defined in src/index.css's @theme block, but plain tailwind-merge doesn't
-// know about them: it reads `text-display` as a text *colour* utility (so it
-// collides with `text-disabled`/`text-muted-foreground`) and `shadow-elev-1`
-// as a shadow *colour* (so it never collides with another shadow size like
-// `shadow-card`). Both bugs silently drop a class. These tests prove the
-// extendTailwindMerge config in utils.ts fixes both.
 describe("cn", () => {
   it("keeps a custom type-scale class alongside an unrelated text-colour class", () => {
     expect(cn("text-caption", "text-muted-foreground")).toBe("text-caption text-muted-foreground")
@@ -39,7 +31,6 @@ describe("cn", () => {
   })
 
   it("keeps a custom type-scale class alongside a colour class even with Tailwind's own color util in between", () => {
-    // Regression for StatCard.tsx: text-display must survive next to text-disabled.
     expect(cn("mt-2 font-mono text-display font-semibold tabular-nums", "text-disabled")).toBe(
       "mt-2 font-mono text-display font-semibold tabular-nums text-disabled",
     )

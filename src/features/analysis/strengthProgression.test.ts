@@ -11,7 +11,6 @@ function day(n: number): Date {
   return new Date(T0 + n * DAY)
 }
 
-// A session whose listed exercises each log two sets; the heavier is the top set.
 function session(dayN: number, lifts: { exerciseId: string; top: number }[]): WorkoutSession {
   return {
     id: crypto.randomUUID(),

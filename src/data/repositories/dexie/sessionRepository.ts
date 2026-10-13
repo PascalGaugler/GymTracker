@@ -14,10 +14,7 @@ export const sessionRepository: SessionRepository = {
 
   getRecent: (limit) => db.sessions.orderBy("date").reverse().limit(limit).toArray(),
 
-  // Compound index gives the most recent session of a workout (placeholders + rotation).
-  // With `before`, the upper bound is exclusive — a session logged exactly at `before`
-  // (e.g. the session being edited) is excluded, so backfilling a past day looks at
-  // what came strictly before it.
+  // With `before`, the upper bound is exclusive, so backfilling a past day (or editing a session) sees only what came strictly before.
   getLastForWorkout: (workoutId, before) =>
     db.sessions
       .where("[workoutId+date]")
@@ -29,11 +26,9 @@ export const sessionRepository: SessionRepository = {
       )
       .last(),
 
-  // Rotation for a past day: the most recent session overall, strictly before `date`.
   getLastBefore: (date) => db.sessions.where("date").below(date).last(),
 
   async getExerciseHistory(exerciseId) {
-    // Sets are embedded; at a few hundred sessions, load + flatten in memory.
     const sessions = await db.sessions.orderBy("date").toArray()
     return sessions.flatMap((s) =>
       s.sets
@@ -50,7 +45,6 @@ export const sessionRepository: SessionRepository = {
   },
 
   async countSessionsForExercise(exerciseId) {
-    // Sets are embedded; scan and count sessions that reference the exercise.
     const sessions = await db.sessions.toArray()
     return sessions.filter((s) => s.sets.some((set) => set.exerciseId === exerciseId)).length
   },
@@ -62,6 +56,6 @@ export const sessionRepository: SessionRepository = {
       .count(),
 
   async save(session) {
-    await db.sessions.put(WorkoutSessionSchema.parse(session)) // validate on write
+    await db.sessions.put(WorkoutSessionSchema.parse(session))
   },
 }

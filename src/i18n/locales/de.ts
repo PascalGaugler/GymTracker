@@ -1,4 +1,3 @@
-// German (default locale). User data (exercise names, notes) is never translated.
 const de = {
   day: {
     openCalendar: "Kalender öffnen",

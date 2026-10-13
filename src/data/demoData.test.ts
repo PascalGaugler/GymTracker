@@ -53,11 +53,9 @@ describe("loadDemoData", () => {
     expect(recomp.hasStrength).toBe(true)
     expect(recomp.hasBodyweight).toBe(true)
 
-    // Thesis: the strength index ends above the 100 baseline...
     expect(recomp.latestStrengthIndex).not.toBeNull()
     expect(recomp.latestStrengthIndex!).toBeGreaterThan(100)
 
-    // ...while indexed bodyweight ends below it.
     const bwPoints = recomp.points.filter((p) => p.bodyweight != null)
     expect(bwPoints.at(-1)!.bodyweight!).toBeLessThan(100)
   })

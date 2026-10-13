@@ -7,12 +7,8 @@ export interface MeasurementChangePlan {
   remove: string[]
 }
 
-// Pure "what to write" diff for the quick-add save: one prefilled entry per
-// type for the day, compared against the edited values (null = cleared/empty).
-// Per type: existing + a different value → save (replace in place, no
-// duplicate per day); a value with no existing entry → add; a prefilled entry
-// cleared → remove (by id); anything else (no entry and no value, or an
-// unchanged value) → skip, so saving never rewrites an identical value.
+// Per type: existing + different value → save (replace in place, no duplicate per day); value without entry → add;
+// prefilled entry cleared → remove; anything else → skip, so identical values are never rewritten.
 export function planMeasurementChanges(
   prefill: Map<MeasurementType, Measurement>,
   values: Record<MeasurementType, number | null>,

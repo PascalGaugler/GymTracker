@@ -20,15 +20,12 @@ import { ExerciseLogCard } from "./ExerciseLogCard"
 
 interface LocationState {
   workoutId?: string
-  // Where the back arrow leads (e.g. "/" when started from the Dashboard).
-  // The `returnTo` prop, when given, overrides this.
+  // Where the back arrow leads; the `returnTo` prop overrides it.
   returnTo?: string
 }
 
-// Loader for /log/:sessionId. A freshly picked workout arrives as an in-memory
-// draft (workout id via router state) and is persisted only on save; an existing
-// session id loads its saved sets for correction. Once everything has resolved,
-// the form is mounted keyed by session id so it can seed its state once.
+// A fresh draft is persisted only on save; an existing session id loads its saved sets.
+// Form is keyed by session id so it seeds state once.
 export function ActiveSession({
   sessionId,
   returnTo: returnToProp,
@@ -46,8 +43,7 @@ export function ActiveSession({
   const workout = useWorkout(workoutId)
   const catalog = useExerciseCatalog()
 
-  // A draft opened without a workout (e.g. refresh on an unsaved url) cannot be
-  // reconstructed — send the user back to the picker.
+  // A draft without a workout (e.g. refresh on an unsaved url) can't be reconstructed.
   useEffect(() => {
     if (session === null && !stateWorkoutId) navigate("/log", { replace: true })
   }, [session, stateWorkoutId, navigate])
@@ -78,8 +74,6 @@ interface SessionFormProps {
   returnTo: string | undefined
 }
 
-// Pre-fill any already-saved sets so editing shows current values; a draft
-// starts blank.
 function buildInitialValues(
   workout: Workout,
   session: WorkoutSession | null,
@@ -121,8 +115,7 @@ function SessionForm({
   const date = session?.date ?? draftDate
   const isToday = isSameDay(date, new Date())
 
-  // Rotation position within the active plan; a workout outside it (archived plan,
-  // removed workout) falls back to the generic "Log" overline.
+  // A workout outside the active plan falls back to the generic "Log" overline.
   const rotation = useWorkoutRotation()
   const inRotation = rotation?.workouts.find((w) => w.id === workoutId)
 
@@ -130,11 +123,9 @@ function SessionForm({
   // editing an old session shows the session before it, not a later one.
   const lastSession = useLastSession(workoutId, date)
 
-  // Entered weights, keyed by slot id → one string per set.
   const [values, setValues] = useState(() => buildInitialValues(workout, session))
   const [saving, setSaving] = useState(false)
 
-  // Last-weight placeholders, skipping this session itself when re-editing.
   const lastByKey = useMemo(() => {
     const map = new Map<string, number>()
     if (lastSession && lastSession.id !== sessionId) {
@@ -193,8 +184,7 @@ function SessionForm({
 
   return (
     <>
-      {/* -mx-4 -mt-5 cancel AppLayout's <main> px-4 pt-5 so the divider spans edge to edge;
-          the header scrolls with <main> (app shell: never sticky). */}
+      {/* -mx-4 -mt-5 cancel AppLayout's <main> padding so the divider spans edge to edge. */}
       <header className="-mx-4 -mt-5 mb-3 flex items-center gap-3 border-b border-border px-4 py-3">
         <Button
           variant="outline"
@@ -214,7 +204,6 @@ function SessionForm({
           </Overline>
           <h1 className="truncate text-h3">{workout.name}</h1>
         </div>
-        {/* Balances the back button so the title is centred (rest-timer slot). */}
         <span aria-hidden="true" className="size-12 shrink-0" />
       </header>
 

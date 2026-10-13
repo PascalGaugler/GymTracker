@@ -10,7 +10,6 @@ const STEP = 2.5
 // Machine stacks and micro-plates can carry 2 decimals, so keep that precision.
 const DECIMALS = 2
 
-// Sanitise raw keystrokes to a decimal string: digits, one separator, comma→dot.
 function sanitize(raw: string): string {
   return raw.replace(/[^0-9.,]/g, "").replace(",", ".")
 }
@@ -22,15 +21,12 @@ function step(value: string, last: number | undefined, delta: number): string {
 
 export interface SetRowProps {
   index: number
-  /** Previous session's weight for this set, shown as a placeholder. */
   last: number | undefined
   value: string
   unit: string
   onChange: (value: string) => void
 }
 
-// Custom gym-optimised weight input (not shadcn): big tap targets, last-weight
-// placeholder, fast decimal entry, ±2.5 steppers. Tokens only.
 export function SetRow({ index, last, value, unit, onChange }: SetRowProps) {
   const { t, i18n } = useTranslation()
   const inputRef = useRef<HTMLInputElement>(null)

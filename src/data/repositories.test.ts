@@ -248,7 +248,6 @@ describe("sessionRepository", () => {
   })
 })
 
-// The core promise of the plan/workout editor: a plan is only a template.
 describe("editing a plan vs. logged sessions", () => {
   it("leaves past sessions untouched when the plan is deleted", async () => {
     const exercise = makeExercise()
@@ -285,7 +284,6 @@ describe("editing a plan vs. logged sessions", () => {
     await workoutRepository.save(workout)
     await sessionRepository.save(session)
 
-    // Drop the slot, then the whole plan — the harshest edits the editor allows.
     await workoutRepository.save({ ...workout, exercises: [] })
     await planRepository.remove(plan.id)
 

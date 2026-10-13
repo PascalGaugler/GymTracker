@@ -14,9 +14,7 @@ interface PendingImport {
   fileName: string
 }
 
-// Export/import is the only backup path (local-first, no backend). Import
-// replaces everything, so the file is parsed and Zod-validated first and the
-// user confirms against a summary of what the file actually contains.
+// Import replaces everything, so the file is Zod-validated and confirmed against a summary first.
 export function BackupSection() {
   const { t } = useTranslation()
   const fileRef = useRef<HTMLInputElement>(null)

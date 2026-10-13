@@ -34,10 +34,6 @@ describe("resolveNextWorkoutId", () => {
   })
 })
 
-// Exercises the exact two-step flow `useWorkoutRotation(before)` does —
-// `sessionRepository.getLastBefore` then `resolveNextWorkoutId` — against a
-// real (in-memory) DB, so the "before" wiring itself is covered end to end,
-// not just its two halves separately.
 describe("rotation with a `before` boundary (backfill)", () => {
   beforeEach(resetDb)
 

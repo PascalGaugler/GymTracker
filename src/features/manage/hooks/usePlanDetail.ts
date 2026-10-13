@@ -5,12 +5,10 @@ import type { TrainingPlan, Workout } from "@/data/schema"
 
 export interface PlanDetail {
   plan: TrainingPlan
-  /** The plan's workouts, pre-sorted by rotation order. */
   workouts: Workout[]
 }
 
-// One plan with its workouts. `undefined` while loading, `null` when the id is
-// unknown (deleted plan / hand-typed URL) so the view can redirect.
+// `null` = unknown id (deleted plan / hand-typed URL), so the view can redirect.
 export function usePlanDetail(planId: string | undefined): PlanDetail | null | undefined {
   return useLiveQuery(async () => {
     if (!planId) return null

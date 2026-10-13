@@ -15,14 +15,9 @@ export interface DashboardMeasurementStats {
   bodyweightGoal: GoalProgress | null
 }
 
-// Dashboard readouts for the two headline measurements (bodyweight + waist),
-// as of the selected day — entries logged later are excluded, so backfilling
-// a past day shows that day's standing, not today's. Wraps the repository in
-// useLiveQuery so the cards refresh the instant the quick-add sheet writes a
-// new measurement. Returns undefined while loading; a null summary means
-// that type has no data up to `until` yet (card shows its empty state).
-// `until` is keyed by its calendar day — a fresh `Date` each render (today)
-// must not retrigger the query.
+// As of `until` (the selected day): later entries are excluded, so backfilling a past day shows that
+// day's standing. A null summary = no data up to `until`. `until` is keyed by calendar day so a fresh
+// `Date` each render doesn't retrigger the query.
 export function useMeasurementStats(until: Date): DashboardMeasurementStats | undefined {
   const { targetWeight } = useSettings()
   const untilKey = dayKey(until)

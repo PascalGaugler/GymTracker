@@ -15,12 +15,7 @@ import { useWorkoutRotation } from "../hooks/useWorkoutRotation"
 
 const CHIP_LIMIT = 3
 
-// The selected day's workout via rotation (suggested first) plus the rest, or
-// pick any. On a past day this is a backfill (rotation computed from the
-// session before that day). Picking mints a session id and opens the active
-// session, carrying the chosen workout in router state only — the picker
-// carries no day info; the form reads the selected day from context itself
-// (the draft is only persisted once the user saves).
+// Only the workout travels via router state; the draft is persisted on save and the form reads the selected day from context.
 export function WorkoutPicker() {
   const { t } = useTranslation()
   const navigate = useNavigate()

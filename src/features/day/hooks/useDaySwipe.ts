@@ -5,9 +5,7 @@ export type SwipeDirection = "left" | "right" | null
 
 const THRESHOLD_PX = 60
 
-// Pure decision: does this touch delta count as a horizontal swipe, and which
-// way? `null` means "not a swipe" — either too short, or more vertical than
-// horizontal (a scroll gesture, which must never be hijacked).
+// `null` = not a swipe (too short, or more vertical than horizontal: scrolls must never be hijacked).
 export function swipeDirection(dx: number, dy: number): SwipeDirection {
   if (Math.abs(dx) < THRESHOLD_PX) return null
   if (Math.abs(dx) <= 2 * Math.abs(dy)) return null
@@ -15,24 +13,13 @@ export function swipeDirection(dx: number, dy: number): SwipeDirection {
 }
 
 interface UseDaySwipeOptions {
-  /** Swipe right (finger moves right) — previous day. */
   onSwipeRight(): void
-  /** Swipe left (finger moves left) — next day. Callers skip the actual
-   * navigation themselves when it would be a no-op (e.g. already on today). */
+  /** Callers skip navigation themselves when it would be a no-op (already on today). */
   onSwipeLeft(): void
 }
 
-// Touch handlers for the Dashboard content wrapper. Only `touchstart`/`touchend`
-// are read — `touchmove` is never touched and `preventDefault` is never called,
-// so native vertical scrolling is untouched. Gestures starting inside an input,
-// textarea, select, contenteditable, or anything marked `[data-no-swipe]` are
-// ignored (e.g. a horizontally-scrollable chart).
-//
-// Stateless by design: this hook only decides *whether* a gesture was a swipe
-// and which way. What (if anything) should animate because of it is the
-// caller's call — see `DashboardView`, which keys its slide animation to the
-// specific day a swipe landed on so a later, non-swipe day change never
-// replays a stale direction.
+// Only touchstart/touchend are read and preventDefault is never called, so native scrolling is untouched.
+// Gestures starting in inputs or `[data-no-swipe]` elements (e.g. scrollable charts) are ignored.
 export function useDaySwipe({ onSwipeRight, onSwipeLeft }: UseDaySwipeOptions) {
   const origin = useRef<{ x: number; y: number } | null>(null)
 

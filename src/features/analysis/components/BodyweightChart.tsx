@@ -13,8 +13,8 @@ import type { BodyweightPoint, BodyweightTrend } from "../body"
 import { ChartTooltipFrame, ChartTooltipRow } from "./ChartTooltip"
 import { axisTick, formatDate } from "./chartFormat"
 
-const RAW = "var(--subtle)" // faint individual weigh-ins
-const TREND = "var(--recomp-bodyweight)" // violet 7-day average — the signal
+const RAW = "var(--subtle)"
+const TREND = "var(--recomp-bodyweight)"
 
 interface ChartTooltipProps {
   active?: boolean
@@ -22,8 +22,6 @@ interface ChartTooltipProps {
   unit?: string
 }
 
-// Date header + the day's raw weigh-in and the 7-day average. Reads the whole row
-// off the payload so both values describe the same day.
 function ChartTooltip({ active, payload, unit }: ChartTooltipProps) {
   const { t } = useTranslation()
   if (!active || !payload || payload.length === 0) return null
@@ -47,8 +45,6 @@ function ChartTooltip({ active, payload, unit }: ChartTooltipProps) {
   )
 }
 
-// Bodyweight trend: faint raw weigh-ins (dots only) under a solid 7-day moving
-// average — the smoothed line, not the noisy raw line, is the signal (docs/charts.md).
 export function BodyweightChart({ trend }: { trend: BodyweightTrend }) {
   return (
     <ResponsiveContainer width="100%" height={280}>
@@ -76,7 +72,6 @@ export function BodyweightChart({ trend }: { trend: BodyweightTrend }) {
           content={<ChartTooltip unit={trend.unit} />}
           cursor={{ stroke: "var(--border-strong)" }}
         />
-        {/* Raw weigh-ins: dots only (no connecting line), so noise reads as a scatter. */}
         <Line
           dataKey="raw"
           stroke="none"

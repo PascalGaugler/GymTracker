@@ -1,5 +1,4 @@
-// Vitest runs in Node, which has no localStorage. Settings persistence needs one,
-// so tests install this minimal in-memory implementation on globalThis.
+// Node has no localStorage; settings persistence needs one.
 export function installMemoryStorage(): Storage {
   const map = new Map<string, string>()
 

@@ -21,8 +21,6 @@ interface ChartTooltipProps {
   payload?: { dataKey?: string | number; name?: string; value?: number | null; color?: string }[]
 }
 
-// Date header + a coloured row per series present that day, each showing its
-// value indexed to 100 at the series' own start.
 function ChartTooltip({ active, payload, label }: ChartTooltipProps) {
   if (!active || !payload || payload.length === 0) return null
   const rows = payload.filter((entry) => entry.value != null)
@@ -43,9 +41,7 @@ function ChartTooltip({ active, payload, label }: ChartTooltipProps) {
   )
 }
 
-// Circumference comparison: each present series indexed to 100 at its own start on
-// ONE shared axis, with a baseline reference line at 100. connectNulls is ON so a
-// sparse series (circumferences logged every few weeks) reads as one line.
+// connectNulls ON so a sparse series (circumferences logged every few weeks) reads as one line.
 export function MeasurementComparisonChart({ data }: { data: MeasurementComparison }) {
   const { t } = useTranslation()
 

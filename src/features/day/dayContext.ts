@@ -1,16 +1,14 @@
 import { createContext } from "react"
 
 export interface SelectedDayContextValue {
-  /** The selected day, start-of-day. Never in the future. */
+  /** Start-of-day; never in the future. */
   day: Date
   isToday: boolean
   setDay(date: Date): void
-  /** Moves the selected day by `delta` days (negative = earlier), clamped to today. */
+  /** Negative = earlier; clamped to today. */
   shiftDay(delta: number): void
   goToToday(): void
 }
 
-// Split from SelectedDayContext.tsx: react-refresh/only-export-components only
-// allows a component file to export components, and this context object is
-// shared by both the provider component and the useSelectedDay hook.
+// Separate file: react-refresh/only-export-components forbids non-component exports in SelectedDayContext.tsx.
 export const SelectedDayContext = createContext<SelectedDayContextValue | null>(null)

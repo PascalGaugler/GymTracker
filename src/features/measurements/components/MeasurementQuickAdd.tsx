@@ -33,9 +33,7 @@ interface Field {
   labelKey: ParseKeys
 }
 
-// Bodyweight in kg (fine 0.1 steps); circumferences in cm (0.5 steps).
-// Bodyweight keeps 2 decimals — scales report that precision. Circumferences are
-// read off a tape measure, where a second decimal is noise, so they show 1.
+// Scales report 2 decimals; tape measures are read to 1, a second decimal is noise.
 const FIELDS: Field[] = [
   {
     type: "bodyweight",
@@ -60,16 +58,10 @@ const FIELD_BY_TYPE: Record<MeasurementType, Field> = Object.fromEntries(
   FIELDS.map((field) => [field.type, field]),
 ) as Record<MeasurementType, Field>
 
-// One-tap quick-add: a bottom sheet (shadcn) launched from Dashboard/Progress-Body.
-// `children` is the trigger. `day` is the day it reads/writes (default: today) —
-// the Dashboard passes the selected day, Progress-Body stays global and omits it.
-// The form lives in its own component so it remounts with fresh data each time
-// the sheet opens (Radix keeps sheet content mounted while closed).
+// `day` defaults to today; the Dashboard passes the selected day, Progress-Body omits it.
 export function MeasurementQuickAdd({ children, day }: { children: ReactNode; day?: Date }) {
   const [open, setOpen] = useState(false)
-  // Bumped on every open so the loader below remounts even when the day didn't
-  // change — otherwise a cancelled/edited draft from the previous open would
-  // still be sitting in the mounted form.
+  // Bumped on every open so the form remounts even if the day didn't change, dropping any stale draft.
   const [session, setSession] = useState(0)
   const resolvedDay = day ?? new Date()
 
@@ -98,8 +90,7 @@ function isPositive(raw: string): number | null {
   return raw !== "" && !Number.isNaN(n) && n > 0 ? n : null
 }
 
-// Sheet header shared by the loading and loaded states so the sheet doesn't
-// jump once data arrives. Shows the day only when it isn't today.
+// Shared by loading and loaded states so the sheet doesn't jump.
 function QuickAddHeader({ day }: { day: Date }) {
   const { t } = useTranslation()
   const isToday = dayKey(day) === dayKey(new Date())
@@ -112,9 +103,7 @@ function QuickAddHeader({ day }: { day: Date }) {
   )
 }
 
-// Loads the day's prefill + as-of-day placeholders, then hands off to the pure
-// form once both are ready — avoids seeding form state from data that hasn't
-// arrived yet (both queries resolve from local IndexedDB, effectively instant).
+// Hands off to the form only once both queries resolve, so form state isn't seeded from missing data.
 function MeasurementFormLoader({ day, onSaved }: { day: Date; onSaved: () => void }) {
   const { t } = useTranslation()
   const prefill = useMeasurementsOnDay(day)

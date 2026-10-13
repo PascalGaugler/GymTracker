@@ -1,5 +1,3 @@
-// Public surface of the data seam. Nothing outside src/data imports Dexie;
-// features import these repository instances (or the interfaces) only.
 export type {
   ExerciseDataPoint,
   ExerciseRepository,

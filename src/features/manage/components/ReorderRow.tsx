@@ -1,7 +1,6 @@
 import { ChevronDown, ChevronUp } from "lucide-react"
 
-// Reorder control for an ordered list row (workouts, slots). Side-by-side rather
-// than stacked so both halves keep a full --tap hit area and still fit at 320px.
+// Side-by-side so both halves keep a full --tap hit area at 320px.
 export function ReorderRow({
   canMoveUp,
   canMoveDown,

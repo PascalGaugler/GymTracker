@@ -4,10 +4,8 @@ import { measurementRepository } from "@/data/repositories"
 import type { Measurement, MeasurementType } from "@/data/schema"
 import { dayKey } from "@/features/day/day"
 
-// The day's measurements, one per type — the latest when legacy data holds
-// several entries of the same type on one day. Backs the quick-add prefill.
-// Keyed by the calendar day so a fresh `Date` each render (today) doesn't
-// retrigger the query.
+// Latest entry per type when legacy data has several on one day.
+// Keyed by calendar day so a fresh `Date` each render doesn't retrigger the query.
 export function useMeasurementsOnDay(day: Date) {
   const key = dayKey(day)
   return useLiveQuery(async () => {

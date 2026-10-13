@@ -28,8 +28,7 @@ import { nextOrder } from "../ordering"
 const MIN_SETS = 1
 const MAX_SETS = 12
 
-// Add (slot === null) or edit one exercise slot of a workout. Slots are embedded
-// in their workout, so saving writes the whole workout document in one put.
+// Slots are embedded in their workout, so saving writes the whole workout in one put.
 export function SlotEditorDialog({
   workout,
   slot,
@@ -39,7 +38,6 @@ export function SlotEditorDialog({
 }: {
   workout: Workout
   slot: WorkoutExercise | null
-  /** Catalog exercises, name-sorted — the pickable options. */
   catalog: Exercise[]
   open: boolean
   onOpenChange: (open: boolean) => void
@@ -261,7 +259,6 @@ function SlotForm({
   )
 }
 
-// A second select + add button, so picking an alternative never leaves the form.
 function AlternativePicker({
   options,
   onAdd,
@@ -297,7 +294,6 @@ function AlternativePicker({
   )
 }
 
-// shadcn Select over the exercise catalog; the label is the trigger's accessible name.
 function ExerciseSelect({
   label,
   value,
