@@ -238,14 +238,12 @@ export const sessionRepository: SessionRepository = {
     return sessions.flatMap((s) =>
       s.sets
         .filter((set) => set.exerciseId === exerciseId)
-        .map(
-          (set): ExerciseDataPoint => ({
-            date: s.date,
-            weight: set.weight,
-            setNumber: set.setNumber,
-            sessionId: s.id,
-          }),
-        ),
+        .map((set): ExerciseDataPoint => ({
+          date: s.date,
+          weight: set.weight,
+          setNumber: set.setNumber,
+          sessionId: s.id,
+        })),
     )
   },
 
