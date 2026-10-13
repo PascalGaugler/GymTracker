@@ -2,9 +2,7 @@ import type { ParseKeys } from "i18next"
 
 import type { TrendDir } from "./stats"
 
-// Rule-based insight copy for the chart "Insight" boxes (docs/charts.md). The
-// wording is picked from FIXED-baseline numbers only (never free text, never a
-// rolling baseline); this module returns i18n KEYS and the caller interpolates.
+// Wording is picked from FIXED-baseline numbers only; returns i18n KEYS, the caller interpolates.
 
 /** Index change below this (in index points) counts as "flat". */
 export const INSIGHT_EPSILON = 0.5
@@ -55,11 +53,7 @@ function dirOf(delta: number, epsilon = INSIGHT_EPSILON): TrendDir {
   return "flat"
 }
 
-/**
- * Pick the recomposition takeaway from the strength-index and bodyweight-index
- * change since the fixed baseline (index points; both are 100 at baseline).
- * `null` = no baseline / no data yet for that series.
- */
+/** Change since the fixed baseline in index points (100 at baseline); null = no baseline/data for that series. */
 export function recompositionInsight(
   strengthDelta: number | null,
   bodyweightDelta: number | null,
@@ -81,25 +75,18 @@ export function recompositionInsight(
   return result("noTrend")
 }
 
-// --- Body insights (docs/charts.md › Bodyweight / Measurements) ---
-
 /** Bodyweight change below this (kg) counts as "flat" for the badge. */
 export const BODYWEIGHT_EPSILON = 0.1
 /** Circumference change below this (cm) counts as "flat". */
 export const CIRCUMFERENCE_EPSILON = 0.5
 
-/** A trend pill whose label interpolates a signed `value` (formatted by the caller). */
 export interface ValueBadge {
   dir: TrendDir
   good: boolean
-  /** The signed change the badge reports. */
   value: number
 }
 
-/**
- * Badge for the bodyweight card: total change since the first weigh-in. Down is
- * the desirable direction in a cut. `null` = fewer than two weigh-ins.
- */
+/** Down is desirable in a cut. null = fewer than two weigh-ins. */
 export function bodyweightInsight(changeSinceStart: number | null): ValueBadge | null {
   if (changeSinceStart == null) return null
   return {
@@ -128,11 +115,7 @@ function bodyResult(textName: BodyTextName, badge: ValueBadge | null): BodyCompa
   return { badge, textKey: `progress.body.insight.${textName}` }
 }
 
-/**
- * Pick the circumference takeaway from the raw change since each series' first
- * value (cm). Waist is the fat proxy (should fall); chest and biceps are the
- * muscle proxy (should hold or rise). `null` = series missing or < 2 points.
- */
+/** Raw cm change since each series' first value. Waist should fall; chest/biceps hold or rise. null = series missing or < 2 points. */
 export function bodyComparisonInsight(changes: {
   waist: number | null
   chest: number | null

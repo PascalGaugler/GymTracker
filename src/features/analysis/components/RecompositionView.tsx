@@ -12,9 +12,6 @@ import { Insight } from "./Insight"
 import { RecompositionChart } from "./RecompositionChart"
 import { TrendBadge } from "./TrendBadge"
 
-// The recomposition (hero) view: the indexed strength-vs-bodyweight chart with a
-// legend and a one-line read of the thesis. Empty until there is something to
-// index (a logged session or a weigh-in).
 export function RecompositionView() {
   const { t } = useTranslation()
   const data = useRecompositionData()

@@ -1,7 +1,5 @@
 import type { ReactNode } from "react"
 
-// First-run / no-data fallback. Optional numbered steps render the guiding
-// "Create your first plan → Add exercises → Log your first session" flow.
 export function EmptyState({
   title,
   body,

@@ -1,15 +1,21 @@
 import type { ComponentProps } from "react"
-import { format } from "date-fns"
-import { de } from "date-fns/locale"
+import { useState } from "react"
 import { useLiveQuery } from "dexie-react-hooks"
-import { Ruler } from "lucide-react"
+import { addDays } from "date-fns"
+import { CalendarDays, Ruler } from "lucide-react"
 import { useTranslation } from "react-i18next"
 
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
+import { pickChipVariants } from "@/components/ui/segmented"
 import { planRepository } from "@/data/repositories"
+import { dayKey } from "@/features/day/day"
+import { DayCalendarSheet } from "@/features/day/components/DayCalendarSheet"
+import { useDaySwipe } from "@/features/day/hooks/useDaySwipe"
+import { useSelectedDay } from "@/features/day/useSelectedDay"
 import { MeasurementQuickAdd } from "@/features/measurements/components/MeasurementQuickAdd"
-import { formatDecimal, formatSigned } from "@/lib/format"
+import { formatDayLong, formatDecimal, formatSigned } from "@/lib/format"
+import { cn } from "@/lib/utils"
 import { EmptyState } from "@/pages/EmptyState"
 import { PageHeader } from "@/pages/PageHeader"
 
@@ -23,30 +29,29 @@ import { StatCard } from "./StatCard"
 import { TodayWorkoutCard } from "./TodayWorkoutCard"
 import { TrendBadge } from "./TrendBadge"
 
-// Rates within ±this read as "flat" (kg/cm per week) rather than up/down noise.
 const RATE_EPSILON = 0.05
 
-// A live measurement card: latest value, weekly-rate trend badge, and the
-// total change since tracking began. Down is the desirable direction (a cut).
 function MeasurementStat({
   label,
   summary,
   loading,
   action,
   goal,
+  day,
 }: {
   label: string
   summary: MeasurementSummary | null
   loading: boolean
   /** Makes the card interactive: a route link, or (no `to`) a quick-add trigger. */
   action: { actionHint: string; to?: string }
-  /** Bodyweight only: progress toward the target weight. */
   goal?: GoalProgress | null
+  /** Quick-add trigger only: the day it writes to. */
+  day: Date
 }) {
   const { t } = useTranslation()
   const card = (props: Omit<ComponentProps<typeof StatCard>, "label" | "to" | "actionHint">) => {
     const el = <StatCard label={label} to={action.to} actionHint={action.actionHint} {...props} />
-    return action.to ? el : <MeasurementQuickAdd>{el}</MeasurementQuickAdd>
+    return action.to ? el : <MeasurementQuickAdd day={day}>{el}</MeasurementQuickAdd>
   }
 
   if (loading) return card({ value: null })
@@ -81,14 +86,11 @@ function MeasurementStat({
   return card({ value: latest.toFixed(1), unit, badge, sub, goal: goalProp })
 }
 
-// Index moves within ±this read as "flat" rather than up/down noise.
 const INDEX_EPSILON = 0.5
 
-// Live strength-index card: latest index (100 = baseline) with the change since
-// baseline. Up is the desirable direction (strength holding/rising during a cut).
-function StrengthStat() {
+function StrengthStat({ day }: { day: Date }) {
   const { t } = useTranslation()
-  const strength = useStrengthIndex()
+  const strength = useStrengthIndex(day)
 
   const link = {
     label: t("dashboard.cards.strength"),
@@ -117,20 +119,38 @@ function StrengthStat() {
   )
 }
 
-// The dashboard: headline stat cards + quick actions. Strength index and
-// calories are placeholders (their math/integration arrive in P5 and Phase 2).
 export function DashboardView() {
   const { t } = useTranslation()
   const plans = useLiveQuery(() => planRepository.getAll(), [])
-  const stats = useMeasurementStats()
-  const today = format(new Date(), "EEEE · d. MMMM", { locale: de })
+  const { day, isToday, shiftDay, goToToday } = useSelectedDay()
+  const stats = useMeasurementStats(day)
+  const [calendarOpen, setCalendarOpen] = useState(false)
+  // Set only when a swipe caused the day change, keyed to its target day; any other change just fades.
+  const [slide, setSlide] = useState<{ key: string; from: "left" | "right" } | null>(null)
+
+  const swipe = useDaySwipe({
+    onSwipeRight: () => {
+      const target = addDays(day, -1)
+      setSlide({ key: dayKey(target), from: "left" })
+      shiftDay(-1)
+    },
+    // No-op on today so nothing remounts/animates.
+    onSwipeLeft: () => {
+      if (isToday) return
+      const target = addDays(day, 1)
+      setSlide({ key: dayKey(target), from: "right" })
+      shiftDay(1)
+    },
+  })
+
+  const overline = formatDayLong(day)
 
   if (plans === undefined) return null
 
   if (plans.length === 0) {
     return (
       <>
-        <PageHeader overline={today} title={t("dashboard.title")} />
+        <PageHeader overline={overline} title={t("dashboard.title")} />
         <EmptyState
           title={t("dashboard.empty.title")}
           body={t("dashboard.empty.body")}
@@ -146,44 +166,87 @@ export function DashboardView() {
 
   const loading = stats === undefined
 
+  // Keyed by day to remount and replay the slide, only for swipe-caused transitions.
+  const slideClass =
+    slide?.key === dayKey(day)
+      ? slide.from === "left"
+        ? "slide-in-from-left-4"
+        : "slide-in-from-right-4"
+      : ""
+
   return (
     <>
-      <PageHeader overline={today} title={t("dashboard.title")} />
+      <PageHeader
+        overline={overline}
+        title={t("dashboard.title")}
+        action={
+          <>
+            {!isToday && (
+              <button
+                type="button"
+                onClick={goToToday}
+                className={cn(pickChipVariants({ active: false }))}
+              >
+                {t("day.today")}
+              </button>
+            )}
+            <Button
+              variant="ghost"
+              size="icon"
+              aria-label={t("day.openCalendar")}
+              onClick={() => setCalendarOpen(true)}
+            >
+              <CalendarDays aria-hidden="true" />
+            </Button>
+          </>
+        }
+      />
 
-      <div className="grid grid-cols-2 gap-3">
-        <MeasurementStat
-          label={t("dashboard.cards.bodyweight")}
-          summary={stats?.bodyweight ?? null}
-          loading={loading}
-          goal={stats?.bodyweightGoal}
-          action={{ actionHint: t("dashboard.cards.bodyweightAdd") }}
-        />
-        <MeasurementStat
-          label={t("dashboard.cards.waist")}
-          summary={stats?.waist ?? null}
-          loading={loading}
-          action={{ to: "/progress/body", actionHint: t("dashboard.cards.waistOpen") }}
-        />
-        <StrengthStat />
-        <StatCard
-          label={t("dashboard.cards.calories")}
-          value={null}
-          muted
-          badge={<Badge variant="neutral">{t("dashboard.cards.soon")}</Badge>}
-          sub={t("dashboard.cards.caloriesSoon")}
-        />
+      <div
+        key={dayKey(day)}
+        onTouchStart={swipe.onTouchStart}
+        onTouchEnd={swipe.onTouchEnd}
+        className={cn("animate-in fade-in duration-(--dur) motion-reduce:animate-none", slideClass)}
+      >
+        <div className="grid grid-cols-2 gap-3">
+          <MeasurementStat
+            label={t("dashboard.cards.bodyweight")}
+            summary={stats?.bodyweight ?? null}
+            loading={loading}
+            goal={stats?.bodyweightGoal}
+            action={{ actionHint: t("dashboard.cards.bodyweightAdd") }}
+            day={day}
+          />
+          <MeasurementStat
+            label={t("dashboard.cards.waist")}
+            summary={stats?.waist ?? null}
+            loading={loading}
+            action={{ to: "/progress/body", actionHint: t("dashboard.cards.waistOpen") }}
+            day={day}
+          />
+          <StrengthStat day={day} />
+          <StatCard
+            label={t("dashboard.cards.calories")}
+            value={null}
+            muted
+            badge={<Badge variant="neutral">{t("dashboard.cards.soon")}</Badge>}
+            sub={t("dashboard.cards.caloriesSoon")}
+          />
+        </div>
+
+        <RecompositionPreview />
+
+        <TodayWorkoutCard />
+
+        <MeasurementQuickAdd day={day}>
+          <Button variant="outline" size="lg" className="mt-3 w-full">
+            <Ruler aria-hidden="true" />
+            {t("measurements.quickAdd")}
+          </Button>
+        </MeasurementQuickAdd>
       </div>
 
-      <RecompositionPreview />
-
-      <TodayWorkoutCard />
-
-      <MeasurementQuickAdd>
-        <Button variant="outline" size="lg" className="mt-3 w-full">
-          <Ruler aria-hidden="true" />
-          {t("measurements.quickAdd")}
-        </Button>
-      </MeasurementQuickAdd>
+      <DayCalendarSheet open={calendarOpen} onOpenChange={setCalendarOpen} />
     </>
   )
 }

@@ -60,7 +60,7 @@ describe("strengthIndexSeries", () => {
 
   it("uses only the heaviest set of the session as the progression value", () => {
     const ex = "A"
-    const s = session(ex, 0, 80) // sets 75 + 80 → top 80
+    const s = session(ex, 0, 80)
     expect(strengthIndexSeries([s])).toEqual([{ t: day(0).getTime(), value: 100 }])
   })
 
@@ -136,7 +136,6 @@ describe("buildRecomposition", () => {
     )
     expect(data.hasStrength).toBe(true)
     expect(data.hasBodyweight).toBe(true)
-    // Four distinct timestamps (two sessions + two weigh-ins), sorted.
     expect(data.points.map((p) => p.t)).toEqual([
       day(0).getTime(),
       day(1).getTime(),
@@ -150,7 +149,6 @@ describe("buildRecomposition", () => {
     expect(data.points[1].bodyweight).not.toBeNull()
     expect(data.latestStrengthIndex).toBe(data.points[2].strength)
     expect(data.latestBodyweightIndex).toBe(data.points[3].bodyweight)
-    // Shared axis brackets the 100 baseline.
     expect(data.yDomain[0]).toBeLessThanOrEqual(100)
     expect(data.yDomain[1]).toBeGreaterThanOrEqual(100)
   })
@@ -188,5 +186,36 @@ describe("strength display smoothing", () => {
     expect(weighInOnly).toHaveLength(2)
     for (const p of weighInOnly) expect(p.strengthDisplay).toBeNull()
     expect(data.points.filter((p) => p.strength != null).at(-1)?.strengthDisplay).toBe(106.7)
+  })
+})
+
+describe("as-of (tooltip) fields", () => {
+  const ex = "A"
+
+  it("carries the previous strength values onto a weigh-in-only row", () => {
+    const data = buildRecomposition([session(ex, 0, 100), session(ex, 3, 110)], [bw(90, 4)])
+    const weighIn = data.points.find((p) => p.t === day(4).getTime())!
+    expect(weighIn.strength).toBeNull()
+    expect(weighIn.strengthAsOf).toBe(data.points[1].strength)
+    expect(weighIn.strengthDisplayAsOf).toBe(data.points[1].strengthDisplay)
+    expect(weighIn.bodyweightAsOf).toBe(weighIn.bodyweight)
+  })
+
+  it("carries the previous bodyweight onto a strength-only row", () => {
+    const data = buildRecomposition([session(ex, 0, 100), session(ex, 3, 110)], [bw(90, 1)])
+    const last = data.points.at(-1)!
+    expect(last.bodyweight).toBeNull()
+    expect(last.bodyweightAsOf).toBe(data.points[1].bodyweight)
+    expect(last.strengthAsOf).toBe(last.strength)
+  })
+
+  it("stays null before a series' first value", () => {
+    const data = buildRecomposition([session(ex, 2, 100)], [bw(90, 0)])
+    const first = data.points[0]
+    expect(first.bodyweightAsOf).not.toBeNull()
+    expect(first.strengthAsOf).toBeNull()
+    expect(first.strengthDisplayAsOf).toBeNull()
+    const second = data.points[1]
+    expect(second.strengthAsOf).not.toBeNull()
   })
 })

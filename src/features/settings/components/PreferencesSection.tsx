@@ -16,8 +16,7 @@ const THRESHOLD_STEP = 50
 const THRESHOLD_MIN = 0
 const THRESHOLD_MAX = 10000
 
-// Default unit for NEW catalog exercises. Stored weights keep the unit they were
-// logged with — this app never converts numbers behind the user's back.
+// Stored weights keep the unit they were logged with; nothing is ever converted.
 export function UnitsSection() {
   const { t } = useTranslation()
   const { defaultWeightUnit } = useSettings()
@@ -44,8 +43,7 @@ export function UnitsSection() {
   )
 }
 
-// The kcal floor below which a tracked day reads as "likely incomplete". Stored
-// now; the Phase 2 calorie work is what consumes it.
+// kcal floor below which a tracked day is flagged "likely incomplete".
 export function CaloriesSection() {
   const { t } = useTranslation()
   const { calorieIncompleteThreshold } = useSettings()
@@ -114,9 +112,7 @@ export function CaloriesSection() {
 
 const TARGET_MAX = 500
 
-// The bodyweight goal the Dashboard card measures progress against. Only the
-// target is stored; the start is the first bodyweight measurement. Empty = no goal.
-// Dot decimals; a comma is accepted and normalised.
+// Only the target is stored; the start is the first bodyweight measurement. Empty = no goal.
 export function GoalSection() {
   const { t } = useTranslation()
   const { targetWeight } = useSettings()

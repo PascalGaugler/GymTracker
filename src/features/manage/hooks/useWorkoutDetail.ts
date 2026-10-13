@@ -8,8 +8,7 @@ export interface WorkoutDetail {
   plan: TrainingPlan
 }
 
-// One workout with its plan. `undefined` while loading, `null` when the workout
-// is unknown or does not belong to the plan in the URL, so the view can redirect.
+// `null` = unknown workout or not in the URL's plan, so the view can redirect.
 export function useWorkoutDetail(
   planId: string | undefined,
   workoutId: string | undefined,

@@ -36,8 +36,7 @@ function ExercisePicker({
   )
 }
 
-// The chart card for one chosen exercise. Keyed by id from the parent so the
-// query re-runs cleanly per selection.
+// Keyed by id from the parent so the query re-runs per selection.
 function Drilldown({ exerciseId }: { exerciseId: string }) {
   const { t } = useTranslation()
   const drilldown = useExerciseDrilldown(exerciseId)
@@ -82,9 +81,6 @@ function Drilldown({ exerciseId }: { exerciseId: string }) {
   )
 }
 
-// Single-exercise drilldown view (/progress/exercise/:exerciseId): pick an
-// exercise, read its top-set line over the min–max band. With no id (or an
-// unknown one) it redirects to the first exercise that has history.
 export function ExerciseDrilldownView() {
   const { t } = useTranslation()
   const { exerciseId } = useParams()

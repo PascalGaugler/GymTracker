@@ -38,9 +38,9 @@ describe("buildBodyweightTrend", () => {
   it("averages only weigh-ins within the trailing 7-day window", () => {
     // day 0,1,2 inside the window for day 2; day 10 starts a fresh window.
     const trend = buildBodyweightTrend([bw(0, 90), bw(1, 88), bw(2, 86), bw(10, 80)])
-    expect(trend.points[0].ma).toBe(90) // only itself
-    expect(trend.points[1].ma).toBe(89) // (90+88)/2
-    expect(trend.points[2].ma).toBe(88) // (90+88+86)/3
+    expect(trend.points[0].ma).toBe(90)
+    expect(trend.points[1].ma).toBe(89)
+    expect(trend.points[2].ma).toBe(88)
     expect(trend.points[3].ma).toBe(80) // day 3..9 absent, day 0-2 out of window
   })
 
@@ -63,13 +63,12 @@ describe("buildMeasurementComparison", () => {
   it("indexes each series to 100 at its own first value on a shared axis", () => {
     const cmp = buildMeasurementComparison({
       ...empty,
-      waist: [m("waist", "cm", 0, 90), m("waist", "cm", 28, 81)], // −10% → 90
-      chest: [m("chest", "cm", 0, 100), m("chest", "cm", 28, 101)], // +1% → 101
+      waist: [m("waist", "cm", 0, 90), m("waist", "cm", 28, 81)],
+      chest: [m("chest", "cm", 0, 100), m("chest", "cm", 28, 101)],
     })
     expect(cmp.present).toEqual({ waist: true, chest: true, biceps: false })
     expect(cmp.points[0]).toEqual({ t: day(0).getTime(), waist: 100, chest: 100, biceps: null })
     expect(cmp.points[1]).toEqual({ t: day(28).getTime(), waist: 90, chest: 101, biceps: null })
-    // Axis brackets the lowest (90) and the 100 baseline.
     expect(cmp.yDomain[0]).toBeLessThanOrEqual(90)
     expect(cmp.yDomain[1]).toBeGreaterThanOrEqual(100)
   })

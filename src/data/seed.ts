@@ -10,31 +10,25 @@ import {
   type Workout,
 } from "./schema"
 
-// First-run template: a Push/Pull/Legs plan with its workouts and a catalog of
-// exercises — structure only, no sessions or measurements. Names are stored
-// verbatim (mixed German/English is expected) and never translated. Contains no
-// personal performance data, so it is safe to ship in a public repo.
+// Structure only, no sessions or measurements; names stored verbatim (mixed German/English).
 
 type CatalogEntry = { name: string; type: ExerciseType; unit: WeightUnit }
 type SeedSlot = { exercise: string; targetSets: number; repRange: [number, number] }
 type SeedWorkout = { name: string; slots: SeedSlot[] }
 
 const CATALOG: CatalogEntry[] = [
-  // Push
   { name: "Bankdrücken", type: "barbell", unit: "kg" },
   { name: "Schrägbankdrücken Kurzhantel", type: "dumbbell", unit: "kg" },
   { name: "Schulterdrücken Kurzhantel", type: "dumbbell", unit: "kg" },
   { name: "Seitheben", type: "dumbbell", unit: "kg" },
   { name: "Trizeps Pushdown", type: "cable", unit: "kg" },
   { name: "Overhead Trizeps Extensions", type: "cable", unit: "kg" },
-  // Pull
   { name: "Klimmzüge", type: "bodyweight", unit: "kg" },
   { name: "Langhantelrudern", type: "barbell", unit: "kg" },
   { name: "Latzug", type: "cable", unit: "kg" },
   { name: "Face Pulls", type: "cable", unit: "kg" },
   { name: "Bizeps Curls Kurzhantel", type: "dumbbell", unit: "kg" },
   { name: "Hammer Curls", type: "dumbbell", unit: "kg" },
-  // Legs
   { name: "Kniebeugen", type: "barbell", unit: "kg" },
   { name: "Beinpresse", type: "machine", unit: "kg" },
   { name: "Rumänisches Kreuzheben", type: "barbell", unit: "kg" },
@@ -122,10 +116,7 @@ export function buildSeed(): { exercises: Exercise[]; plan: TrainingPlan; workou
   return { exercises, plan, workouts }
 }
 
-/**
- * Seeds the PPL template, but only when the database is empty. Returns true if a
- * seed was written, false if existing data was found and seeding was skipped.
- */
+/** Seeds only when the DB is empty; returns whether it wrote. */
 export async function seedIfEmpty(): Promise<boolean> {
   const { exercises, plan, workouts } = buildSeed()
   // The emptiness check lives inside the rw transaction so concurrent callers

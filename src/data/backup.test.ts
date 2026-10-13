@@ -106,7 +106,6 @@ describe("backup", () => {
   it("rejects an invalid payload before touching the database", async () => {
     await seedIfEmpty()
     await expect(importBackup({ version: 1, nope: true })).rejects.toThrow()
-    // DB untouched by the failed import.
     expect(await db.trainingPlans.count()).toBe(1)
   })
 })

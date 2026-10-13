@@ -4,7 +4,6 @@ import { WorkoutSchema } from "../../schema"
 import type { WorkoutRepository } from "../types"
 
 export const workoutRepository: WorkoutRepository = {
-  // [planId+order] returns a plan's workouts pre-sorted by order.
   getByPlan: (planId) =>
     db.workouts
       .where("[planId+order]")
@@ -14,7 +13,7 @@ export const workoutRepository: WorkoutRepository = {
   getById: (id) => db.workouts.get(id),
 
   async save(workout) {
-    await db.workouts.put(WorkoutSchema.parse(workout)) // validate on write
+    await db.workouts.put(WorkoutSchema.parse(workout))
   },
 
   async remove(id) {

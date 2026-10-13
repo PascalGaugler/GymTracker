@@ -1,5 +1,3 @@
-import { format } from "date-fns"
-import { de } from "date-fns/locale"
 import { useTranslation } from "react-i18next"
 import {
   CartesianGrid,
@@ -13,18 +11,9 @@ import {
 } from "recharts"
 
 import type { MeasurementComparison } from "../body"
-import { TooltipSwatch } from "./ChartSwatches"
+import { ChartTooltipFrame, ChartTooltipRow } from "./ChartTooltip"
 import { COMPARISON_SERIES, lineWidth, markerDot, SERIES_CUES } from "./chartCues"
-
-const axisTick = {
-  fill: "var(--subtle)",
-  fontSize: 10,
-  fontFamily: "var(--font-mono)",
-} as const
-
-function formatDate(t: number): string {
-  return format(t, "d. MMM", { locale: de })
-}
+import { axisTick, formatDate } from "./chartFormat"
 
 interface ChartTooltipProps {
   active?: boolean
@@ -32,37 +21,27 @@ interface ChartTooltipProps {
   payload?: { dataKey?: string | number; name?: string; value?: number | null; color?: string }[]
 }
 
-// Date header + a coloured row per series present that day, each showing its
-// value indexed to 100 at the series' own start.
 function ChartTooltip({ active, payload, label }: ChartTooltipProps) {
   if (!active || !payload || payload.length === 0) return null
   const rows = payload.filter((entry) => entry.value != null)
   if (rows.length === 0) return null
 
   return (
-    <div className="rounded-md border border-border-strong bg-popover px-3 py-2 shadow-elev-2">
-      <div className="mb-1 font-mono text-micro tracking-normal text-subtle">
-        {formatDate(label as number)}
-      </div>
+    <ChartTooltipFrame title={formatDate(label as number)}>
       {rows.map((entry) => (
-        <div key={String(entry.dataKey)} className="flex items-center gap-2">
-          <TooltipSwatch
-            cue={COMPARISON_SERIES.find((s) => s.key === entry.dataKey)?.cue ?? SERIES_CUES[0]!}
-            color={entry.color ?? ""}
-          />
-          <span className="flex-1 truncate text-caption text-muted-foreground">{entry.name}</span>
-          <span className="font-mono text-caption font-semibold tabular-nums">
-            {(entry.value as number).toFixed(1)}
-          </span>
-        </div>
+        <ChartTooltipRow
+          key={String(entry.dataKey)}
+          cue={COMPARISON_SERIES.find((s) => s.key === entry.dataKey)?.cue ?? SERIES_CUES[0]!}
+          color={entry.color ?? ""}
+          label={entry.name ?? ""}
+          value={(entry.value as number).toFixed(1)}
+        />
       ))}
-    </div>
+    </ChartTooltipFrame>
   )
 }
 
-// Circumference comparison: each present series indexed to 100 at its own start on
-// ONE shared axis, with a baseline reference line at 100. connectNulls is ON so a
-// sparse series (circumferences logged every few weeks) reads as one line.
+// connectNulls ON so a sparse series (circumferences logged every few weeks) reads as one line.
 export function MeasurementComparisonChart({ data }: { data: MeasurementComparison }) {
   const { t } = useTranslation()
 

@@ -17,8 +17,6 @@ import type { Workout } from "@/data/schema"
 
 import { useWorkoutUsage } from "../hooks/useWorkoutUsage"
 
-// Create (workout === null), rename or delete a workout. Only the name is edited
-// here — exercise slots have their own screen.
 export function WorkoutEditorDialog({
   workout,
   planId,
@@ -29,7 +27,6 @@ export function WorkoutEditorDialog({
 }: {
   workout: Workout | null
   planId: string
-  /** Rotation position for a newly created workout. */
   order: number
   open: boolean
   onOpenChange: (open: boolean) => void

@@ -5,9 +5,7 @@ import { cn } from "@/lib/utils"
 
 import type { TrendDir } from "../stats"
 
-// Trend pill: arrow + delta text. Colour is keyed on whether the direction is
-// DESIRABLE (`good`), not on the literal arrow — a falling waist and a rising
-// strength index are both green. Matches the design-reference `.badge`.
+// Colour keys on whether the direction is DESIRABLE (`good`), not the arrow: a falling waist and a rising strength index are both green.
 export function TrendBadge({
   dir,
   good,

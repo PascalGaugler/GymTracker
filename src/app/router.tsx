@@ -17,8 +17,6 @@ import { SettingsPage } from "@/pages/SettingsPage"
 
 import { AppLayout } from "./AppLayout"
 
-// Route scaffolding per docs/screens.md. Nested Progress/Manage views resolve to
-// section placeholders for now; their real content lands in later phases.
 export const router = createBrowserRouter([
   {
     element: <AppLayout />,

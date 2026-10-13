@@ -13,19 +13,13 @@ import {
   type Workout,
 } from "./schema"
 
-// Synthetic demo dataset — sessions + body measurements — so the charts and the
-// metric maths can be exercised against realistic data before the user has
-// logged anything. It is DETERMINISTIC (seeded PRNG): the same workouts/exercises
-// always produce the same dataset, so it doubles as a fixture for verifying
-// calculations across phases. It is never auto-loaded — only via the dev console
-// hooks below (DEV-only). Writes go through the data layer like any other write.
+// Deterministic (seeded PRNG) synthetic dataset for exercising charts and metrics; never auto-loaded, dev console only.
 
 const WEEKS = 16
-const SESSION_DAYS = [0, 2, 4] // ~Mon/Wed/Fri within each week
+const SESSION_DAYS = [0, 2, 4]
 const HOUR_MS = 3_600_000
 
-// Per-type starting top set and double-progression increment (kg). Bodyweight
-// lifts carry a small added load so they are indexable (a 0 load can't be).
+// Bodyweight lifts carry a small added load so they are indexable (a 0 load can't be).
 const START_TOP: Record<ExerciseType, number> = {
   barbell: 60,
   dumbbell: 18,
@@ -41,8 +35,6 @@ const INCREMENT: Record<ExerciseType, number> = {
   bodyweight: 1.25,
 }
 
-// Small, fast, seedable PRNG (mulberry32) — keeps the dataset reproducible
-// without pulling in a dependency.
 function mulberry32(seed: number): () => number {
   let s = seed >>> 0
   return () => {
@@ -57,25 +49,18 @@ const round = (n: number, step: number) => Math.round(n / step) * step
 
 interface ExerciseState {
   type: ExerciseType
-  top: number // current top set
+  top: number
   inc: number // progression step
   pUp: number // chance the rep target is met (→ load goes up) this session
   seen: boolean
 }
 
 export interface DemoOptions {
-  /** Anchor for the most-recent end of the dataset (defaults to now). */
   now?: Date
-  /** PRNG seed (defaults to a fixed value → reproducible dataset). */
   seed?: number
 }
 
-/**
- * Build a reproducible ~16-week PPL history plus body measurements from the
- * active plan's workouts + catalog. Sessions stair-step upward (double
- * progression on the top set); bodyweight and waist trend down while chest and
- * biceps hold — the recomposition thesis, so the charts show something honest.
- */
+/** Reproducible ~16-week history: bodyweight and waist trend down, chest and biceps hold. */
 export function buildDemoDataset(
   workouts: Workout[],
   exercises: Exercise[],
@@ -105,7 +90,6 @@ export function buildDemoDataset(
 
         let st = state.get(exercise.id)
         if (!st) {
-          // Spread starting loads so exercises aren't identical.
           const base = START_TOP[exercise.type] * (0.85 + rand() * 0.4)
           st = {
             type: exercise.type,
@@ -117,12 +101,9 @@ export function buildDemoDataset(
           state.set(exercise.id, st)
         }
 
-        // Double progression: once warmed up, bump the load when the rep target
-        // is met, otherwise hold — producing realistic stair-stepped lines.
         if (st.seen && rand() < st.pUp) st.top = round(st.top + st.inc, 0.5)
         st.seen = true
 
-        // Build the working sets ramping up to the top set (the heaviest).
         const drop = round(st.inc, 0.5)
         for (let i = 0; i < slot.targetSets; i++) {
           const fromTop = slot.targetSets - 1 - i
@@ -167,8 +148,6 @@ function measurement(
   })
 }
 
-// Bodyweight (logged ~4×/week, noisy daily) plus circumferences (every ~2 weeks):
-// weight + waist fall, chest + biceps roughly hold — fat down, muscle kept.
 function buildMeasurements(start: Date, now: Date, rand: () => number): Measurement[] {
   const totalDays = WEEKS * 7
   const out: Measurement[] = []
@@ -177,7 +156,7 @@ function buildMeasurements(start: Date, now: Date, rand: () => number): Measurem
     if (rand() >= 0.55) continue
     const at = new Date(addDays(start, day).getTime() + 7 * HOUR_MS)
     if (at > now) continue
-    const value = 86 - 0.05 * day + (rand() - 0.5) * 1.2 // ≈ −0.35 kg/week + noise
+    const value = 86 - 0.05 * day + (rand() - 0.5) * 1.2
     out.push(measurement("bodyweight", value, "kg", at))
   }
 
@@ -194,11 +173,7 @@ function buildMeasurements(start: Date, now: Date, rand: () => number): Measurem
   return out.sort((a, b) => a.measuredAt.getTime() - b.measuredAt.getTime())
 }
 
-/**
- * Generate the demo dataset from the active plan and persist it, REPLACING any
- * existing sessions + measurements (destructive — dev/demo use only). The seed
- * (plan + workouts + exercises) must already exist.
- */
+/** Destructive: REPLACES existing sessions and measurements. Requires the seed. */
 export async function loadDemoData(opts: DemoOptions = {}): Promise<{
   sessions: number
   measurements: number
@@ -225,7 +200,6 @@ export async function loadDemoData(opts: DemoOptions = {}): Promise<{
   return { sessions: sessions.length, measurements: measurements.length }
 }
 
-/** Wipe all sessions + measurements (dev/demo reset). */
 export async function clearDemoData(): Promise<void> {
   await db.transaction("rw", [db.sessions, db.measurements], async () => {
     await db.sessions.clear()

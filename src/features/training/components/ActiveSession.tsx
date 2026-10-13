@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from "react"
+import { isSameDay } from "date-fns"
 import { ArrowLeft } from "lucide-react"
 import { useTranslation } from "react-i18next"
 import { useLocation, useNavigate } from "react-router-dom"
@@ -8,6 +9,9 @@ import { Button } from "@/components/ui/button"
 import { Overline } from "@/components/ui/overline"
 import { sessionRepository } from "@/data/repositories"
 import type { Exercise, LoggedSet, Workout, WorkoutSession } from "@/data/schema"
+import { stampOnDay } from "@/features/day/day"
+import { useSelectedDay } from "@/features/day/useSelectedDay"
+import { formatDayLong } from "@/lib/format"
 
 import { useExerciseCatalog } from "../hooks/useExerciseCatalog"
 import { useLastSession, useSession, useWorkout } from "../hooks/useSessionLog"
@@ -16,15 +20,19 @@ import { ExerciseLogCard } from "./ExerciseLogCard"
 
 interface LocationState {
   workoutId?: string
-  // Where the back arrow leads (e.g. "/" when started from the Dashboard).
+  // Where the back arrow leads; the `returnTo` prop overrides it.
   returnTo?: string
 }
 
-// Loader for /log/:sessionId. A freshly picked workout arrives as an in-memory
-// draft (workout id via router state) and is persisted only on save; an existing
-// session id loads its saved sets for correction. Once everything has resolved,
-// the form is mounted keyed by session id so it can seed its state once.
-export function ActiveSession({ sessionId }: { sessionId: string }) {
+// A fresh draft is persisted only on save; an existing session id loads its saved sets.
+// Form is keyed by session id so it seeds state once.
+export function ActiveSession({
+  sessionId,
+  returnTo: returnToProp,
+}: {
+  sessionId: string
+  returnTo?: string
+}) {
   const navigate = useNavigate()
   const location = useLocation()
   const locationState = location.state as LocationState | null
@@ -34,10 +42,8 @@ export function ActiveSession({ sessionId }: { sessionId: string }) {
   const workoutId = session?.workoutId ?? stateWorkoutId
   const workout = useWorkout(workoutId)
   const catalog = useExerciseCatalog()
-  const lastSession = useLastSession(workoutId)
 
-  // A draft opened without a workout (e.g. refresh on an unsaved url) cannot be
-  // reconstructed — send the user back to the picker.
+  // A draft without a workout (e.g. refresh on an unsaved url) can't be reconstructed.
   useEffect(() => {
     if (session === null && !stateWorkoutId) navigate("/log", { replace: true })
   }, [session, stateWorkoutId, navigate])
@@ -54,8 +60,7 @@ export function ActiveSession({ sessionId }: { sessionId: string }) {
       workout={workout}
       session={session}
       catalog={catalog}
-      lastSession={lastSession}
-      returnTo={locationState?.returnTo}
+      returnTo={returnToProp ?? locationState?.returnTo}
     />
   )
 }
@@ -66,12 +71,9 @@ interface SessionFormProps {
   workout: Workout
   session: WorkoutSession | null
   catalog: Map<string, Exercise>
-  lastSession: WorkoutSession | undefined
   returnTo: string | undefined
 }
 
-// Pre-fill any already-saved sets so editing shows current values; a draft
-// starts blank.
 function buildInitialValues(
   workout: Workout,
   session: WorkoutSession | null,
@@ -101,22 +103,29 @@ function SessionForm({
   workout,
   session,
   catalog,
-  lastSession,
   returnTo,
 }: SessionFormProps) {
   const { t } = useTranslation()
   const navigate = useNavigate()
+  const { day } = useSelectedDay()
 
-  // Rotation position within the active plan; a workout outside it (archived plan,
-  // removed workout) falls back to the generic "Log" overline.
+  // A brand-new draft is dated on the selected day, captured ONCE at mount —
+  // a saved session keeps `session.date` and is never re-stamped on edit.
+  const [draftDate] = useState(() => stampOnDay(day))
+  const date = session?.date ?? draftDate
+  const isToday = isSameDay(date, new Date())
+
+  // A workout outside the active plan falls back to the generic "Log" overline.
   const rotation = useWorkoutRotation()
   const inRotation = rotation?.workouts.find((w) => w.id === workoutId)
 
-  // Entered weights, keyed by slot id → one string per set.
+  // Last-weight placeholders come from the session before THIS one's date —
+  // editing an old session shows the session before it, not a later one.
+  const lastSession = useLastSession(workoutId, date)
+
   const [values, setValues] = useState(() => buildInitialValues(workout, session))
   const [saving, setSaving] = useState(false)
 
-  // Last-weight placeholders, skipping this session itself when re-editing.
   const lastByKey = useMemo(() => {
     const map = new Map<string, number>()
     if (lastSession && lastSession.id !== sessionId) {
@@ -160,7 +169,7 @@ function SessionForm({
       const toSave: WorkoutSession = {
         id: sessionId,
         workoutId,
-        date: session?.date ?? new Date(),
+        date,
         sets,
       }
       await sessionRepository.save(toSave)
@@ -175,8 +184,7 @@ function SessionForm({
 
   return (
     <>
-      {/* -mx-4 -mt-5 cancel AppLayout's <main> px-4 pt-5 so the divider spans edge to edge;
-          the header scrolls with <main> (app shell: never sticky). */}
+      {/* -mx-4 -mt-5 cancel AppLayout's <main> padding so the divider spans edge to edge. */}
       <header className="-mx-4 -mt-5 mb-3 flex items-center gap-3 border-b border-border px-4 py-3">
         <Button
           variant="outline"
@@ -188,13 +196,14 @@ function SessionForm({
         </Button>
         <div className="min-w-0 flex-1 text-center">
           <Overline>
-            {inRotation && rotation
-              ? t("log.rotation", { n: inRotation.order + 1, total: rotation.workouts.length })
-              : t("nav.log")}
+            {!isToday
+              ? formatDayLong(date)
+              : inRotation && rotation
+                ? t("log.rotation", { n: inRotation.order + 1, total: rotation.workouts.length })
+                : t("nav.log")}
           </Overline>
           <h1 className="truncate text-h3">{workout.name}</h1>
         </div>
-        {/* Balances the back button so the title is centred (rest-timer slot). */}
         <span aria-hidden="true" className="size-12 shrink-0" />
       </header>
 

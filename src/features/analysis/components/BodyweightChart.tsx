@@ -1,5 +1,3 @@
-import { format } from "date-fns"
-import { de } from "date-fns/locale"
 import { useTranslation } from "react-i18next"
 import {
   CartesianGrid,
@@ -12,19 +10,11 @@ import {
 } from "recharts"
 
 import type { BodyweightPoint, BodyweightTrend } from "../body"
+import { ChartTooltipFrame, ChartTooltipRow } from "./ChartTooltip"
+import { axisTick, formatDate } from "./chartFormat"
 
-const RAW = "var(--subtle)" // faint individual weigh-ins
-const TREND = "var(--recomp-bodyweight)" // violet 7-day average — the signal
-
-const axisTick = {
-  fill: "var(--subtle)",
-  fontSize: 10,
-  fontFamily: "var(--font-mono)",
-} as const
-
-function formatDate(t: number): string {
-  return format(t, "d. MMM", { locale: de })
-}
+const RAW = "var(--subtle)"
+const TREND = "var(--recomp-bodyweight)"
 
 interface ChartTooltipProps {
   active?: boolean
@@ -32,44 +22,29 @@ interface ChartTooltipProps {
   unit?: string
 }
 
-// Date header + the day's raw weigh-in and the 7-day average. Reads the whole row
-// off the payload so both values describe the same day.
 function ChartTooltip({ active, payload, unit }: ChartTooltipProps) {
   const { t } = useTranslation()
   if (!active || !payload || payload.length === 0) return null
   const row = payload[0]?.payload
   if (!row) return null
 
-  const suffix = unit ? ` ${unit}` : ""
   return (
-    <div className="rounded-md border border-border-strong bg-popover px-3 py-2 shadow-elev-2">
-      <div className="mb-1 font-mono text-micro tracking-normal text-subtle">
-        {formatDate(row.t)}
-      </div>
-      <div className="flex items-center gap-3">
-        <span className="flex-1 text-caption text-muted-foreground">
-          {t("progress.body.weight.raw")}
-        </span>
-        <span className="font-mono text-caption tabular-nums text-subtle">
-          {row.raw.toFixed(1)}
-          <span className="ml-0.5">{suffix}</span>
-        </span>
-      </div>
-      <div className="flex items-center gap-3">
-        <span className="flex-1 text-caption text-muted-foreground">
-          {t("progress.body.weight.trend")}
-        </span>
-        <span className="font-mono text-caption font-semibold tabular-nums">
-          {row.ma.toFixed(1)}
-          <span className="ml-0.5 text-subtle">{suffix}</span>
-        </span>
-      </div>
-    </div>
+    <ChartTooltipFrame title={formatDate(row.t)}>
+      <ChartTooltipRow
+        sub
+        label={t("progress.body.weight.raw")}
+        value={row.raw.toFixed(1)}
+        unit={unit}
+      />
+      <ChartTooltipRow
+        label={t("progress.body.weight.trend")}
+        value={row.ma.toFixed(1)}
+        unit={unit}
+      />
+    </ChartTooltipFrame>
   )
 }
 
-// Bodyweight trend: faint raw weigh-ins (dots only) under a solid 7-day moving
-// average — the smoothed line, not the noisy raw line, is the signal (docs/charts.md).
 export function BodyweightChart({ trend }: { trend: BodyweightTrend }) {
   return (
     <ResponsiveContainer width="100%" height={280}>
@@ -97,7 +72,6 @@ export function BodyweightChart({ trend }: { trend: BodyweightTrend }) {
           content={<ChartTooltip unit={trend.unit} />}
           cursor={{ stroke: "var(--border-strong)" }}
         />
-        {/* Raw weigh-ins: dots only (no connecting line), so noise reads as a scatter. */}
         <Line
           dataKey="raw"
           stroke="none"

@@ -19,12 +19,8 @@ import { StatCard } from "./StatCard"
 import { StatTile } from "./StatTile"
 import { TrendBadge } from "./TrendBadge"
 
-// Rates within ±this (kg/week) read as "flat" rather than up/down noise.
 const RATE_EPSILON = 0.05
 
-// The bodyweight rate readout, reusing the dashboard StatCard/TrendBadge: latest
-// weight, weekly rate badge (down is the desirable direction in a cut), and the
-// total change since tracking began.
 function RateCard({
   latest,
   unit,
@@ -61,9 +57,6 @@ function RateCard({
   )
 }
 
-// Body view (/progress/body): the smoothed bodyweight trend with its kg/week rate
-// and the circumference comparison (waist vs. muscle). Empty until there is at
-// least one measurement; the quick-add sheet is the launch point either way.
 export function BodyView() {
   const { t } = useTranslation()
   const data = useBodyData()

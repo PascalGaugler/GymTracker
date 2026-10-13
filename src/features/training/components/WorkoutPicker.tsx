@@ -4,6 +4,8 @@ import { useNavigate } from "react-router-dom"
 
 import { Badge } from "@/components/ui/badge"
 import { Overline } from "@/components/ui/overline"
+import { useSelectedDay } from "@/features/day/useSelectedDay"
+import { formatDayShort } from "@/lib/format"
 import { EmptyState } from "@/pages/EmptyState"
 import { PageHeader } from "@/pages/PageHeader"
 import { cn } from "@/lib/utils"
@@ -13,13 +15,12 @@ import { useWorkoutRotation } from "../hooks/useWorkoutRotation"
 
 const CHIP_LIMIT = 3
 
-// Today's workout via rotation (suggested first) plus the rest, or pick any.
-// Picking mints a session id and opens the active session, carrying the chosen
-// workout in router state (the draft is only persisted once the user saves).
+// Only the workout travels via router state; the draft is persisted on save and the form reads the selected day from context.
 export function WorkoutPicker() {
   const { t } = useTranslation()
   const navigate = useNavigate()
-  const rotation = useWorkoutRotation()
+  const { day, isToday } = useSelectedDay()
+  const rotation = useWorkoutRotation(isToday ? undefined : day)
   const catalog = useExerciseCatalog()
 
   if (rotation === undefined || catalog === undefined) return null
@@ -48,7 +49,11 @@ export function WorkoutPicker() {
   return (
     <>
       <PageHeader
-        overline={t("log.pick.subtitle", { total: workouts.length })}
+        overline={
+          isToday
+            ? t("log.pick.subtitle", { total: workouts.length })
+            : t("day.backfill", { date: formatDayShort(day) })
+        }
         title={t("log.pick.title")}
       />
 

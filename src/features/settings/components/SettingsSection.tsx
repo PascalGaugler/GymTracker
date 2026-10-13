@@ -2,7 +2,6 @@ import type { ReactNode } from "react"
 
 import { cn } from "@/lib/utils"
 
-// One settings block: title, explanation, then its controls. Tokens only.
 export function SettingsSection({
   title,
   body,

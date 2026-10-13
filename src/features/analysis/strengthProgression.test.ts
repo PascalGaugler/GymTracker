@@ -11,7 +11,6 @@ function day(n: number): Date {
   return new Date(T0 + n * DAY)
 }
 
-// A session whose listed exercises each log two sets; the heavier is the top set.
 function session(dayN: number, lifts: { exerciseId: string; top: number }[]): WorkoutSession {
   return {
     id: crypto.randomUUID(),
@@ -112,5 +111,21 @@ describe("buildStrengthProgression", () => {
     expect(data.yDomain[0]).toBeLessThanOrEqual(100)
     expect(data.yDomain[1]).toBeGreaterThanOrEqual(110)
     expect(data.yTicks.length).toBeGreaterThan(1)
+  })
+
+  it("emits no row for sessions without a positive top set", () => {
+    const empty: WorkoutSession = { id: "e", workoutId: "w", date: day(9), sets: [] }
+    const zero: WorkoutSession = {
+      id: "z",
+      workoutId: "w",
+      date: day(12),
+      sets: [{ id: "s", exerciseId: "a", setNumber: 1, weight: 0 }],
+    }
+    const data = buildStrengthProgression(
+      [session(0, [{ exerciseId: "a", top: 80 }]), empty, zero],
+      ["a"],
+      info,
+    )
+    expect(data.rows.map((r) => r.t)).toEqual([day(0).getTime()])
   })
 })

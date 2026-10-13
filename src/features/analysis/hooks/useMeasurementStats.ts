@@ -2,6 +2,8 @@ import { useLiveQuery } from "dexie-react-hooks"
 
 import { measurementRepository } from "@/data/repositories"
 import { useSettings } from "@/features/settings/hooks/useSettings"
+import { dayKey } from "@/features/day/day"
+import { upTo } from "@/lib/upTo"
 
 import { goalProgress, type GoalProgress } from "../goal"
 import { summarizeSeries, type MeasurementSummary } from "../stats"
@@ -13,21 +15,23 @@ export interface DashboardMeasurementStats {
   bodyweightGoal: GoalProgress | null
 }
 
-// Dashboard readouts for the two headline measurements (bodyweight + waist).
-// Wraps the repository in useLiveQuery so the cards refresh the instant the
-// quick-add sheet writes a new measurement. Returns undefined while loading;
-// a null summary means that type has no data yet (card shows its empty state).
-export function useMeasurementStats(): DashboardMeasurementStats | undefined {
+// As of `until` (the selected day): later entries are excluded, so backfilling a past day shows that
+// day's standing. A null summary = no data up to `until`. `until` is keyed by calendar day so a fresh
+// `Date` each render doesn't retrigger the query.
+export function useMeasurementStats(until: Date): DashboardMeasurementStats | undefined {
   const { targetWeight } = useSettings()
+  const untilKey = dayKey(until)
   return useLiveQuery(async () => {
     const [bodyweight, waist] = await Promise.all([
       measurementRepository.getByType("bodyweight"),
       measurementRepository.getByType("waist"),
     ])
+    const bodyweightUpTo = upTo(bodyweight, (m) => m.measuredAt, until)
+    const waistUpTo = upTo(waist, (m) => m.measuredAt, until)
     return {
-      bodyweight: summarizeSeries(bodyweight),
-      waist: summarizeSeries(waist),
-      bodyweightGoal: goalProgress(bodyweight, targetWeight),
+      bodyweight: summarizeSeries(bodyweightUpTo),
+      waist: summarizeSeries(waistUpTo),
+      bodyweightGoal: goalProgress(bodyweightUpTo, targetWeight),
     }
-  }, [targetWeight])
+  }, [targetWeight, untilKey])
 }

@@ -11,7 +11,6 @@ export interface ExerciseLogCardProps {
   repRange?: [number, number]
   /** Entered weight per set (index 0 = set 1), "" when blank. */
   values: string[]
-  /** Last session's weight per set, for placeholders. */
   lasts: (number | undefined)[]
   onSetChange: (setIndex: number, value: string) => void
 }

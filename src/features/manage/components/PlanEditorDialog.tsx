@@ -15,9 +15,7 @@ import { Input } from "@/components/ui/input"
 import { planRepository } from "@/data/repositories"
 import type { TrainingPlan } from "@/data/schema"
 
-// Create (plan === null), rename or delete a training plan. The form is keyed by
-// id so it remounts with fresh fields — state is seeded via useState initialisers
-// (no set-state-in-effect).
+// Keyed by id so the form remounts with fresh state seeded via initializers.
 export function PlanEditorDialog({
   plan,
   open,
@@ -29,9 +27,7 @@ export function PlanEditorDialog({
   plan: TrainingPlan | null
   open: boolean
   onOpenChange: (open: boolean) => void
-  /** Make a newly created plan the active one (true for the very first plan). */
   activateOnCreate?: boolean
-  /** Workouts that would be deleted along with the plan — shown in the warning. */
   workoutCount?: number
   onDeleted?: () => void
 }) {

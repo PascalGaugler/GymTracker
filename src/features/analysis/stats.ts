@@ -2,22 +2,15 @@ import { differenceInCalendarDays } from "date-fns"
 
 import type { Measurement, MeasurementUnit } from "@/data/schema"
 
-// Presentation math for the dashboard readouts. Pure functions over a single
-// measurement type's time series — no Dexie, no React — so they are unit-tested
-// in isolation. The recomposition / strength-index math is deliberately NOT here
-// (Phase 5); this file only does the simple bodyweight/circumference readouts.
-
 export type TrendDir = "up" | "down" | "flat"
 
 export interface MeasurementSummary {
-  /** Most recent recorded value. */
   latest: number
   unit: MeasurementUnit
   /** latest − first recorded value (since tracking began); negative = down. */
   changeSinceStart: number
   /** Recent pace in units/week (least-squares fit); null until 2+ distinct days. */
   ratePerWeek: number | null
-  /** Number of points in the series. */
   count: number
 }
 
@@ -65,8 +58,7 @@ export function weeklyRate(series: Measurement[], windowDays = 30): number | nul
   return round2((num / den) * 7)
 }
 
-// Collapse one measurement type's series into the dashboard readout. Sorts
-// defensively by time; the repository already returns ascending order.
+// Sorts defensively by time.
 export function summarizeSeries(series: Measurement[], windowDays = 30): MeasurementSummary | null {
   if (series.length === 0) return null
 

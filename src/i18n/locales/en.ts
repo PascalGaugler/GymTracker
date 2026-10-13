@@ -1,7 +1,13 @@
 import type de from "./de"
 
-// English (optional). Mirrors the German key structure exactly.
 const en: typeof de = {
+  day: {
+    openCalendar: "Open calendar",
+    today: "Today",
+    calendarTitle: "Choose a day",
+    trainingDay: "Training day",
+    backfill: "Backfill · {{date}}",
+  },
   nav: {
     primary: "Main navigation",
     dashboard: "Dashboard",
@@ -40,6 +46,9 @@ const en: typeof de = {
     today: {
       title: "Up today",
       cta: "Start workout",
+      loggedTitle: "Today's session",
+      loggedTitleOn: "Session on {{date}}",
+      backfillCta: "Backfill",
     },
     empty: {
       title: "Welcome",

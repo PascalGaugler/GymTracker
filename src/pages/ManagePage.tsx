@@ -9,8 +9,6 @@ import {
 
 import { PageHeader } from "./PageHeader"
 
-// Manage sub-views reached from the segmented control: the plan/workout editor
-// and the exercise catalog.
 const TABS = [
   { to: "/manage/plans", key: "manage.tabs.plans" },
   { to: "/manage/exercises", key: "manage.tabs.exercises" },

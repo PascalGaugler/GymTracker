@@ -26,7 +26,6 @@ describe("seedIfEmpty", () => {
       expect(() => WorkoutSchema.parse(workout)).not.toThrow()
       expect(workout.planId).toBe(plans[0].id)
       expect(workout.exercises.length).toBeGreaterThan(0)
-      // Every slot points at a real catalog exercise (the hub).
       for (const slot of workout.exercises) {
         expect(catalogIds.has(slot.exerciseId)).toBe(true)
       }

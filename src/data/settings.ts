@@ -2,23 +2,13 @@ import { z } from "zod"
 
 import { WeightUnit } from "./schema"
 
-// User preferences. Deliberately NOT a Dexie store: it is a single tiny record
-// with no queries, no history and no relations, so localStorage + Zod is the
-// boring fit (no schema version bump, no migration). It still lives in src/data
-// because it is persistence — features reach it through a hook, never directly.
+// Not a Dexie store: a single tiny record, so localStorage + Zod avoids a schema bump.
 
 export const SettingsSchema = z.object({
-  /** Preselected unit when creating a catalog exercise. Stored weights are never converted. */
   defaultWeightUnit: WeightUnit.default("kg"),
-  /**
-   * kcal floor below which a tracked day reads as "likely incomplete" and drops
-   * out of averages by default. Stored now, consumed by the Phase 2 calorie work.
-   */
+  /** kcal floor below which a tracked day is "likely incomplete" and excluded from averages by default. */
   calorieIncompleteThreshold: z.number().int().min(0).max(10000).default(1200),
-  /**
-   * Bodyweight goal in kg (the Dashboard goal bar). Absent = no goal. Same 2-decimal
-   * precision as bodyweight measurements. The start weight is derived, never stored.
-   */
+  /** Bodyweight goal in kg; absent = no goal. The start weight is derived, never stored. */
   targetWeight: z
     .number()
     .positive()
@@ -59,7 +49,7 @@ function write(settings: Settings): void {
   try {
     storage()?.setItem(STORAGE_KEY, JSON.stringify(settings))
   } catch {
-    // Quota or privacy mode — keep the in-memory value and move on.
+    // Quota or privacy mode: keep the in-memory value.
   }
 }
 
@@ -72,7 +62,6 @@ export function getSettings(): Settings {
   return cache
 }
 
-/** Merges a patch, validates, persists and notifies subscribers. */
 export function updateSettings(patch: Partial<Settings>): Settings {
   cache = SettingsSchema.parse({ ...getSettings(), ...patch })
   write(cache)

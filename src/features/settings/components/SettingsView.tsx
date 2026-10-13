@@ -7,8 +7,6 @@ import { BackupSection } from "./BackupSection"
 import { CaloriesSection, GoalSection, UnitsSection } from "./PreferencesSection"
 import { SettingsSection } from "./SettingsSection"
 
-// Settings: the backup surface plus the handful of preferences the app has.
-// Yazio stays a disabled placeholder until the Phase 2 integration exists.
 export function SettingsView() {
   const { t } = useTranslation()
   const { calorieIncompleteThreshold, targetWeight } = useSettings()

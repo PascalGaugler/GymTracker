@@ -2,20 +2,11 @@ import type { ExerciseDataPoint } from "@/data/repositories"
 
 import { customWeightAxis } from "./axis"
 
-// Single-exercise drilldown math: collapse one exercise's logged sets into a
-// per-session top-set line with a min–max BAND (the spread of that session's
-// sets — working weight + fatigue drop-off, per docs/charts.md). Pure over the
-// flat per-set history the repository returns; presentation logic, so it lives
-// in the analysis feature, not a repo.
-
-/** One session's row: the top set (line) and the [min, max] band. */
 export interface DrilldownPoint {
   t: number
   /** Heaviest set of the session — the line (and the band's upper edge). */
   top: number
-  /** Lightest set of the session — the band's lower edge. */
   min: number
-  /** [min, max] tuple driving the range area. */
   band: [number, number]
 }
 
@@ -30,7 +21,6 @@ export interface DrilldownData {
   changeSinceStart: number | null
 }
 
-/** Group the exercise's sets by session, then derive top + min–max per session. */
 export function buildExerciseDrilldown(history: ExerciseDataPoint[]): DrilldownData {
   const bySession = new Map<string, { t: number; weights: number[] }>()
   for (const p of history) {
@@ -57,7 +47,7 @@ export function buildExerciseDrilldown(history: ExerciseDataPoint[]): DrilldownD
     yTicks: ticks,
     sessionCount: points.length,
     latestTop: last ? last.top : null,
-    // Rounded to kill float noise (e.g. 102.25 − 100 = 2.25 exactly, but 0.1+0.2 style sums).
+    // Rounded to kill float noise.
     changeSinceStart: points.length >= 2 ? Math.round((last.top - first.top) * 100) / 100 : null,
   }
 }

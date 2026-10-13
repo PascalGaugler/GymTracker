@@ -11,9 +11,7 @@ import { RecompositionChart } from "./RecompositionChart"
 
 const WEEK_MS = 7 * 24 * 60 * 60 * 1000
 
-// Dashboard "am I on track?" preview: the thesis in one line plus a mini
-// recomposition chart, linking to the full view. Renders nothing until BOTH
-// series have a fixed baseline (the comparison is meaningless with only one).
+// Renders nothing until BOTH series have a fixed baseline.
 export function RecompositionPreview() {
   const { t } = useTranslation()
   const data = useRecompositionData()

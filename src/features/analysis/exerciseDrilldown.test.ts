@@ -11,7 +11,6 @@ function day(n: number): Date {
   return new Date(T0 + n * DAY)
 }
 
-// The flat per-set points the repository returns for one exercise.
 function point(
   sessionId: string,
   dayN: number,

@@ -1,5 +1,3 @@
-import { format } from "date-fns"
-import { de } from "date-fns/locale"
 import { useTranslation } from "react-i18next"
 import {
   Area,
@@ -13,22 +11,13 @@ import {
 } from "recharts"
 
 import type { DrilldownData, DrilldownPoint } from "../exerciseDrilldown"
-import { TooltipSwatch } from "./ChartSwatches"
+import { ChartTooltipFrame, ChartTooltipRow } from "./ChartTooltip"
 import { SERIES_CUES, lineWidth, markerDot } from "./chartCues"
+import { axisTick, formatDate } from "./chartFormat"
 
-const LINE = "var(--chart-1)" // top set — solid
-const CUE = SERIES_CUES[0]! // solid · circle
-const BAND = "var(--chart-1)" // min–max spread — faint fill
-
-const axisTick = {
-  fill: "var(--subtle)",
-  fontSize: 10,
-  fontFamily: "var(--font-mono)",
-} as const
-
-function formatDate(t: number): string {
-  return format(t, "d. MMM", { locale: de })
-}
+const LINE = "var(--chart-1)"
+const CUE = SERIES_CUES[0]!
+const BAND = "var(--chart-1)"
 
 interface ChartTooltipProps {
   active?: boolean
@@ -36,46 +25,32 @@ interface ChartTooltipProps {
   unit?: string
 }
 
-// Date header + the top set and the session's min–max range. Reads the row off
-// the payload so both the line and the band describe the same session.
 function ChartTooltip({ active, payload, unit }: ChartTooltipProps) {
   const { t } = useTranslation()
   if (!active || !payload || payload.length === 0) return null
   const row = payload[0]?.payload
   if (!row) return null
 
-  const suffix = unit ? ` ${unit}` : ""
   return (
-    <div className="rounded-md border border-border-strong bg-popover px-3 py-2 shadow-elev-2">
-      <div className="mb-1 font-mono text-micro tracking-normal text-subtle">
-        {formatDate(row.t)}
-      </div>
-      <div className="flex items-center gap-2">
-        <TooltipSwatch cue={CUE} color={LINE} />
-        <span className="flex-1 text-caption text-muted-foreground">
-          {t("progress.exercise.topSet")}
-        </span>
-        <span className="font-mono text-caption font-semibold tabular-nums">
-          {row.top.toFixed(1)}
-          <span className="ml-0.5 text-subtle">{suffix}</span>
-        </span>
-      </div>
+    <ChartTooltipFrame title={formatDate(row.t)}>
+      <ChartTooltipRow
+        cue={CUE}
+        color={LINE}
+        label={t("progress.exercise.topSet")}
+        value={row.top.toFixed(1)}
+        unit={unit}
+      />
       {row.min !== row.top && (
-        <div className="flex items-center gap-3">
-          <span className="flex-1 text-caption text-muted-foreground">
-            {t("progress.exercise.range")}
-          </span>
-          <span className="font-mono text-caption tabular-nums text-subtle">
-            {row.min.toFixed(1)}–{row.top.toFixed(1)}
-          </span>
-        </div>
+        <ChartTooltipRow
+          sub
+          label={t("progress.exercise.range")}
+          value={`${row.min.toFixed(1)}–${row.top.toFixed(1)}`}
+        />
       )}
-    </div>
+    </ChartTooltipFrame>
   )
 }
 
-// Single-exercise drilldown: a top-set line over a faint min–max band (the
-// session's set spread). One exercise, one raw-weight axis.
 export function ExerciseDrilldownChart({ data, unit }: { data: DrilldownData; unit: string }) {
   return (
     <ResponsiveContainer width="100%" height={280}>

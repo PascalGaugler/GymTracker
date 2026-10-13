@@ -46,8 +46,7 @@ function WorkoutSelector({
   )
 }
 
-// One workout's progression: top-set line per exercise, each toggleable. Keyed by
-// workout id from the parent, so toggle state resets when the workout changes.
+// Keyed by workout id from the parent so toggle state resets on change.
 function WorkoutProgression({ workout }: { workout: Workout }) {
   const { t } = useTranslation()
   const data = useWorkoutProgression(workout)
@@ -83,8 +82,6 @@ function WorkoutProgression({ workout }: { workout: Workout }) {
 
       <StrengthProgressionChart data={data} visible={visible} />
 
-      {/* Each chip: tap the label to show/hide its line; the chevron drills into
-          the single-exercise view (Phase 7's "drilled into from elsewhere"). */}
       <div className="flex flex-wrap gap-2">
         {data.series.map((s) => {
           const on = !hidden.has(s.exerciseId)
@@ -131,8 +128,6 @@ function WorkoutProgression({ workout }: { workout: Workout }) {
   )
 }
 
-// Per-workout strength progression view (/progress/strength): pick a workout,
-// then read each exercise's top-set trend. Empty when there is no active plan.
 export function StrengthProgressionView() {
   const { t } = useTranslation()
   const rotation = useWorkoutRotation()

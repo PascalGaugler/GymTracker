@@ -3,9 +3,6 @@ import { cva } from "class-variance-authority"
 
 import { cn } from "@/lib/utils"
 
-// Shared "pick one" styling: a segmented strip (route tabs, workout pills, option
-// fields) and standalone pick chips. Presentational helpers only; consumers own
-// the element (NavLink, button, Link) and its aria attributes.
 const segmentedListVariants = cva("gap-1 rounded-md border border-border bg-surface-2 p-1", {
   variants: {
     layout: {
@@ -43,8 +40,6 @@ const pickChipVariants = cva(
   },
 )
 
-// Horizontal scroll container for a strip that can be wider than the viewport:
-// the strip, not the page, owns the overflow.
 function SegmentedScroller({ className, ...props }: React.ComponentProps<"nav">) {
   return (
     <nav

@@ -28,9 +28,7 @@ const TYPE_LABEL: Record<Exercise["type"], ParseKeys> = {
   bodyweight: "manage.exercises.types.bodyweight",
 }
 
-// Create (exercise === null) or edit an existing catalog exercise. The form lives
-// in its own component keyed by id so it remounts with fresh fields whenever the
-// target changes — seeds state via initializers (no set-state-in-effect).
+// Keyed by id so the form remounts with fresh state seeded via initializers.
 export function ExerciseEditorDialog({
   exercise,
   open,
@@ -68,7 +66,6 @@ function ExerciseForm({ exercise, onDone }: { exercise: Exercise | null; onDone:
   const { defaultWeightUnit } = useSettings()
   const [name, setName] = useState(exercise?.name ?? "")
   const [type, setType] = useState<Exercise["type"]>(exercise?.type ?? "barbell")
-  // New exercises start on the preferred unit; an existing one keeps its own.
   const [unit, setUnit] = useState<Exercise["unit"]>(exercise?.unit ?? defaultWeightUnit)
   const [busy, setBusy] = useState(false)
   const [confirmingDelete, setConfirmingDelete] = useState(false)
@@ -188,8 +185,7 @@ function ExerciseForm({ exercise, onDone }: { exercise: Exercise | null; onDone:
   )
 }
 
-// Compact segmented selector for small, fixed option sets (equipment, unit).
-// Wraps at 320px so every option stays tappable. Tokens only — not shadcn.
+// Wraps at 320px so every option stays tappable.
 function SegmentedField<T extends string>({
   label,
   options,
