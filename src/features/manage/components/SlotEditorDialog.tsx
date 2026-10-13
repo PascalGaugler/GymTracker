@@ -1,5 +1,5 @@
 import { useState, type ReactNode } from "react"
-import { ChevronDown, Minus, Plus, X } from "lucide-react"
+import { Minus, Plus, X } from "lucide-react"
 import { useTranslation } from "react-i18next"
 import { toast } from "sonner"
 
@@ -12,6 +12,13 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog"
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
 import { workoutRepository } from "@/data/repositories"
 import type { Exercise, Workout, WorkoutExercise } from "@/data/schema"
 import { cn } from "@/lib/utils"
@@ -290,8 +297,7 @@ function AlternativePicker({
   )
 }
 
-// Native <select>: on phones it opens the platform picker, which beats any custom
-// listbox for a catalog of dozens of exercises. Styled with tokens only.
+// shadcn Select over the exercise catalog; the label is the trigger's accessible name.
 function ExerciseSelect({
   label,
   value,
@@ -304,24 +310,18 @@ function ExerciseSelect({
   onChange: (id: string) => void
 }) {
   return (
-    <div className="relative w-full min-w-0">
-      <select
-        aria-label={label}
-        className="h-12 w-full max-w-full min-w-0 appearance-none truncate rounded-md border border-border bg-surface-2 pr-10 pl-3 text-body-lg text-foreground outline-none focus:border-ring focus:ring-3 focus:ring-ring/50"
-        value={value}
-        onChange={(e) => onChange(e.target.value)}
-      >
+    <Select value={value} onValueChange={onChange}>
+      <SelectTrigger aria-label={label}>
+        <SelectValue />
+      </SelectTrigger>
+      <SelectContent>
         {options.map((exercise) => (
-          <option key={exercise.id} value={exercise.id}>
+          <SelectItem key={exercise.id} value={exercise.id}>
             {exercise.name}
-          </option>
+          </SelectItem>
         ))}
-      </select>
-      <ChevronDown
-        className="pointer-events-none absolute top-1/2 right-3 size-4 -translate-y-1/2 text-muted-foreground"
-        aria-hidden="true"
-      />
-    </div>
+      </SelectContent>
+    </Select>
   )
 }
 

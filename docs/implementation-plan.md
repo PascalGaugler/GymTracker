@@ -13,6 +13,7 @@ Build **one phase at a time**, in order; never build ahead.
 | DN2 | Dashboard navigation (calendar sheet + swipe)     | done   | calendar + swipe + header change the selected day   | `shadcn add --yes` overwrites `button.tsx` and adds a stray `cn` package — never use `--yes`; `git status` after every `shadcn add`.                                                                 |
 | DN3 | Dashboard content as of day + day-aware quick-add | done   | cards as of day; quick-add prefill + replace/delete | Shared `upTo(items, getDate, until)` helper (`src/lib/upTo.ts`) for every "as of day" filter — reuse it, don't re-derive the boundary.                                                               |
 | DN4 | Day-aware Log tab + Dashboard workout card        | done   | Log opens the day's session or a backfill picker    | Pure helper `sessionTally(session, workout)` (`src/features/training/sessionTally.ts`) for any "done/total sets" display against a saved session — reuse it rather than re-deriving from form state. |
+| FX1 | Chart tooltip/x-range fixes + shadcn Select       | done   | tooltips, progression range, Select; ci green       | Recomposition rows carry forward-filled `*AsOf` fields for tooltips only; progression rows come from plotted points only; shared `ChartTooltipFrame`/`ChartTooltipRow`.                              |
 
 `Status` ∈ `todo · in_progress · done`. Flip to `done` ONLY after `npm run ci` passes.
 

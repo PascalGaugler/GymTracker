@@ -199,6 +199,13 @@ widgets built on the same tokens live next to their feature.
 - **Chart cues** (`chartCues.tsx`, `ChartSwatches.tsx`): per-series dash + marker pairing,
   shared by lines, legends (`LegendSwatch`) and tooltips (`TooltipSwatch`); see the chart
   palette above.
+- **Chart tooltip** (`ChartTooltip.tsx`, `chartFormat.ts`): shared `ChartTooltipFrame`
+  (popover container + mono date header) and `ChartTooltipRow` (swatch, label, value;
+  `sub` for secondary rows); every chart composes them. `axisTick` / `formatDate` live in
+  `chartFormat.ts`.
+- **Select** (`components/ui/select.tsx`, shadcn/Radix): `h-12` trigger styled like
+  `Input`, popper content sized to the trigger, items >= `--tap`. Used for the slot editor's
+  exercise pickers.
 
 **Class merging:** `cn()` uses `tailwind-merge` extended with our custom `text-*` scale and
 `shadow-*` names (`src/lib/utils.ts`). Add any new type-scale or shadow token there too, or

@@ -111,7 +111,11 @@ export function buildStrengthProgression(
 
   // One row per session timestamp; null where an exercise was not logged that
   // day so the chart (connectNulls off) never bridges a swap.
-  const timestamps = [...new Set(perSession.map((s) => s.date.getTime()))].sort((a, b) => a - b)
+  // Only timestamps that carry a plotted point: sessions with no positive top set
+  // would be all-null rows and stretch the x-domain.
+  const timestamps = [
+    ...new Set([...pointsById.values()].flatMap((pts) => pts.map((p) => p.t))),
+  ].sort((a, b) => a - b)
   const rows: ProgressionRow[] = timestamps.map((t) => {
     const row: ProgressionRow = { t }
     for (const s of series) {

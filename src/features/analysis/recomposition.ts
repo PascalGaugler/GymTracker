@@ -27,6 +27,12 @@ export interface RecompositionPoint {
   /** DISPLAY ONLY: trailing mean of the last 3 strength points; plotted, never used for metrics. */
   strengthDisplay: number | null
   bodyweight: number | null
+  /** DISPLAY/TOOLTIP ONLY: last non-null `strengthDisplay` at or before t (null before the first). */
+  strengthDisplayAsOf: number | null
+  /** DISPLAY/TOOLTIP ONLY: last non-null raw `strength` at or before t (null before the first). */
+  strengthAsOf: number | null
+  /** DISPLAY/TOOLTIP ONLY: last non-null `bodyweight` at or before t (null before the first). */
+  bodyweightAsOf: number | null
 }
 
 export interface RecompositionData {
@@ -191,16 +197,40 @@ export function buildRecomposition(
       strength: p.value,
       strengthDisplay: smoothed[i],
       bodyweight: null,
+      strengthDisplayAsOf: null,
+      strengthAsOf: null,
+      bodyweightAsOf: null,
     })
   })
   for (const p of bw) {
     const existing = byTimestamp.get(p.t)
     if (existing) existing.bodyweight = p.value
     else {
-      byTimestamp.set(p.t, { t: p.t, strength: null, strengthDisplay: null, bodyweight: p.value })
+      byTimestamp.set(p.t, {
+        t: p.t,
+        strength: null,
+        strengthDisplay: null,
+        bodyweight: p.value,
+        strengthDisplayAsOf: null,
+        strengthAsOf: null,
+        bodyweightAsOf: null,
+      })
     }
   }
   const points = [...byTimestamp.values()].sort((a, b) => a.t - b.t)
+
+  // Forward-fill the "as of" fields so a tooltip on any date can show both series.
+  let lastDisplay: number | null = null
+  let lastStrength: number | null = null
+  let lastBodyweight: number | null = null
+  for (const point of points) {
+    if (point.strengthDisplay != null) lastDisplay = point.strengthDisplay
+    if (point.strength != null) lastStrength = point.strength
+    if (point.bodyweight != null) lastBodyweight = point.bodyweight
+    point.strengthDisplayAsOf = lastDisplay
+    point.strengthAsOf = lastStrength
+    point.bodyweightAsOf = lastBodyweight
+  }
 
   const { domain, ticks } = niceAxis([...strength.map((p) => p.value), ...bw.map((p) => p.value)])
 
